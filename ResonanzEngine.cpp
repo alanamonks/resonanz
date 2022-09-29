@@ -12,6 +12,7 @@
 #include <limits>
 #include <map>
 
+#include <cmath>
 #include <math.h>
 #include <dirent.h>
 #include <stdlib.h>
@@ -1043,7 +1044,7 @@ void ResonanzEngine::engine_loop()
 	if(hmmUpdator != nullptr){
 	  hmmUpdator->stop();
 	  delete hmmUpdator;
-	  hmmUpdaor = nullptr;
+	  hmmUpdator = nullptr;
 	}
 
 	if(hmm != nullptr){
