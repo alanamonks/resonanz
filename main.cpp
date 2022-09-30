@@ -36,7 +36,7 @@ bool keypress();
 void print_usage()
 {
 	printf("Usage: resonanz <mode> [options]\n");
-	printf("Learn and activate brainwave entraintment stimulus.");
+	printf("Learn and activate brainwave entraintment stimulus (EEG).");
 	printf("\n");
 	printf("--random         display random stimulation\n");
 	printf("--measure        measure brainwave responses to pictures/keywords\n");
@@ -397,14 +397,13 @@ int main(int argc, char** argv)
 	sleep(1);
 
 	while(!engine.keypress() && engine.isBusy()){
-	  if(verbose)
-	    std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
+	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  
 	  fflush(stdout);
 	  sleep(1); // resonanz-engine thread is doing all the heavy work
 	}
 	
-	if(verbose){
+	{
 	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  fflush(stdout);
 	}

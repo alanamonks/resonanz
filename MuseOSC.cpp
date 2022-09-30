@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <chrono>
 
+#include "spectral_entropy.h"
+
 
 #include "oscpkt.hh"
 #include "udp.hh"
@@ -105,7 +107,7 @@ bool MuseOSC::data(std::vector<float>& x) const
 
 bool MuseOSC::getSignalNames(std::vector<std::string>& names) const
 {
-  names.resize(6);
+  names.resize(6+1);
 
   // delta, theta, alpha, beta, gamma
   
@@ -115,13 +117,14 @@ bool MuseOSC::getSignalNames(std::vector<std::string>& names) const
   names[3] = "Muse: Beta";
   names[4] = "Muse: Gamma";
   names[5] = "Muse: Total Power";
+  names[6] = "Muse: Spectral Entropy";
   
   return true;
 }
 
 unsigned int MuseOSC::getNumberOfSignals() const
 {
-  return 6;
+  return 6+1; // entropy is calculated signal
 }
 
 void MuseOSC::muse_loop() // worker thread loop
@@ -200,13 +203,27 @@ void MuseOSC::muse_loop() // worker thread loop
       t = gamma; t = (1 + tanh(2*(t - 0.6)))/2.0;
       v.push_back(t);
       
+      // calculates spectral entropy
+      std::vector<float> P;
+      {
+	P.push_back(pow(10.0f,delta/10.0f));
+	P.push_back(pow(10.0f,theta/10.0f));
+	P.push_back(pow(10.0f,alpha/10.0f));
+	P.push_back(pow(10.0f,beta/10.0f));
+	P.push_back(pow(10.0f,gamma/10.0f));
+      }
+	  
+      const float SPECTRAL_ENTROPY = spectral_entropy(P);
+
       // calculates total power in decibels [sums power terms together]
       float total = pow(10.0f, delta/10.0f) + pow(10.0f, theta/10.0f) + pow(10.0f, alpha/10.0f) + pow(10.0f, beta/10.0f) + pow(10.0f, gamma/10.0f);
       total = 10.0f * log10(total);
-      
-      
+
       t = total; t = (1 + tanh(2*(t - 7.0)))/2.0;
       v.push_back(t);
+
+      // adds spectral entropy
+      v.push_back(SPECTRAL_ENTROPY);
       
       // gets current time
       auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
