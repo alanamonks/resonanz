@@ -400,7 +400,7 @@ int main(int argc, char** argv)
 	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  
 	  fflush(stdout);
-	  sleep(1); // resonanz-engine thread is doing all the heavy work
+	  sleep(2); // resonanz-engine thread is doing all the heavy work
 	}
 	
 	{
