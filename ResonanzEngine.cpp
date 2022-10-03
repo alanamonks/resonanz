@@ -1799,6 +1799,7 @@ void ResonanzEngine::engine_loop()
 	// minimize(picture) ||f(picture,eegCurrent) - eegTarget||/eegTargetVariance
 	
 	const float timedelta = 1.0f/programHz; // current delta between pictures [in seconds]
+	//const float timedelta = 1.0f; // CHANGED: 1 sec between picture changes, 
 
 	// const float timedelta = TICK_MS/1000.0f; // current delta between pictures [length of single tick which the image is shown]
 	
@@ -2156,6 +2157,50 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
 }
 
 
+
+int gaussian_random_select(const std::multimap<float,int>& squared_errors)
+{
+  if(squared_errors.size() <= 1) return 0;
+
+  // converts values to p-values
+
+  std::vector<float> pvalues;
+  pvalues.resize(squared_errors.size());
+
+  float psum = 0.0f;
+
+  unsigned int i=0;
+  for(const auto& s : squared_errors){
+
+    const float p = expf(-(s.first*s.first));
+
+    pvalues[i] = p;
+    psum += p;
+
+    i++;
+  }
+
+  for(auto& p : pvalues) p /= psum;
+
+  // calculates cumulative PDF function
+
+  for(unsigned int i=1;i<pvalues.size();i++)
+    pvalues[i] += pvalues[i-1];
+
+  float select = (float)(rng.uniform().c[0]);
+
+  for(unsigned int i=0;i<pvalues.size();i++){
+    if(select <= pvalues[i]) return i;
+  }
+
+  if(pvalues.size() >= 1) 
+    return (pvalues.size()-1);
+  else
+    return 0;
+}
+
+
+
 // shows picture/keyword which model predicts to give closest match to target
 // minimize(picture) ||f(picture,eegCurrent) - eegTarget||/eegTargetVariance
 bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
@@ -2163,7 +2208,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 					   const std::vector<float>& eegTargetVariance,
 					   float timestep_)
 {
-  const unsigned int NUM_TOPRESULTS = 1;
+  const unsigned int NUM_TOPRESULTS = 1; // was: 3, was: 1 (only selects the best result)
   std::multimap<float, int> bestKeyword;
   std::multimap<float, int> bestPicture;
   
@@ -2649,6 +2694,9 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
   
   {
     unsigned int elem = 0;
+
+    //keyword = gaussian_random_select(bestKeyword);
+    
     
     if(keywordData.size() > 0){
       elem = rng.rand() % bestKeyword.size();
@@ -2658,8 +2706,13 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	  break;
 	}
 	else elem--;
-			}
+      }
     }
+    
+    
+    
+    //picture = gaussian_random_select(bestPicture);
+
     
     elem = rng.rand() % bestPicture.size();
     for(auto& p : bestPicture){
@@ -2669,6 +2722,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       }
       else elem--;
     }
+    
     
     if(randomPrograms){
       if(keywords.size() > 0)

@@ -284,14 +284,14 @@ private:
         unsigned int HMMstate = 0; // current HMM state
         HMMStateUpdatorThread* hmmUpdator = nullptr;
   
-        const unsigned int KMEANS_NUM_CLUSTERS = 50;
+        const unsigned int KMEANS_NUM_CLUSTERS = 25;
         const unsigned int HMM_NUM_CLUSTERS = 10; // number of HMM hidden brain states
 	
 	// whiteice::pLBFGS_nnetwork<>* optimizer = nullptr;
 	whiteice::math::NNGradDescent<>* optimizer = nullptr;
 	
-	const unsigned int NUM_OPTIMIZER_THREADS = 1;
-	const unsigned int NUM_OPTIMIZER_ITERATIONS = 750; // was: 150
+	const unsigned int NUM_OPTIMIZER_THREADS = 2;
+	const unsigned int NUM_OPTIMIZER_ITERATIONS = 1000; // was: 150
 	bool optimizeSynthOnly = false;
 
   	whiteice::nnetwork<>* nn = nullptr;
@@ -300,7 +300,7 @@ private:
 	whiteice::UHMC<>* bayes_optimizer = nullptr;
 
 	const int NEURALNETWORK_COMPLEXITY = 10; // values above 10 seem to make sense (was: 25, 10)
-	const int NEURALNETWORK_DEPTH = 6; // how many layers neural network have (was: 3, 6)
+	const int NEURALNETWORK_DEPTH = 10; // how many layers neural network have (was: 3, 6)
 	
 	bool use_bayesian_nnetwork = false;
 	const unsigned int BAYES_NUM_SAMPLES = 500; // number of samples collected from "bayesian posterior" (what we really sample is MLE likelihood thought..) [reduced from 1000 to 500 because HMC now don't add samples until epsilon is properly learnt]
