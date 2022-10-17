@@ -78,169 +78,280 @@ bool NMCFile::createProgram(const DataSource& ds,
 	// everything went ok
 	
 	for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+	  signalName[i] = "N/A";
+	  program[i].resize(length_secs);
+	  for(unsigned int s=0;s<length_secs;s++)
+	    program[i][s] = -1.0;
+	}
+
+	for(unsigned int i=0;i<2;i++){
 	  signalName[i] = names[i];
 	  program[i] = pvalues[i];
 	}
 	
 	return true;
 }
+
+  
+  bool NMCFile::createProgram(const DataSource& ds,
+			      const std::vector< std::vector<float> > programdata)
+  {
+    if(programdata.size() != ds.getNumberOfSignals())
+      return false;
+
+    std::vector<std::string> snames;
+    ds.getSignalNames(snames);
+
+    for(unsigned int i=0;i<programdata.size();i++)
+      if(programdata[0].size() != programdata[i].size())
+	return false; // programs must have same size
+
+    // defaults for the programs (no program)
+    for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+      signalName[i] = "N/A";
+      program[i].resize(programdata[0].size());
+      for(unsigned int s=0;s<programdata[0].size();s++)
+	program[i][s] = -1.0;
+    }
+
+    // writes existing programs
+    for(unsigned int i=0;i<programdata.size()&&i<NUMBER_OF_PROGRAMS;i++){
+      signalName[i] = snames[i];
+      program[i] = programdata[i];
+    }
+
+    return true;
+  }
   
 
 bool NMCFile::loadFile(const std::string& filename)
 {
-	FILE* handle = NULL;
+  FILE* handle = NULL;
+  
+  try{
+    handle = fopen(filename.c_str(), "rb");
+    if(handle == NULL) return false;
+    
+    char* name[NUMBER_OF_PROGRAMS];
 
-	try{
-		handle = fopen(filename.c_str(), "rb");
-		if(handle == NULL) return false;
+    for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+      name[i] = new char[33]; // US-ASCII chars
 
-		std::unique_ptr<char> name1(new char[33]); // US-ASCII chars
-		std::unique_ptr<char> name2(new char[33]);
-		unsigned int len = 0;
+      if(fread(name[i], sizeof(char), 32, handle) != 32){
+	fclose(handle);
+	return false;
+      }
 
-		if(fread(name1.get(), sizeof(char), 32, handle) != 32){
-			fclose(handle);
-			return false;
-		}
+      name[i][32] = '\0';
+    }
 
-		if(fread(name2.get(), sizeof(char), 32, handle) != 32){
-			fclose(handle);
-			return false;
-		}
+    unsigned int len = 0;
+    
+    if(fread(&len, sizeof(unsigned int), 1, handle) != 1){ // assumes little endianess here...11
+      fclose(handle);
+      return false;
+    }
+    
+    if(len > 10000){ // sanity check [in practice values must be always "small"]
+      fclose(handle);
+      return false;
+    }
+    
+		
+    // next we read actual "program" data (floats)
+    
+    float* programdata[NUMBER_OF_PROGRAMS];
 
-		if(fread(&len, sizeof(unsigned int), 1, handle) != 1){ // assumes little endianess here...
-			fclose(handle);
-			return false;
-		}
+    for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+      programdata[i] = (new float[len]); // 32bit floats [little endian]
 
-		if(len > 10000){ // sanity check [in practice values must be always "small"]
-			fclose(handle);
-			return false;
-		}
-
-		name1.get()[32] = '\0';
-		name2.get()[32] = '\0';
-
-		// next we read actual "program" data (floats)
-
-		std::unique_ptr<float> program1(new float[len]); // 32bit floats [little endian]
-		std::unique_ptr<float> program2(new float[len]);
-
-		if(fread(program1.get(), sizeof(float), len, handle) != len){
-			fclose(handle);
-			return false;
-		}
-
-		if(fread(program2.get(), sizeof(float), len, handle) != len){
-			fclose(handle);
-			return false;
-		}
-
-		// all data has been successfully read, stores values to internal class variables
-		signalName[0] = std::string(name1.get());
-		signalName[1] = std::string(name2.get());
-
-		// trimming
-		signalName[0].erase(signalName[0].find_last_not_of(" ")+1);
-		signalName[1].erase(signalName[1].find_last_not_of(" ")+1);
-
-		program[0].resize(len);
-		program[1].resize(len);
-
-		for(unsigned int i=0;i<len;i++){
-			program[0][i] = program1.get()[i];
-			program[1][i] = program2.get()[i];
-		}
-
-		fclose(handle);
-		return true;
-	}
-	catch(std::exception& e){
-		return false;
-	}
+      if(fread(programdata[i], sizeof(float), len, handle) != len){
+	fclose(handle);
+	return false;
+      }
+    }
 
 
+    for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+      // all data has been successfully read, stores values to internal class variables
+      signalName[i] = std::string(name[i]);
+      
+      // trimming
+      signalName[i].erase(signalName[i].find_last_not_of(" ")+1);
+      
+      program[i].resize(len);
+      
+      for(unsigned int k=0;k<len;k++){
+	program[i][k] = programdata[i][k];
+      }
+    }
+
+    for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+      delete[] programdata[i];
+      delete[] name[i];
+    }
+    
+    fclose(handle);
+    return true;
+  }
+  catch(std::exception& e){
+    return false;
+  }
 
 }
 
 
-bool NMCFile::saveFile(const std::string& filename) const
-{
-	return false; // FIXME: NOT IMPLEMENTED
-}
+  bool NMCFile::saveFile(const std::string& filename) const
+  {
+    
+    FILE* handle = NULL;
+    
+    try{
+      handle = fopen(filename.c_str(), "wb");
+      if(handle == NULL) return false;
+      
+      char* name[NUMBER_OF_PROGRAMS];
+      
+      for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+	name[i] = new char[33]; // US-ASCII chars
 
-unsigned int NMCFile::getNumberOfPrograms() const
-{
-	return NUMBER_OF_PROGRAMS;
-}
-
-bool NMCFile::getProgramSignalName(unsigned int index, std::string& name) const
-{
-	if(index > NUMBER_OF_PROGRAMS) return false;
-	name = signalName[index];
-	return true;
-}
-
-
-bool NMCFile::getRawProgram(unsigned int index, std::vector<float>& program) const
-{
-	if(index > NUMBER_OF_PROGRAMS) return false;
-	program = this->program[index];
-	return true;
-}
-
-
-bool NMCFile::getInterpolatedProgram(unsigned int index, std::vector<float>& program) const
-{
-	if(index > NUMBER_OF_PROGRAMS) return false;
-	program = this->program[index];
-
-	return interpolateProgram(program);
-}
-
-
-bool NMCFile::interpolateProgram(std::vector<float>& program)
-{
-	// goes through the code program and finds the first positive point
-	unsigned int prevPoint = program.size();
-	for(unsigned int i=0;i<program.size();i++){
-		if(program[i] >= 0.0f){ prevPoint = i; break; }
+	for(unsigned int k=0;k<32&&k<=signalName[i].size();k++){
+	  name[i][k] = signalName[i][k];
 	}
 
-	if(prevPoint == program.size()){ // all points are negative
-		for(auto& p : program)
-			p = 0.5f;
-
-		return true;
+	name[i][32] = '\0';
+	
+	if(fwrite(name[i], sizeof(char), 32, handle) != 32){
+	  fclose(handle);
+	  return false;
 	}
+	
+	
+      }
 
-	for(unsigned int i=0;i<prevPoint;i++)
-		program[i] = program[prevPoint];
-
-	// once we have processed the first positive point, looks for the next one
-	while(prevPoint+1 < program.size()){
-		for(unsigned int p=prevPoint+1;p<program.size();p++){
-			if(program[p] >= 0.0f){
-				const float ratio = (program[p] - program[prevPoint])/(p - prevPoint);
-				for(unsigned int i=prevPoint+1;i<p;i++)
-					program[i] = program[prevPoint] + ratio*(i - prevPoint);
-				prevPoint = p;
-				break;
-			}
-			else if(p+1 >= program.size()){ // last iteration of the for loop
-				// we couldn't find any more positive elements..
-				for(unsigned int i=prevPoint+1;i<program.size();i++)
-					program[i] = program[prevPoint];
-
-				prevPoint = program.size();
-			}
-		}
+      unsigned int len = 0;
+      
+      len = program[0].size();
+      
+      if(len > 10000){ // sanity check [in practice values must be always "small"]
+	fclose(handle);
+	return false;
+      }
+      
+      
+      if(fwrite(&len, sizeof(unsigned int), 1, handle) != 1){ // assumes little endianess here...11
+	fclose(handle);
+	return false;
+      }
+      
+      
+      // next we write actual "program" data (floats)
+      
+      float* programdata[NUMBER_OF_PROGRAMS];
+      
+      for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+	programdata[i] = (new float[len]); // 32bit floats [little endian]
+	
+	for(unsigned int k=0;k<len;k++)
+	  programdata[i][k] = -1.0f;
+	
+	for(unsigned int k=0;k<program[i].size();k++)
+	  programdata[i][k] = program[i][k];
+	
+	if(fwrite(programdata[i], sizeof(float), len, handle) != len){
+	  fclose(handle);
+	  return false;
 	}
-
-	return true;
-}
-
-
-
+      }
+      
+      
+      for(unsigned int i=0;i<NUMBER_OF_PROGRAMS;i++){
+	delete[] programdata[i];
+	delete[] name[i]; 
+      }
+      
+      fclose(handle);
+      return true;
+    }
+    catch(std::exception& e){
+      return false;
+    }
+    
+    
+  }
+  
+  unsigned int NMCFile::getNumberOfPrograms() const
+  {
+    return NUMBER_OF_PROGRAMS;
+  }
+  
+  bool NMCFile::getProgramSignalName(unsigned int index, std::string& name) const
+  {
+    if(index > NUMBER_OF_PROGRAMS) return false;
+    name = signalName[index];
+    return true;
+  }
+  
+  
+  bool NMCFile::getRawProgram(unsigned int index, std::vector<float>& program) const
+  {
+    if(index > NUMBER_OF_PROGRAMS) return false;
+    program = this->program[index];
+    return true;
+  }
+  
+  
+  bool NMCFile::getInterpolatedProgram(unsigned int index, std::vector<float>& program) const
+  {
+    if(index > NUMBER_OF_PROGRAMS) return false;
+    program = this->program[index];
+    
+    return interpolateProgram(program);
+  }
+  
+  
+  bool NMCFile::interpolateProgram(std::vector<float>& program)
+  {
+    // goes through the code program and finds the first positive point
+    unsigned int prevPoint = program.size();
+    for(unsigned int i=0;i<program.size();i++){
+      if(program[i] >= 0.0f){ prevPoint = i; break; }
+    }
+    
+    if(prevPoint == program.size()){ // all points are negative
+      for(auto& p : program)
+	p = 0.5f;
+      
+      return true;
+    }
+    
+    for(unsigned int i=0;i<prevPoint;i++)
+      program[i] = program[prevPoint];
+    
+    // once we have processed the first positive point, looks for the next one
+    while(prevPoint+1 < program.size()){
+      for(unsigned int p=prevPoint+1;p<program.size();p++){
+	if(program[p] >= 0.0f){
+	  const float ratio = (program[p] - program[prevPoint])/(p - prevPoint);
+	  for(unsigned int i=prevPoint+1;i<p;i++)
+	    program[i] = program[prevPoint] + ratio*(i - prevPoint);
+	  prevPoint = p;
+	  break;
+	}
+	else if(p+1 >= program.size()){ // last iteration of the for loop
+	  // we couldn't find any more positive elements..
+	  for(unsigned int i=prevPoint+1;i<program.size();i++)
+	    program[i] = program[prevPoint];
+	  
+	  prevPoint = program.size();
+	}
+      }
+    }
+    
+    return true;
+  }
+  
+  
+  
 } /* namespace resonanz */
 } /* namespace whiteice */

@@ -2208,7 +2208,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 					   const std::vector<float>& eegTargetVariance,
 					   float timestep_)
 {
-  const unsigned int NUM_TOPRESULTS = 1; // was: 3, was: 1 (only selects the best result)
+  const unsigned int NUM_TOPRESULTS = 3; // was: 3, was: 1 (only selects the best result)
   std::multimap<float, int> bestKeyword;
   std::multimap<float, int> bestPicture;
   

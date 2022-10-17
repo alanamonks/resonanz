@@ -40,6 +40,7 @@ void print_usage()
 	printf("\n");
 	printf("--random         display random stimulation\n");
 	printf("--measure        measure brainwave responses to pictures/keywords\n");
+	printf("--measure-music  measure response to media/music and save results to program file\n");
 	printf("--optimize       optimize prediction model for targeted stimulation\n");
 	printf("--program        programmed stimulation sequences towards target values\n");
 	printf("--analyze        measurement database statistics and model performance analysis\n");
@@ -56,6 +57,7 @@ void print_usage()
 	printf("--method=        sets optimization method: rbf, lbfgs*, bayes\n");
 	printf("--pca            preprocess input data with pca if possible\n");
 	printf("--loop           loops program forever\n");
+	printf("--program-len=   measured program length in seconds/ticks\n");
 	printf("--fullscreen     fullscreen mode instead of windowed mode\n");
 	printf("--savevideo      save video to neurostim.ogv file\n");
 	printf("--optimize-synth only optimize synth model when optimizing\n");
@@ -72,7 +74,7 @@ int main(int argc, char** argv)
 	srand(time(0));
 
 	if(argc > 1){
-	        printf("Resonanz engine v0.56\n");
+	        printf("Resonanz engine v0.60\n");
 	}
 	else{
 	        print_usage();
@@ -100,6 +102,8 @@ int main(int argc, char** argv)
 	bool optimizeSynthOnly = false;
 	bool randomPrograms = false;
 	bool verbose = false;
+
+	unsigned int programLength = 120; // 2 minutes default
 	
 	std::string programFile;
 	std::vector<float> targets;
@@ -119,6 +123,10 @@ int main(int argc, char** argv)
 			cmd.command = whiteice::resonanz::ResonanzCommand::CMD_DO_MEASURE;
 			hasCommand = true;
 		}
+		else if(strcmp(argv[i], "--measure-music") == 0){
+			cmd.command = whiteice::resonanz::ResonanzCommand::CMD_DO_MEASURE_PROGRAM;
+			hasCommand = true;
+		}
 		else if(strcmp(argv[i], "--optimize") == 0){
 			cmd.command = whiteice::resonanz::ResonanzCommand::CMD_DO_OPTIMIZE;
 			hasCommand = true;
@@ -127,6 +135,7 @@ int main(int argc, char** argv)
 			cmd.command = whiteice::resonanz::ResonanzCommand::CMD_DO_EXECUTE;
 			hasCommand = true;
 		}
+
 		else if(strcmp(argv[i], "--analyze") == 0){
 			cmd.command = whiteice::resonanz::ResonanzCommand::CMD_DO_NOTHING;
 			hasCommand = true;
@@ -148,6 +157,10 @@ int main(int argc, char** argv)
 	    else if(strncmp(argv[i], "--picture-dir=", 14) == 0){
 	    	char* p = &(argv[i][14]);
 	    	if(strlen(p) > 0) cmd.pictureDir = p;
+	    }
+	    else if(strncmp(argv[i], "--program-len=", 14) == 0){
+	      char* p = &(argv[i][14]);
+	      if(strlen(p) > 0) programLength = atoi(p);
 	    }
 	    else if(strncmp(argv[i], "--model-dir=", 12) == 0){
 	    	char* p = &(argv[i][12]);
@@ -310,6 +323,26 @@ int main(int argc, char** argv)
 			return -1;
 		}
 	}
+	else if(cmd.command == cmd.CMD_DO_MEASURE_PROGRAM){
+	  
+	  std::vector<std::string> names;
+
+	  const auto& eeg = engine.getDevice();
+
+	  eeg.getSignalNames(names);
+
+	  if(names.size() <= 0 || programLength <= 0){
+	    printf("ERROR: bad parameters\n");
+	    return -1;
+	  }
+	  
+	  
+	  if(engine.cmdMeasureProgram(cmd.audioFile, names, programLength) == false){
+	    printf("ERROR: bad parameters\n");
+	    return -1;
+	  }
+	  
+	}
 	else if(cmd.command == cmd.CMD_DO_OPTIMIZE){
 		if(engine.cmdOptimizeModel(cmd.pictureDir, cmd.keywordsFile, cmd.modelDir) == false){
 			printf("ERROR: bad parameters\n");
@@ -317,7 +350,7 @@ int main(int argc, char** argv)
 		}
 	}
 	else if(cmd.command == cmd.CMD_DO_EXECUTE){
-		whiteice::resonanz::NMCFile file;
+	  whiteice::resonanz::NMCFile file;
 		
 		if(targets.size() == 0){
 		  if(file.loadFile(programFile) == false){
@@ -353,7 +386,7 @@ int main(int argc, char** argv)
 		}
 		
 		
-		std::string audioFile = "";
+		std::string audioFile = cmd.audioFile;
 		
 		
 		if(engine.cmdExecuteProgram(cmd.pictureDir, cmd.keywordsFile, 
@@ -426,6 +459,44 @@ int main(int argc, char** argv)
 	else if(cmd.command == cmd.CMD_DO_EXECUTE){
 	  std::string msg = engine.executedProgramStatistics();
 	  std::cout << msg << std::endl;
+	}
+	else if(cmd.command == cmd.CMD_DO_MEASURE_PROGRAM){
+
+	  std::vector<std::string> names;
+	  
+	  const auto& eeg = engine.getDevice();
+	  
+	  eeg.getSignalNames(names);
+
+	  std::vector< std::vector<float> > program;
+
+	  if(engine.getMeasuredProgram(program) == false){
+	    printf("ERROR: Cannot retrieve measured program.\n");
+	    return -1;
+	  }
+
+	  if(program.size() <= 0){
+	    printf("ERROR: Cannot retrieve measured program.\n");
+	    return -1;
+	  }
+
+	  if(program.size() != names.size() || program[0].size() != programLength){
+	    printf("ERROR: Invalid measured program.\n");
+	    return -1;
+	  }
+
+	  whiteice::resonanz::NMCFile file;
+
+	  if(file.createProgram(eeg, program) == false){
+	    printf("ERROR: Cannot create program from measurements.\n");
+	    return -1;
+	  }
+
+	  if(file.saveFile(programFile) == false){
+	    printf("ERROR: Cannot save program to file.\n");
+	    return -1;
+	  }
+	  
 	}
 
 

@@ -7,7 +7,8 @@
 #ifndef HMMStateUpdator_h
 #define HMMStateUpdator_h
 
-#include <dinrhiw/dinrhiw.h>
+//#include <dinrhiw/dinrhiw.h>
+#include <dinrhiw.h>
 #include <thread>
 #include <mutex>
 

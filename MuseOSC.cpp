@@ -118,7 +118,6 @@ bool MuseOSC::getSignalNames(std::vector<std::string>& names) const
   names[4] = "Muse: Gamma";
   names[5] = "Muse: Total Power";
   names[6] = "Muse: Spectral Entropy";
-  
   return true;
 }
 
@@ -206,14 +205,26 @@ void MuseOSC::muse_loop() // worker thread loop
       // calculates spectral entropy
       std::vector<float> P;
       {
-	P.push_back(pow(10.0f,delta/10.0f));
-	P.push_back(pow(10.0f,theta/10.0f));
-	P.push_back(pow(10.0f,alpha/10.0f));
-	P.push_back(pow(10.0f,beta/10.0f));
-	P.push_back(pow(10.0f,gamma/10.0f));
+	// DO NOT USE RAW VALUES AS THEY GIVE BAD RESULTS ALTHOUGH SHOULD WORK OK
+	// 
+	//P.push_back(pow(10.0f,delta/10.0f));
+	//P.push_back(pow(10.0f,theta/10.0f));
+	//P.push_back(pow(10.0f,alpha/10.0f));
+	//P.push_back(pow(10.0f,beta/10.0f));
+	//P.push_back(pow(10.0f,gamma/10.0f));
+
+	// use preprocessed values
+	
+	P.push_back(delta);
+	P.push_back(theta);
+	P.push_back(alpha);
+	P.push_back(beta);
+	P.push_back(gamma);
       }
 	  
       const float SPECTRAL_ENTROPY = spectral_entropy(P);
+
+      // std::cout << "MUSE: SPECTRAL_ENTROPY: " << SPECTRAL_ENTROPY << std::endl;
 
       // calculates total power in decibels [sums power terms together]
       float total = pow(10.0f, delta/10.0f) + pow(10.0f, theta/10.0f) + pow(10.0f, alpha/10.0f) + pow(10.0f, beta/10.0f) + pow(10.0f, gamma/10.0f);
