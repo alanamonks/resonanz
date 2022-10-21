@@ -721,6 +721,14 @@ bool ResonanzEngine::setParameter(const std::string& parameter, const std::strin
     }
     else return false;
   }
+  else if(parameter == "show-top-results"){
+    this->SHOW_TOP_RESULTS = 1;
+    this->SHOW_TOP_RESULTS = atoi(value.c_str());
+    if(this->SHOW_TOP_RESULTS <= 0)
+      this->SHOW_TOP_RESULTS = 1;
+    
+    return true;
+  }
   else if(parameter == "use-data-rbf"){
     if(value == "true"){
       dataRBFmodel = true;
@@ -2208,7 +2216,10 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 					   const std::vector<float>& eegTargetVariance,
 					   float timestep_)
 {
-  const unsigned int NUM_TOPRESULTS = 3; // was: 3, was: 1 (only selects the best result)
+  // was: 3, was: 1 (only selects the best result)
+  const unsigned int NUM_TOPRESULTS = SHOW_TOP_RESULTS; 
+  
+  
   std::multimap<float, int> bestKeyword;
   std::multimap<float, int> bestPicture;
   

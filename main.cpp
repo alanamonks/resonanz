@@ -259,6 +259,15 @@ int main(int argc, char** argv)
 	      printf("Hardware: unknown device (ERROR!)\n");
 	      exit(-1);
 	    }
+
+	    {
+	      const unsigned int SHOW_TOP_RESULTS = 1;
+	      
+	      char buffer[80];
+	      sprintf(buffer, "%d", SHOW_TOP_RESULTS);
+	      
+	      engine.setParameter("show-top-results", buffer);
+	    }
 	    
 	    engine.setParameter("use-bayesian-nnetwork", "true");
 	    engine.setParameter("use-data-rbf", "true");
@@ -308,7 +317,6 @@ int main(int argc, char** argv)
 	      engine.setParameter("optimize-synth-only", "false");
 	    }
 	}
-
 	
 	
 	if(cmd.command == cmd.CMD_DO_RANDOM){
@@ -351,8 +359,8 @@ int main(int argc, char** argv)
 	}
 	else if(cmd.command == cmd.CMD_DO_EXECUTE){
 	  whiteice::resonanz::NMCFile file;
-		
-		if(targets.size() == 0){
+
+	        if(targets.size() == 0){
 		  if(file.loadFile(programFile) == false){
 		    std::cout << "Loading program file: " 
 			      << programFile << " failed." << std::endl;
@@ -360,6 +368,13 @@ int main(int argc, char** argv)
 		  }
 		}
 		else{
+
+		  if(targets.size() != engine.getDevice().getNumberOfSignals()){
+		    printf("Number of signals in target is wrong (%d != %d).\n",
+			   (int)targets.size(), engine.getDevice().getNumberOfSignals());
+		    return -1;
+		  }
+		  
 		  if(file.createProgram(engine.getDevice(), targets, 120) == false){
 		    std::cout << "Creating neurostim program failed." << std::endl;
 		    return -1;

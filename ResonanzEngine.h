@@ -314,6 +314,8 @@ private:
 			const std::vector<float>& eegTargetVariance, float timedelta);
 	
 	bool loopMode = false; // loop program forever
+  
+        unsigned int SHOW_TOP_RESULTS = 3; // how many results show in executeProgram from top results
 
 	std::vector< whiteice::bayesian_nnetwork<> > keywordModels;
 	std::vector< whiteice::bayesian_nnetwork<> > pictureModels;
