@@ -1,0 +1,1 @@
+./resonanz.exe --program --picture-dir=/c/msys64/home/Tomas/cc0pictures/unplash.com/ --model-dir=model/ --target=1.0,-1.0,-1.0,-1,-1,-1.0,0.0 --loop --music-file=healing-music.mp3 

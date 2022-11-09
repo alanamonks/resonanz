@@ -261,7 +261,7 @@ int main(int argc, char** argv)
 	    }
 
 	    {
-	      const unsigned int SHOW_TOP_RESULTS = 1;
+	      const unsigned int SHOW_TOP_RESULTS = 2;
 	      
 	      char buffer[80];
 	      sprintf(buffer, "%d", SHOW_TOP_RESULTS);

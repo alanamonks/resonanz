@@ -1,0 +1,7 @@
+#!/bin/bash
+# target values for muse are: delta,theta,alpha,beta,gamma,total,spectral_entropy
+
+./resonanz.exe --program --picture-dir=/c/msys64/home/Tomas/cc0pictures/unplash.com/ --model-dir=model/ --loop --target=-1,-1,1.0,1.0,-1,-1,-1
+
+
+

@@ -2591,38 +2591,49 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       auto x = input;
       
       if(synthData.preprocess(0, x) == false){
-	logging.warn("skipping bad synth prediction");
+	logging.warn("skipping bad synth prediction (0)");
 	continue;
       }
 
       math::vertex<> m;
       math::matrix<> cov;
-	    
+
+#if 0
       if(dataRBFmodel){
 	// engine_estimateNN(x, synthData, m , cov);
 	// NOT SUPPORTED YET...
+
+	assert(0);
 	
 	// now change high variance output
 	m = x;
 	cov.resize(x.size(), x.size());
 	cov.identity(); 
       }
-      else{
+      else
+#endif
+      {
 	auto& model = synthModel;
 	
 	if(model.inputSize() != x.size() || model.outputSize() != eegTarget.size()){
-	  logging.warn("skipping bad synth prediction model");
+	  logging.warn("skipping bad synth prediction model (1)");
 	  continue; // bad model/data => ignore
 	}
 	
 	if(model.calculate(x, m, cov, 1, 0) == false){
-	  logging.warn("skipping bad synth prediction model");
-		continue;
+	  logging.warn("skipping bad synth prediction model (2)");
+	  continue;
 	}
+	
       }
       
       if(synthData.invpreprocess(1, m) == false){
-	logging.warn("skipping bad synth prediction model");
+	char buffer[256];
+
+	sprintf(buffer, "skipping bad synth prediction model (3): clusters: %d %d %d %d\n",
+		synthData.getNumberOfClusters(), m.size(), synthData.dimension(1), synthData.size(0));
+
+	logging.warn(buffer);
 	continue;
       }
       
@@ -5075,9 +5086,9 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
   
   flags = MIX_INIT_OGG;
   
-  audioEnabled = false;
+  audioEnabled = true;
   
-  if(0){
+  if(audioEnabled){
     synth = new FMSoundSynthesis(); // curretly just supports single synthesizer type
     mic   = new SDLMicListener();   // records single input channel
     synth->pause(); // no sounds
