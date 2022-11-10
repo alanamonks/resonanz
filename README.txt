@@ -7,7 +7,7 @@ SDL2_image: libtiff-dev libjpeg
 SDL2_ttf: libfreetype6-dev
 SDL2_mixer: SMPEG (svn co), libflac-dev, libvorbis-dev, libfluidsynth-dev (MIDI)
 
-Theora video coder and decoder.
+Theora video coder and decoder. Vorbis audio encoding.
 
 Software is Copyright Tomas Ukkonen and requires permission from Tomas Ukkonen to use.
 
