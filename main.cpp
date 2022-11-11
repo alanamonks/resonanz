@@ -88,6 +88,8 @@ int main(int argc, char** argv)
 	}
 #endif
 
+	whiteice::logging.setOutputFile("resonanz-engine.log");
+
 	
 	// process command line
 	bool hasCommand = false;
@@ -95,7 +97,7 @@ int main(int argc, char** argv)
 	bool dumpAsciiCommand = false;
 	whiteice::resonanz::ResonanzCommand cmd;	
 	std::string device = "muse";
-	std::string optimizationMethod = "rbf"; // was: lbfgs
+	std::string optimizationMethod = "lbfgs"; // was: lbfgs, rbf
 	bool usepca  = false;
 	bool fullscreen = false;
 	bool loop = false;
@@ -207,7 +209,6 @@ int main(int argc, char** argv)
 	    }
 	    else if(strcmp(argv[i],"-v") == 0){
 	    	verbose = true;
-		whiteice::logging.setOutputFile("resonanz-engine.log");
 		whiteice::logging.setPrintOutput(true);
 	    }
 	    else{

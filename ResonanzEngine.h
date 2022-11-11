@@ -323,7 +323,7 @@ private:
 	bool dataRBFmodel = true; // don't calculate neural networks but use simple model to directly predict response from stimulus
 	
 	// number of parameters to test with synthModel before selecting the optimium one 
-	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 500; // (was 2000) reduced to 50 because of slowness(?)
+	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 100; // (was 2000) reduced to 50 because of slowness(?)
 	
 	unsigned long long synthParametersChangedTime = 0ULL;
 

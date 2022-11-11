@@ -890,6 +890,8 @@ void ResonanzEngine::engine_loop()
   
   
   while(thread_is_running){
+
+    bool tick_delay_sleep = false;
     
     // sleeps until there is a new engine tick
     while(lastTickProcessed >= tick){
@@ -931,10 +933,13 @@ void ResonanzEngine::engine_loop()
 	
       }
       
-      if(tick < currentTick)
+      if(tick < currentTick){
 	tick = currentTick;
-      else
-	engine_sleep(TICK_MS/10);
+      }
+      else{
+	tick_delay_sleep = true;
+	engine_sleep(TICK_MS/20);
+      }
     }
     
     lastTickProcessed = tick;
@@ -1702,8 +1707,18 @@ void ResonanzEngine::engine_loop()
 		  
     }
     else if(currentCommand.command == ResonanzCommand::CMD_DO_EXECUTE){
-      logging.info("resonanz-engine: executing program..");
-      engine_setStatus("resonanz-engine: executing program..");
+
+      {
+	char buffer[80];
+
+	if(tick_delay_sleep)
+	  snprintf(buffer, 80, "resonanz-engine: executing program (in sync)..");
+	else
+	  snprintf(buffer, 80, "resonanz-engine: executing program (out of sync)..");
+	
+	logging.info(buffer);
+	engine_setStatus(buffer);
+      }
       
       engine_stopHibernation();
       
@@ -1783,7 +1798,7 @@ void ResonanzEngine::engine_loop()
       {
 	char buffer[80];
 	snprintf(buffer, 80, "Executing program (pseudo)second: %d/%d",
-		 (unsigned int)(currentSecond/programHz), program[0].size());
+		 (unsigned int)(currentSecond/programHz), (int)program[0].size());
 	logging.info(buffer);
       }
       
@@ -2405,7 +2420,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     auto original = x;
     
     if(pictureData[index].preprocess(0, x) == false){
-      logging.warn("skipping bad picture prediction model");
+      logging.warn("skipping bad picture prediction model (1)");
       continue;
     }
     
@@ -2418,20 +2433,22 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     else{
       whiteice::bayesian_nnetwork<>& model = pictureModels[index];
       
-      if(model.inputSize() != eegCurrent.size() || model.outputSize() != eegTarget.size()){
-	logging.warn("skipping bad picture prediction model");
+      if(model.inputSize() != (eegCurrent.size()+HMM_NUM_CLUSTERS) ||
+	 model.outputSize() != eegTarget.size()){
+	
+	logging.warn("skipping bad picture prediction model (2)");
 	continue; // bad model/data => ignore
       }
       
       if(model.calculate(x, m, cov, 1, 0) == false){
-	logging.warn("skipping bad picture prediction model");
+	logging.warn("skipping bad picture prediction model (3)");
 	continue;
       }
       
     }
     
     if(pictureData[index].invpreprocess(1, m, cov) == false){
-      logging.warn("skipping bad picture prediction model");
+      logging.warn("skipping bad picture prediction model (4)");
       continue;
     }
     
@@ -2535,7 +2552,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     if(2*synthBefore.size() + eegCurrent.size() != synthModel.inputSize()){
       char buffer[256];
       snprintf(buffer, 256, "engine_executeProgram(): synth model input parameters (dimension) mismatch! (%d + %d != %d)\n",
-	       synthBefore.size(), eegCurrent.size(), synthModel.inputSize());
+	       (int)synthBefore.size(), (int)eegCurrent.size(), synthModel.inputSize());
       logging.fatal(buffer);
     }
     
@@ -2584,7 +2601,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       
       // copies parameters to input vector
       for(unsigned int i=0;i<synthTest.size();i++){
-	      input[synthBefore.size()+i] = synthTest[i];
+	input[synthBefore.size()+i] = synthTest[i];
       }
       
       // calculates approximated response
@@ -2644,7 +2661,9 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       // calculates error (weighted distance to the target state)
       
       auto delta = target - (original + m);
+#if 0
       auto stdev = m;
+      stdev.zero();
       
       for(unsigned int i=0;i<stdev.size();i++){
 	stdev[i] = math::sqrt(math::abs(cov(i,i)));
@@ -2658,6 +2677,11 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	delta[i] = math::abs(delta[i]) + 0.50f*stdev[i]; // FIXME: was 0.5 (handles uncertainty)
 	delta[i] /= targetVariance[i];
       }
+#else
+      for(unsigned int i=0;i<delta.size();i++){
+	delta[i] /= targetVariance[i];
+      }
+#endif
       
       auto error = delta.norm();
       
@@ -2692,6 +2716,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     for(unsigned int i=0;i<errors.size();i++){
       if(errors[i].first < best_error){
 	soundParameters = errors[i].second; // synthTest
+	best_error = errors[i].first;
       }
     }
     
@@ -3111,6 +3136,8 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	logging.error("Loading EEG data from datastructure failed");
 	return false;
       }
+
+      printf("KMeans: EEG input data size: %d\n", (int)eegTS.size()); // REMOVE ME
       
       if(kmeans->startTrain(KMEANS_NUM_CLUSTERS, eegTS) == false){
 	logging.error("Starting K-Means optimization FAILED.");
@@ -3140,13 +3167,15 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 
       // starts HMM optimizer
       hmm = new HMM(KMEANS_NUM_CLUSTERS, HMM_NUM_CLUSTERS);
-      
+
+#if 0
       std::vector<whiteice::math::vertex<> > eegTS; // eeg time-series
       
       if(eegData.getData(0,eegTS) == false){
 	logging.error("Loading EEG data from datastructure failed");
 	return false;
       }
+#endif
 
       std::vector<unsigned int> observations;
       {
@@ -3199,7 +3228,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 
       char buffer[512];
       snprintf(buffer, 512, "resonanz HMM updates data classification (%d/%d).",
-	       hmmUpdator->getProcessedElements(), (pictureData.size() + keywordData.size()));
+	       hmmUpdator->getProcessedElements(), (int)(pictureData.size() + keywordData.size()));
       logging.info(buffer);
     }
     else if(hmmUpdator->isRunning() == false){
@@ -3231,11 +3260,14 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	logging.info(buffer);
       }
 
+      printf("SYNTH DATA SIZE: %d\n", synthData.size(0)); // REMOVE ME
+
       
       //optimizer = new whiteice::pLBFGS_nnetwork<>(*nnsynth, synthData, false, false);
       //optimizer->minimize(NUM_OPTIMIZER_THREADS);
       
       optimizer = new whiteice::math::NNGradDescent<>();
+      optimizer->setUseMinibatch(true);
       optimizer->startOptimize(synthData, *nnsynth, 
 			       NUM_OPTIMIZER_THREADS);
       
@@ -3413,6 +3445,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       //optimizer->minimize(NUM_OPTIMIZER_THREADS);
       
       optimizer = new whiteice::math::NNGradDescent<>();
+      optimizer->setUseMinibatch(true);
       optimizer->startOptimize(pictureData[currentPictureModel], *nn,
 			       NUM_OPTIMIZER_THREADS);
       
@@ -3523,7 +3556,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  //optimizer->minimize(NUM_OPTIMIZER_THREADS);
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
-	  
+	  optimizer->setUseMinibatch(true);
 	  optimizer->startOptimize(pictureData[currentPictureModel], *nn,
 				   NUM_OPTIMIZER_THREADS);
 	  
@@ -3598,7 +3631,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  //optimizer->minimize(NUM_OPTIMIZER_THREADS);
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
-	  
+	  optimizer->setUseMinibatch(true);
 	  optimizer->startOptimize(pictureData[currentPictureModel], *nn,
 				   NUM_OPTIMIZER_THREADS);
 	}
@@ -3617,7 +3650,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	
 	char buffer[512];
 	snprintf(buffer, 512, "resonanz L-BFGS model optimization running. picture model %d/%d. number of iterations: %d/%d. error: %f",
-		 currentPictureModel, pictures.size(), 
+		 currentPictureModel, (int)pictures.size(), 
 		 iterations, NUM_OPTIMIZER_ITERATIONS, error.c[0]);
 	fprintf(stdout, "%s\n", buffer);
 	logging.info(buffer);
@@ -3638,7 +3671,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       //optimizer->minimize(NUM_OPTIMIZER_THREADS);
       
       optimizer = new whiteice::math::NNGradDescent<>();
-      
+      optimizer->setUseMinibatch(true);
       optimizer->startOptimize(keywordData[currentKeywordModel], *nn,
 			       NUM_OPTIMIZER_THREADS);
       
@@ -3749,8 +3782,9 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  //optimizer->minimize(NUM_OPTIMIZER_THREADS);
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
+	  optimizer->setUseMinibatch(true);
 	  optimizer->startOptimize(keywordData[currentKeywordModel], *nn, 
-								 NUM_OPTIMIZER_THREADS);
+				   NUM_OPTIMIZER_THREADS);
 	}
       }
       else{
@@ -3823,6 +3857,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  //optimizer->minimize(NUM_OPTIMIZER_THREADS);
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
+	  optimizer->setUseMinibatch(true);
 	  optimizer->startOptimize(keywordData[currentKeywordModel], *nn, 
 				   NUM_OPTIMIZER_THREADS);
 	}
@@ -3841,7 +3876,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	
 	char buffer[512];
 	snprintf(buffer, 512, "resonanz NNGradDescent<> model optimization running. keyword model %d/%d. number of iterations: %d/%d. error: %f",
-		 currentKeywordModel, keywords.size(), 
+		 currentKeywordModel, (int)keywords.size(), 
 		 iterations, NUM_OPTIMIZER_ITERATIONS, error.c[0]);
 	logging.info(buffer);
       }
@@ -4707,7 +4742,7 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
   {
     char buffer[256];
     snprintf(buffer, 256, "engine_showScreen(%s %d/%d dim(%d)) called",
-	     message.c_str(), picture, pictures.size(), synthParams.size());
+	     message.c_str(), picture, (int)pictures.size(), (int)synthParams.size());
     logging.info(buffer);
   }
   
@@ -4989,7 +5024,7 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
   {
     char buffer[256];
     snprintf(buffer, 256, "engine_showScreen(%s %d/%d dim(%d)) = %d. DONE",
-	     message.c_str(), picture, pictures.size(), synthParams.size(), elementsDisplayed);
+	     message.c_str(), picture, (int)pictures.size(), (int)synthParams.size(), elementsDisplayed);
     logging.info(buffer);
   }
   
