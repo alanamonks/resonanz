@@ -101,7 +101,7 @@ ResonanzEngine::ResonanzEngine()
     
     nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
     for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
-      nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*eeg->getNumberOfSignals());
+      nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
     nnArchitecture.push_back(eeg->getNumberOfSignals());
     
     nn = new whiteice::nnetwork<>(nnArchitecture);
@@ -113,9 +113,12 @@ ResonanzEngine::ResonanzEngine()
     const int synth_number_of_parameters = 3;
     
     nnArchitecture.clear();
-    nnArchitecture.push_back(eeg->getNumberOfSignals() + 2*synth_number_of_parameters);
+    nnArchitecture.push_back(eeg->getNumberOfSignals() +
+			     2*synth_number_of_parameters +
+			     HMM_NUM_CLUSTERS);
+    
     for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
-      nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + 2*synth_number_of_parameters));
+      nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + 2*synth_number_of_parameters + HMM_NUM_CLUSTERS));
     nnArchitecture.push_back(eeg->getNumberOfSignals());
     
     nnsynth = new whiteice::nnetwork<>(nnArchitecture);
@@ -500,7 +503,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       std::vector<unsigned int> nnArchitecture;
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
-	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*eeg->getNumberOfSignals());
+	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
       if(nn != nullptr) delete nn;
@@ -518,12 +521,12 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	// nnsynth(synthBefore, synthProposed, currentEEG) = dEEG/dt (predictedEEG = currentEEG + dEEG/dT * TIMESTEP)
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-				 2*synth->getNumberOfParameters());
+				 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
 	
 	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
-				    2*synth->getNumberOfParameters()));
+				    2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS));
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -539,11 +542,11 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	const int synth_number_of_parameters = 6;
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-				 2*synth_number_of_parameters);
+				 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
 	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
-				    2*synth_number_of_parameters));
+				    2*synth_number_of_parameters) + HMM_NUM_CLUSTERS);
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
 	if(nnsynth != nullptr) delete nnsynth;
@@ -574,7 +577,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
       
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
-	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*eeg->getNumberOfSignals());
+	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -590,12 +593,13 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       
       if(synth){			  
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-				 2*synth->getNumberOfParameters());
+				 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
 	
 	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
-				    2*synth->getNumberOfParameters()));
+				    2*synth->getNumberOfParameters() +
+				    HMM_NUM_CLUSTERS));
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -611,12 +615,13 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	const int synth_number_of_parameters = 6;
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-				 2*synth_number_of_parameters);
+				 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
 	
 	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
-				    2*synth_number_of_parameters));
+				    2*synth_number_of_parameters +
+				    HMM_NUM_CLUSTERS));
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -1612,7 +1617,7 @@ void ResonanzEngine::engine_loop()
 	  else{
 	    // generates something similar (adds random noise to current parameters)
 	    for(unsigned int i=0;i<synthCurrent.size();i++){
-	      synthCurrent[i] = synthBefore[i] + rng.normal().c[0]*0.10f;
+	      synthCurrent[i] = synthBefore[i] + rng.normal().c[0]*0.20f;
 	      if(synthCurrent[i] <= 0.0f) synthCurrent[i] = 0.0f;
 	      else if(synthCurrent[i] >= 1.0f) synthCurrent[i] = 1.0f;
 	    }
@@ -1656,7 +1661,7 @@ void ResonanzEngine::engine_loop()
 	  else{
 	    // generates something similar (adds random noise to current parameters)
 	    for(unsigned int i=0;i<synthCurrent.size();i++){
-	      synthCurrent[i] = synthBefore[i] + rng.normal().c[0]*0.10f;
+	      synthCurrent[i] = synthBefore[i] + rng.normal().c[0]*0.20f;
 	      if(synthCurrent[i] <= 0.0f) synthCurrent[i] = 0.0f;
 	      else if(synthCurrent[i] >= 1.0f) synthCurrent[i] = 1.0f;
 	    }
@@ -2528,8 +2533,8 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
   }
   
   engine_pollEvents(); // polls for incoming events in case there are lots of models
-	
-  // FIXME synth don't use HMMstate variable (brain clusterized state)
+
+  
   if(synth){
     logging.info("engine_executeProgram(): calculate synth model");
     
@@ -2549,7 +2554,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     synthTest.resize(synthBefore.size());
     
     // nn(synthNow, synthProposed, currentEEG) = dEEG/dt
-    if(2*synthBefore.size() + eegCurrent.size() != synthModel.inputSize()){
+    if((2*synthBefore.size() + eegCurrent.size() + HMM_NUM_CLUSTERS) != synthModel.inputSize()){
       char buffer[256];
       snprintf(buffer, 256, "engine_executeProgram(): synth model input parameters (dimension) mismatch! (%d + %d != %d)\n",
 	       (int)synthBefore.size(), (int)eegCurrent.size(), synthModel.inputSize());
@@ -2560,9 +2565,13 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       input[i] = synthBefore[i];
     }
     
+    
     for(unsigned int i=0;i<eegCurrent.size();i++){
       input[2*synthBefore.size() + i] = eegCurrent[i];
     }
+
+    // sets HMM state variable to input
+    input[2*synthBefore.size()+eegCurrent.size()+HMMstate] = 1.0f;
     
     math::vertex<> original(eegCurrent.size());
     
@@ -2644,7 +2653,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	
       }
       
-      if(synthData.invpreprocess(1, m) == false){
+      if(synthData.invpreprocess(1, m, cov) == false){
 	char buffer[256];
 
 	sprintf(buffer, "skipping bad synth prediction model (3): clusters: %d %d %d %d\n",
@@ -2661,7 +2670,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       // calculates error (weighted distance to the target state)
       
       auto delta = target - (original + m);
-#if 0
+#if 1
       auto stdev = m;
       stdev.zero();
       
@@ -3216,10 +3225,12 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       currentHMMModel++;
     }
     else if(hmmUpdator == nullptr && currentHMMModel == 1){
-
+      
       hmmUpdator = new HMMStateUpdatorThread(kmeans, hmm,
+					     &eegData,
 					     &pictureData,
-					     &keywordData);
+					     &keywordData,
+					     &synthData);
       
       hmmUpdator->start();
     }
@@ -3259,8 +3270,6 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	fprintf(stdout, "%s\n", buffer);
 	logging.info(buffer);
       }
-
-      printf("SYNTH DATA SIZE: %d\n", synthData.size(0)); // REMOVE ME
 
       
       //optimizer = new whiteice::pLBFGS_nnetwork<>(*nnsynth, synthData, false, false);
@@ -4077,11 +4086,13 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
       logging.info("Couldn't load EEG data => creating empty database");
       eegData.clear();
       eegData.createCluster(eegName, eeg->getNumberOfSignals());
+      eegData.createCluster("index", 1);
     }
-    else if(eegData.getNumberOfClusters() != 1){
+    else if(eegData.getNumberOfClusters() != 2){
       logging.info("Couldn't load EEG data => creating empty database");
       eegData.clear();
       eegData.createCluster(eegName, eeg->getNumberOfSignals());
+      eegData.createCluster("index", 1);
     }
 
     eeg_num_samples = eegData.size(0);
@@ -4117,14 +4128,16 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
       
       keywordData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
       keywordData[i].createCluster(name2, eeg->getNumberOfSignals());
+      keywordData[i].createCluster("index", 1);
     }
     else{
-      if(keywordData[i].getNumberOfClusters() != 2){
+      if(keywordData[i].getNumberOfClusters() != 3){
 	logging.error("Keyword data wrong number of clusters or data corruption => reset database");
 	
 	keywordData[i].clear();
 	keywordData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
 	keywordData[i].createCluster(name2, eeg->getNumberOfSignals());
+	keywordData[i].createCluster("index", 1);
       }
     }
     
@@ -4189,15 +4202,17 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
       
       pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
       pictureData[i].createCluster(name2, eeg->getNumberOfSignals());
+      pictureData[i].createCluster("index", 1);
       
     }
     else{
-      if(pictureData[i].getNumberOfClusters() != 2){
+      if(pictureData[i].getNumberOfClusters() != 3){
 	logging.error("Picture data wrong number of clusters or data corruption => reset database");
 	
 	pictureData[i].clear();
 	pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
 	pictureData[i].createCluster(name2, eeg->getNumberOfSignals());
+	pictureData[i].createCluster("index", 1);
       }
     }
     
@@ -4253,24 +4268,25 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
   logging.info("picture measurement database loaded");
   
   // loads synth parameters data into memory
-  // FIXME synth code doesn't use HMM brain state classification
   if(synth){
     std::string dbFilename = modelDir + "/" + calculateHashName(eeg->getDataSourceName() + synth->getSynthesizerName()) + ".ds";
     
     synthData.clear();
     
     if(synthData.load(dbFilename) == false){
-      synthData.createCluster(name1, eeg->getNumberOfSignals() + 2*synth->getNumberOfParameters());
+      synthData.createCluster(name1, eeg->getNumberOfSignals() + 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
       synthData.createCluster(name2, eeg->getNumberOfSignals());
+      synthData.createCluster("index", 1);
       logging.info("Couldn't load synth data => creating empty database");
       return false;
     }
     else{
-      if(synthData.getNumberOfClusters() != 2){
+      if(synthData.getNumberOfClusters() != 3){
 	logging.error("Synth data wrong number of clusters or data corruption => reset database");
 	synthData.clear();
-	synthData.createCluster(name1, eeg->getNumberOfSignals() + 2*synth->getNumberOfParameters());
+	synthData.createCluster(name1, eeg->getNumberOfSignals() + 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
 	synthData.createCluster(name2, eeg->getNumberOfSignals());
+	synthData.createCluster("index", 1);
 	return false;
       }
     }
@@ -4357,15 +4373,17 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
 {
   if(eegBefore.size() != eegAfter.size()) return false;
   
-  std::vector< whiteice::math::blas_real<float> > t1, t2, t3;
+  std::vector< whiteice::math::blas_real<float> > t1, t2, t3, t4;
   t1.resize(eegBefore.size() + HMM_NUM_CLUSTERS);
   t2.resize(eegAfter.size());
   t3.resize(eegAfter.size());
+  t4.resize(1);
   
   // initialize to zero [no bad data possible]
   for(auto& t : t1) t = 0.0f; 
   for(auto& t : t2) t = 0.0f;
   for(auto& t : t3) t = 0.0f;
+  t4[0] = 0.0f;
   
   // heavy checks against correctness of the data because buggy code/hardware
   // seem to introduce bad measurment data into database..
@@ -4408,15 +4426,17 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
     t3[i] = eegAfter[i];
   }
 
+  t4[0] = eegData.size(0);
+
   
   // updates HMM brain state model's state
   {
     std::lock_guard<std::mutex> lock(hmm_mutex);
-    
+
     if(kmeans == NULL || hmm == NULL){
       logging.warn("WARN: engine_storeMeasurement(): K-Means or HMM model doesn't exist. Doesn't save HMM brain state with data!");
 
-      HMMstate = t1.size(); // DISABLE ADDING BRAINSTATE CLASSIFICATION TO DATA
+      HMMstate = 0; // DISABLE ADDING BRAINSTATE CLASSIFICATION TO DATA
     }
     else{
 #if 0
@@ -4437,20 +4457,20 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
   }
   
   if(key < keywordData.size()){
-    if(keywordData[key].add(0, t1) == false || keywordData[key].add(1, t2) == false){
+    if(keywordData[key].add(0, t1) == false || keywordData[key].add(1, t2) == false || keywordData[key].add(2, t4) == false){
       logging.error("Adding new keyword data FAILED");
       return false;
     }
   }
   
   if(pic < pictureData.size()){
-    if(pictureData[pic].add(0, t1) == false || pictureData[pic].add(1, t2) == false){
+    if(pictureData[pic].add(0, t1) == false || pictureData[pic].add(1, t2) == false || pictureData[pic].add(2, t4) == false){
       logging.error("Adding new picture data FAILED");
       return false;
     }
   }
 
-  if(eegData.add(0, t3) == false){
+  if(eegData.add(0, t3) == false || eegData.add(1, t4) == false){
     logging.error("Adding EEG measurement FAILED");
     return false;
   }
@@ -4459,7 +4479,7 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
   if(synth){
     std::vector< whiteice::math::blas_real<float> > input, output;
     
-    input.resize(synthBefore.size() + synthAfter.size() + eegBefore.size());
+    input.resize(synthBefore.size() + synthAfter.size() + eegBefore.size() + HMM_NUM_CLUSTERS);
     output.resize(eegAfter.size());
     
     // initialize to zero [no bad data possible]
@@ -4503,12 +4523,16 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
     for(unsigned int i=0;i<eegBefore.size();i++){
       input[synthBefore.size()+synthAfter.size() + i] = eegBefore[i];
     }
+
+    // adds HMM state value
+    input[synthBefore.size()+synthAfter.size()+eegBefore.size() + HMMstate] = 1.0f;
     
     for(unsigned int i=0;i<eegAfter.size();i++){
-      output[i] = (eegAfter[i] - eegBefore[i])/delta; // dEEG/dt
+      // output[i] = (eegAfter[i] - eegBefore[i])/delta; // dEEG/dt
+      output[i] = t2[i];
     }
     
-    if(synthData.add(0, input) == false || synthData.add(1, output) == false){
+    if(synthData.add(0, input) == false || synthData.add(1, output) == false || synthData.add(2, t4) == false){
       logging.error("Adding new synth data FAILED");
       return false;
     }
@@ -4527,7 +4551,7 @@ bool ResonanzEngine::engine_saveDatabase(const std::string& modelDir)
   {
     std::string dbFilename = modelDir + "/" + calculateHashName("eegData" + eeg->getDataSourceName()) + ".ds";
 
-    if(eegData.getNumberOfClusters() != 1) return false;
+    if(eegData.getNumberOfClusters() != 2) return false;
 
     eegData.convert(0);
 
@@ -5152,12 +5176,13 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
     
     if(synth){			  
       nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-			       2*synth->getNumberOfParameters());
+			       2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
       
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				 (eeg->getNumberOfSignals() + 
-				  2*synth->getNumberOfParameters()));
+				  2*synth->getNumberOfParameters() +
+				  HMM_NUM_CLUSTERS));
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -5173,12 +5198,14 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
       const int synth_number_of_parameters = 6;
       
       nnArchitecture.push_back(eeg->getNumberOfSignals() + 
-			       2*synth_number_of_parameters);
+			       2*synth_number_of_parameters +
+			       HMM_NUM_CLUSTERS);
       
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				 (eeg->getNumberOfSignals() + 
-				  2*synth_number_of_parameters));
+				  2*synth_number_of_parameters +
+				  HMM_NUM_CLUSTERS));
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -5497,7 +5524,7 @@ std::string ResonanzEngine::analyzeModel(const std::string& modelDir) const
     if(nnet.load(modelFilename)){
       models++;
       
-      if(ds.getNumberOfClusters() != 2)
+      if(ds.getNumberOfClusters() < 2)
 	continue;
       
       if(ds.size(0) != ds.size(1))
@@ -5587,7 +5614,7 @@ std::string ResonanzEngine::analyzeModel2(const std::string& pictureDir,
     whiteice::bayesian_nnetwork<> bnn;
     
     if(data.load(dbFilename) == true && bnn.load(modelFilename)){
-      if(data.getNumberOfClusters() == 2){
+      if(data.getNumberOfClusters() >= 2){
 	// calculates average error
 	float error = 0.0f;
 	float num   = 0.0f;
@@ -5636,7 +5663,7 @@ std::string ResonanzEngine::analyzeModel2(const std::string& pictureDir,
     whiteice::bayesian_nnetwork<> bnn;
     
     if(data.load(dbFilename) == true && bnn.load(modelFilename)){
-      if(data.getNumberOfClusters() == 2){
+      if(data.getNumberOfClusters() >= 2){
 	// calculates average error
 	float error = 0.0f;
 	float num   = 0.0f;
@@ -5687,7 +5714,7 @@ std::string ResonanzEngine::analyzeModel2(const std::string& pictureDir,
     whiteice::bayesian_nnetwork<> bnn;    
     
     if(data.load(dbFilename) == true && bnn.load(modelFilename)){
-      if(data.getNumberOfClusters() == 2){
+      if(data.getNumberOfClusters() >= 2){
 	// calculates average error
 	float error = 0.0f;
 	float num   = 0.0f;
@@ -5791,12 +5818,14 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
     data.clear();
     
     if(data.load(dbFilename) == true){
-      if(data.getNumberOfClusters() == 2){
+      if(data.getNumberOfClusters() >= 2){
 	float delta = 0.0f;
+	float delta2 = 0.0f;
 	
 	for(unsigned int j=0;j<data.size(0);j++){
 	  auto d = data.access(1, j);
 	  delta += d.norm().c[0] / data.size(0);
+	  delta2 += d.norm().c[0]*d.norm().c[0] / data.size(0);
 	}
 	
 	if(data.size(0) > 0){
@@ -5816,7 +5845,7 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
 	keywordDeltas.insert(p);
 	
 	mean_delta_keywords += delta;
-	var_delta_keywords  += delta*delta;
+	var_delta_keywords  += delta2 - delta*delta;
 	num_keywords++;
 	
 	if(data.hasPreprocess(0, whiteice::dataset<>::dnCorrelationRemoval))
@@ -5827,8 +5856,6 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
   
   mean_delta_keywords /= num_keywords;
   var_delta_keywords  /= num_keywords;
-  var_delta_keywords  -= mean_delta_keywords*mean_delta_keywords;
-  var_delta_keywords  *= num_keywords/(num_keywords - 1.0f);
   
   for(unsigned int i=0;i<pictureFiles.size();i++){
     std::string dbFilename = modelDir + "/" + calculateHashName(pictureFiles[i] + eeg->getDataSourceName()) + ".ds";
@@ -5836,12 +5863,14 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
     data.clear();
     
     if(data.load(dbFilename) == true){
-      if(data.getNumberOfClusters() == 2){
+      if(data.getNumberOfClusters() >= 2){
 	float delta = 0.0f;
+	float delta2 = 0.0f; 
 	
 	for(unsigned int j=0;j<data.size(0);j++){
 	  auto d = data.access(1, j);
 	  delta += d.norm().c[0] / data.size(0);
+	  delta2 += d.norm().c[0]*d.norm().c[0] / data.size(0);
 	}
 	
 	if(data.size(0) > 0){
@@ -5861,7 +5890,7 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
 	pictureDeltas.insert(p);
 	
 	mean_delta_pictures += delta;
-	var_delta_pictures  += delta*delta;
+	var_delta_pictures  += delta2 - delta*delta;
 	num_pictures++;
 	
 	if(data.hasPreprocess(0, whiteice::dataset<>::dnCorrelationRemoval))
@@ -5872,10 +5901,7 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
   
   mean_delta_pictures /= num_pictures;
   var_delta_pictures  /= num_pictures;
-  var_delta_pictures  -= mean_delta_pictures*mean_delta_pictures;
-  var_delta_pictures  *= num_pictures/(num_pictures - 1.0f);
-  
-  
+
   unsigned int synth_N = 0;
   
   if(synth){
@@ -5885,19 +5911,22 @@ std::string ResonanzEngine::deltaStatistics(const std::string& pictureDir, const
     data.clear();
     
     if(data.load(dbFilename) == true){
-      if(data.getNumberOfClusters() == 2){
+
+      synth_N = data.size(1);
+      
+      if(data.getNumberOfClusters() >= 2){
 	
 	float delta = 0.0f;
+	float delta2 = 0.0f;
 	
-	for(unsigned int j=0;j<data.size(0);j++){
+	for(unsigned int j=0;j<data.size(1);j++){
 	  auto d = data.access(1, j);
-	  delta += d.norm().c[0] / data.size(0);
+	  delta += d.norm().c[0] / ((float)data.size(1));
+	  delta2 += d.norm().c[0]*d.norm().c[0] / ((float)data.size(1));
 	}
 	
-	synth_N = data.size(0);
-	
 	mean_delta_synth += delta;
-	var_delta_synth  += delta*delta;
+	var_delta_synth  += delta2;
       }
     }
     

@@ -21,8 +21,10 @@ namespace whiteice {
 
       HMMStateUpdatorThread(whiteice::KMeans<>* kmeans,
 			    whiteice::HMM* hmm,
+			    whiteice::dataset<>* eegData,
 			    std::vector< whiteice::dataset<> >* pictureData,
-			    std::vector< whiteice::dataset<> >* keywordData);
+			    std::vector< whiteice::dataset<> >* keywordData,
+			    whiteice::dataset<>* synthData);
 
       ~HMMStateUpdatorThread();
 
@@ -31,12 +33,16 @@ namespace whiteice {
       bool isRunning();
 
       unsigned int getProcessedElements(){
-	return (processingPicIndex + processingKeyIndex);
+	return (processingPicIndex + processingKeyIndex + processingSynthIndex);
       }
 
       bool stop();
       
     private:
+
+      // does binary search of strictly increasing sequences of eeg_index numbers in
+      // eegData and returns EEG DATA INDEX value for given eeg_index value
+      unsigned int find_eegData_index(unsigned int eeg_index);
       
       void updator_loop();
       
@@ -46,10 +52,13 @@ namespace whiteice {
       
       whiteice::KMeans<>* kmeans;
       whiteice::HMM* hmm;
+
+      whiteice::dataset<>* eegData;
       std::vector< whiteice::dataset<> >* pictureData;
       std::vector< whiteice::dataset<> >* keywordData;
+      whiteice::dataset<>* synthData;
 
-      unsigned int processingPicIndex = 0, processingKeyIndex = 0;
+      unsigned int processingPicIndex = 0, processingKeyIndex = 0, processingSynthIndex = 0;
       
     };
     

@@ -35,35 +35,35 @@ bool keypress();
 
 void print_usage()
 {
-	printf("Usage: resonanz <mode> [options]\n");
-	printf("Learn and activate brainwave entraintment stimulus (EEG).");
-	printf("\n");
-	printf("--random         display random stimulation\n");
-	printf("--measure        measure brainwave responses to pictures/keywords\n");
-	printf("--measure-music  measure response to media/music and save results to program file\n");
-	printf("--optimize       optimize prediction model for targeted stimulation\n");
-	printf("--program        programmed stimulation sequences towards target values\n");
-	printf("--analyze        measurement database statistics and model performance analysis\n");
-	printf("--dumpdata       dumps measurement database to ascii files\n");
-	printf("--help           shows command line help\n");
-	printf("\n");
-	printf("--picture-dir=   use picture source directory\n");
-	printf("--keyword-file=  source keywords file\n");
-	printf("--model-dir=     model directory for measurements and prediction models\n");
-	printf("--program-file=  sets NMC program file\n");
-	printf("--music-file=    sets music (MP3) file for playback\n");
-	printf("--target=        sets measurement program targets (comma separated numbers)\n");
-	printf("--device=        sets measurement device: muse* (osc.udp://localhost:4545), [insight], random\n");
-	printf("--method=        sets optimization method: rbf, lbfgs*, bayes\n");
-	printf("--pca            preprocess input data with pca if possible\n");
-	printf("--loop           loops program forever\n");
-	printf("--program-len=   measured program length in seconds/ticks\n");
-	printf("--fullscreen     fullscreen mode instead of windowed mode\n");
-	printf("--savevideo      save video to neurostim.ogv file\n");
-	printf("--optimize-synth only optimize synth model when optimizing\n");
-	printf("-v               verbose mode\n");
-	printf("\n");
-	printf("This is alpha version. Report bugs to Tomas Ukkonen <nop@iki.fi>\n");
+  printf("Usage: resonanz <mode> [options]\n");
+  printf("Learn and activate brainwave entraintment stimulus (EEG).");
+  printf("\n");
+  printf("--random         display random stimulation\n");
+  printf("--measure        measure brainwave responses to pictures/keywords\n");
+  printf("--measure-music  measure response to media/music and save results to program file\n");
+  printf("--optimize       optimize prediction model for targeted stimulation\n");
+  printf("--program        programmed stimulation sequences towards target values\n");
+  printf("--analyze        measurement database statistics and model performance analysis\n");
+  printf("--dumpdata       dumps measurement database to ascii files\n");
+  printf("--help           shows command line help\n");
+  printf("\n");
+  printf("--picture-dir=   use picture source directory\n");
+  printf("--keyword-file=  source keywords file\n");
+  printf("--model-dir=     model directory for measurements and prediction models\n");
+  printf("--program-file=  sets NMC program file\n");
+  printf("--music-file=    sets music (MP3) file for playback\n");
+  printf("--target=        sets measurement program targets (comma separated numbers)\n");
+  printf("--device=        sets measurement device: muse* (osc.udp://localhost:4545), [insight], random\n");
+  printf("--method=        sets optimization method: rbf, lbfgs*, bayes\n");
+  printf("--pca            preprocess input data with pca if possible\n");
+  printf("--loop           loops program forever\n");
+  printf("--program-len=   measured program length in seconds/ticks\n");
+  printf("--fullscreen     fullscreen mode instead of windowed mode\n");
+  printf("--savevideo      save video to neurostim.ogv file\n");
+  printf("--optimize-synth only optimize synth model when optimizing\n");
+  printf("-v               verbose mode\n");
+  printf("\n");
+  printf("This is alpha version. Report bugs to Tomas Ukkonen <nop@iki.fi>\n");
 }
 
 #define _GNU_SOURCE 1
@@ -71,21 +71,20 @@ void print_usage()
 
 int main(int argc, char** argv)
 {
-	srand(time(0));
+  srand(time(0));
 
-	if(argc > 1){
-	        printf("Resonanz engine v0.60\n");
-	}
-	else{
-	        print_usage();
-		return -1;
-	}
-	
-	// debugging enables floating point exceptions for NaNs
+  printf("Resonanz engine v0.61\n");
+  
+  if(argc <= 1){
+    print_usage();
+    return -1;
+  }
+  
+  // debugging enables floating point exceptions for NaNs
 #if 0
-	if(0){
-	  feenableexcept(FE_INVALID | FE_INEXACT);
-	}
+  if(0){
+    feenableexcept(FE_INVALID | FE_INEXACT);
+  }
 #endif
 
 	whiteice::logging.setOutputFile("resonanz-engine.log");
