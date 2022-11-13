@@ -1,5 +1,1 @@
-#!/bin/sh
-
-echo "Starting Tranquility (timeseries.exe).."
-
-./timeseries --reinforcement random "C:\\Users\\cutesolar\\Pictures\\Tranquility\\" --target=0,0,1,0,0,0 --target-var=10000,10000,1,10000,10000,10000
+./resonanz.exe --program --picture-dir=/c/msys64/home/Tomas/cc0pictures/unplash.com/ --model-dir=model/ --target=1,-1,-1,-1,-1,-1,0 --loop
