@@ -300,9 +300,9 @@ private:
 	whiteice::UHMC<>* bayes_optimizer = nullptr;
 
 	const int NEURALNETWORK_COMPLEXITY = 10; // values above 10 seem to make sense (was: 25, 10)
-	const int NEURALNETWORK_DEPTH = 10; // how many layers neural network have (was: 3, 6)
-	
-	bool use_bayesian_nnetwork = false;
+	const int NEURALNETWORK_DEPTH = 2; // how many layers neural network have (was: 3, 6, *10*)
+
+        bool use_bayesian_nnetwork = false;
 	const unsigned int BAYES_NUM_SAMPLES = 500; // number of samples collected from "bayesian posterior" (what we really sample is MLE likelihood thought..) [reduced from 1000 to 500 because HMC now don't add samples until epsilon is properly learnt]
 
 	bool engine_loadModels(const std::string& modelDir); // loads prediction models for program execution, returns false in case of failure

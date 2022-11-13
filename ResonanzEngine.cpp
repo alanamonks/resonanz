@@ -2,6 +2,7 @@
  * ResonanzEngine.cpp
  *
  *  Created on: 13.6.2015
+ *  Edited: 2021, 2022
  *      Author: Tomas Ukkonen
  */
 
@@ -856,6 +857,8 @@ void ResonanzEngine::engine_loop()
   programStarted = 0LL; // program has not been started
   long long lastProgramSecond = 0LL;
   unsigned int eegConnectionDownTime = 0;
+
+  std::vector<float> distanceTarget; // distance of program to target value
 
   long long lastHMMStateUpdateMS = 0; // last time HMM model has been updated
   HMMstate = 0;
@@ -1716,10 +1719,21 @@ void ResonanzEngine::engine_loop()
       {
 	char buffer[80];
 
-	if(tick_delay_sleep)
-	  snprintf(buffer, 80, "resonanz-engine: executing program (in sync)..");
-	else
-	  snprintf(buffer, 80, "resonanz-engine: executing program (out of sync)..");
+	float meand = 0.0f;
+	for(unsigned int i=0;i<distanceTarget.size();i++)
+	  meand += distanceTarget[i];
+
+	if(distanceTarget.size())
+	  meand /= ((float)distanceTarget.size());
+
+	if(tick_delay_sleep){
+	  snprintf(buffer, 80, "resonanz-engine: executing program (in sync) [error: %f]..", meand);
+	}
+	else{
+	  snprintf(buffer, 80, "resonanz-engine: executing program (out of sync) [error: %f]..", meand);
+	}
+
+	distanceTarget.clear();
 	
 	logging.info(buffer);
 	engine_setStatus(buffer);
@@ -1817,11 +1831,19 @@ void ResonanzEngine::engine_loop()
 	
 	eegTarget.resize(eegCurrent.size());
 	eegTargetVariance.resize(eegCurrent.size());
+
+	float distance = 0.0f;
 	
 	for(unsigned int i=0;i<eegTarget.size();i++){
 	  eegTarget[i] = program[i][currentSecond/programHz];
 	  eegTargetVariance[i] = programVar[i][currentSecond/programHz];
+
+	  float d = (eegTarget[i] - eegCurrent[i])/eegTargetVariance[i];
+	  distance += d*d;
 	}
+
+	distance = sqrt(distance);
+	distanceTarget.push_back(distance);
 	
 	// shows picture/keyword which model predicts to give closest match to target
 	// minimize(picture) ||f(picture,eegCurrent) - eegTarget||/eegTargetVariance
@@ -2313,7 +2335,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	continue; // bad model/data => ignore
       }
       
-      if(model.calculate(x, m, cov, 1, 0) == false){
+      if(model.calculate(x, m, cov, 1, 50) == false){
 	logging.warn("skipping bad keyword prediction model");
 	continue;
       }
@@ -2445,7 +2467,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	continue; // bad model/data => ignore
       }
       
-      if(model.calculate(x, m, cov, 1, 0) == false){
+      if(model.calculate(x, m, cov, 1, 50) == false){
 	logging.warn("skipping bad picture prediction model (3)");
 	continue;
       }
@@ -2591,7 +2613,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 #pragma omp parallel for schedule(dynamic)
     for(unsigned int param=0;param<SYNTH_NUM_GENERATED_PARAMS;param++){
       
-      if(rng.uniform() < 0.10f)
+      if(rng.uniform() < 0.20f)
       {
 	// generates random parameters [random search]
 	for(unsigned int i=0;i<synthTest.size();i++)
@@ -2646,7 +2668,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	  continue; // bad model/data => ignore
 	}
 	
-	if(model.calculate(x, m, cov, 1, 0) == false){
+	if(model.calculate(x, m, cov, 1, 50) == false){
 	  logging.warn("skipping bad synth prediction model (2)");
 	  continue;
 	}
@@ -2874,7 +2896,7 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			math::vertex<> m;
 			math::matrix<> cov;
 
-			if(model.calculate(x, m, cov, 1, 0) == false){
+			if(model.calculate(x, m, cov, 1, 50) == false){
 				logging.warn("skipping bad keyword prediction model");
 				continue;
 			}
@@ -2942,7 +2964,7 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			math::vertex<> m;
 			math::matrix<> cov;
 
-			if(model.calculate(x, m, cov, 1, 0) == false){
+			if(model.calculate(x, m, cov, 1, 50) == false){
 				logging.warn("skipping bad picture prediction model");
 				continue;
 			}
@@ -3026,7 +3048,7 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 				math::vertex<> m;
 				math::matrix<> cov;
 
-				if(model.calculate(x, m, cov, 1 ,0) == false){
+				if(model.calculate(x, m, cov, 1 ,50) == false){
 					logging.warn("skipping bad keyword prediction model");
 					continue;
 				}
@@ -3056,7 +3078,7 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 				math::vertex<> m;
 				math::matrix<> cov;
 
-				if(model.calculate(x, m, cov, 1, 0) == false){
+				if(model.calculate(x, m, cov, 1, 50) == false){
 					logging.warn("skipping bad picture prediction model");
 					continue;
 				}
@@ -3316,6 +3338,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	logging.info("DEBUG: STARTING HMC SAMPLER");
 	
 	bayes_optimizer = new whiteice::UHMC<>(*nnsynth, synthData, adaptive);
+	bayes_optimizer->setMinibatch(true);
 	bayes_optimizer->startSampler();
 	
 	delete optimizer;
@@ -3499,6 +3522,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	const bool adaptive = true;
 	
 	bayes_optimizer = new whiteice::UHMC<>(*nn, pictureData[currentPictureModel], adaptive);
+	bayes_optimizer->setMinibatch(true);
 	bayes_optimizer->startSampler();
 	
 	delete optimizer;
@@ -3727,6 +3751,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	const bool adaptive = true;
 	
 	bayes_optimizer = new whiteice::UHMC<>(*nn, keywordData[currentKeywordModel], adaptive);
+	bayes_optimizer->setMinibatch(true);
 	bayes_optimizer->startSampler();
 	
 	delete optimizer;
