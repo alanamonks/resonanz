@@ -84,16 +84,16 @@ bool FMSoundSynthesis::setParameters(const std::vector<float>& p_)
   
   Ac = p[0];
   
-  // sound base frquency: [220, 1760 Hz] => note interval: A-3 - A-6
-  float f = 440.0;
+  // sound base frquency: [55 Hz, 880 Hz] => note interval: A-1 - A-5
+  float f = 220.0;
   {
     // converts [0,1] to note [each note is equally probable]
-    const float NOTES = 24.9999; // note interval: (A-3 - A-5) [24 notes]
-    double note = floor(p[1]*NOTES) - 12.0; // note = 0 => A-4
+    const float NOTES = 24.9999; // note interval: (A-1 - A-5) [48 notes]
+    double note = 2.0*(floor(p[1]*NOTES) - 12.0); // note = 0 => A-3
     
     // printf("note = %f\n", note); fflush(stdout);
     
-    f = 440.0*pow(2.0, note/12.0); // converts note to frequency
+    f = 220.0*pow(2.0, note/12.0); // converts note to frequency
   }
   
   
@@ -238,7 +238,7 @@ bool FMSoundSynthesis::synthesize(int16_t* buffer, int samples)
 	else{
 	  for(unsigned int b=0;b<NBUFFERS;b++){
 	    index += prevbuffer[b].size();
-	    if(index >= 0 && index < prevbuffer[b].size()){
+	    if(index >= 0 && index < (int)prevbuffer[b].size()){
 	      value += delayA[efx]*prevbuffer[b][index]/32767.0;
 	      break;
 	    }
@@ -261,7 +261,7 @@ bool FMSoundSynthesis::synthesize(int16_t* buffer, int samples)
   
   prevbuffer[0].resize(samples);
 
-  double power;
+  double power = 0.0;
 
   for(int i=0;i<samples;i++){
     prevbuffer[0][i] = buffer[i];
