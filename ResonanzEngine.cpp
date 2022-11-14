@@ -2334,8 +2334,15 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	logging.warn("skipping bad keyword prediction model");
 	continue; // bad model/data => ignore
       }
-      
-      if(model.calculate(x, m, cov, 1, 50) == false){
+
+
+      unsigned int SAMPLES = 50;
+
+      if(model.getNumberOfSamples() < SAMPLES)
+	SAMPLES = model.getNumberOfSamples();
+
+	 
+      if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 	logging.warn("skipping bad keyword prediction model");
 	continue;
       }
@@ -2466,8 +2473,13 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	logging.warn("skipping bad picture prediction model (2)");
 	continue; // bad model/data => ignore
       }
+
+      unsigned int SAMPLES = 50;
+
+      if(model.getNumberOfSamples() < SAMPLES)
+	SAMPLES = model.getNumberOfSamples();
       
-      if(model.calculate(x, m, cov, 1, 50) == false){
+      if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 	logging.warn("skipping bad picture prediction model (3)");
 	continue;
       }
@@ -2667,8 +2679,13 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	  logging.warn("skipping bad synth prediction model (1)");
 	  continue; // bad model/data => ignore
 	}
+
+	unsigned int SAMPLES = 50;
+	      
+      if(model.getNumberOfSamples() < SAMPLES)
+	SAMPLES = model.getNumberOfSamples();
 	
-	if(model.calculate(x, m, cov, 1, 50) == false){
+	if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 	  logging.warn("skipping bad synth prediction model (2)");
 	  continue;
 	}
@@ -2896,12 +2913,17 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			math::vertex<> m;
 			math::matrix<> cov;
 
-			if(model.calculate(x, m, cov, 1, 50) == false){
+			unsigned int SAMPLES = 50;
+			
+			if(model.getNumberOfSamples() < SAMPLES)
+			  SAMPLES = model.getNumberOfSamples();
+			
+			if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 				logging.warn("skipping bad keyword prediction model");
 				continue;
 			}
 
-			if(keywordData[index].invpreprocess(1, m) == false){
+			if(keywordData[index].invpreprocess(1, m, cov) == false){
 				logging.warn("skipping bad keyword prediction model");
 				continue;
 			}
@@ -2964,12 +2986,17 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			math::vertex<> m;
 			math::matrix<> cov;
 
-			if(model.calculate(x, m, cov, 1, 50) == false){
+			unsigned int SAMPLES = 50;
+			
+			if(model.getNumberOfSamples() < SAMPLES)
+			  SAMPLES = model.getNumberOfSamples();
+			
+			if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 				logging.warn("skipping bad picture prediction model");
 				continue;
 			}
 
-			if(pictureData[index].invpreprocess(1, m) == false){
+			if(pictureData[index].invpreprocess(1, m, cov) == false){
 				logging.warn("skipping bad picture prediction model");
 				continue;
 			}
@@ -3048,12 +3075,17 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 				math::vertex<> m;
 				math::matrix<> cov;
 
-				if(model.calculate(x, m, cov, 1 ,50) == false){
+				unsigned int SAMPLES = 50;
+				
+				if(model.getNumberOfSamples() < SAMPLES)
+				  SAMPLES = model.getNumberOfSamples();
+
+				if(model.calculate(x, m, cov, 1 , SAMPLES) == false){
 					logging.warn("skipping bad keyword prediction model");
 					continue;
 				}
 
-				if(keywordData[index].invpreprocess(1, m) == false){
+				if(keywordData[index].invpreprocess(1, m, cov) == false){
 					logging.error("mc sampling: skipping bad keyword prediction model");
 					continue;
 				}
@@ -3078,12 +3110,17 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 				math::vertex<> m;
 				math::matrix<> cov;
 
-				if(model.calculate(x, m, cov, 1, 50) == false){
+				unsigned int SAMPLES = 50;
+
+				if(model.getNumberOfSamples() < SAMPLES)
+				  SAMPLES = model.getNumberOfSamples();
+
+				if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 					logging.warn("skipping bad picture prediction model");
 					continue;
 				}
 
-				if(pictureData[index].invpreprocess(1, m) == false){
+				if(pictureData[index].invpreprocess(1, m, cov) == false){
 					logging.error("mc sampling: skipping bad picture prediction model");
 					continue;
 				}
