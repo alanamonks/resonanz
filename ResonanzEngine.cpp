@@ -2136,7 +2136,7 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
     }
     
     
-    pictureModels[i].downsample(100); // keeps only 100 random models
+    // pictureModels[i].downsample(100); // keeps only 100 random models
     
     pictureModelsLoaded++;
     
@@ -2167,7 +2167,7 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
       continue;
     }
     
-    keywordModels[i].downsample(100); // keeps only 100 random samples
+    // keywordModels[i].downsample(100); // keeps only 100 random samples
     
     keywordModelsLoaded++;
     
@@ -2201,7 +2201,7 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
       logging.info(buffer);
     }
     
-    synthModel.downsample(100); // keeps only 100 random models
+    // synthModel.downsample(100); // keeps only 100 random models
   }
   
   // returns true if could load at least one model for pictures
@@ -2260,9 +2260,11 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 					   const std::vector<float>& eegTargetVariance,
 					   float timestep_)
 {
-  // was: 3, was: 1 (only selects the best result)
+  // was: 3, was: 1 (only selects the best result) [how many top results show]
   const unsigned int NUM_TOPRESULTS = SHOW_TOP_RESULTS; 
-  
+
+  // how many bayesian neural networks use to calculate mean and cov.
+  const unsigned int MODEL_SAMPLES = 20; 
   
   std::multimap<float, int> bestKeyword;
   std::multimap<float, int> bestPicture;
@@ -2338,7 +2340,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       }
 
 
-      unsigned int SAMPLES = 50;
+      unsigned int SAMPLES = MODEL_SAMPLES;
 
       if(model.getNumberOfSamples() < SAMPLES)
 	SAMPLES = model.getNumberOfSamples();
@@ -2476,7 +2478,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	continue; // bad model/data => ignore
       }
 
-      unsigned int SAMPLES = 50;
+      unsigned int SAMPLES = MODEL_SAMPLES;
 
       if(model.getNumberOfSamples() < SAMPLES)
 	SAMPLES = model.getNumberOfSamples();
@@ -2682,7 +2684,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	  continue; // bad model/data => ignore
 	}
 
-	unsigned int SAMPLES = 50;
+	unsigned int SAMPLES = MODEL_SAMPLES;
 	
 	if(model.getNumberOfSamples() < SAMPLES)
 	  SAMPLES = model.getNumberOfSamples();
