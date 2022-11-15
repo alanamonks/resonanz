@@ -284,8 +284,8 @@ private:
         unsigned int HMMstate = 0; // current HMM state
         HMMStateUpdatorThread* hmmUpdator = nullptr;
   
-        const unsigned int KMEANS_NUM_CLUSTERS = 25;
-        const unsigned int HMM_NUM_CLUSTERS = 10; // number of HMM hidden brain states
+        const unsigned int KMEANS_NUM_CLUSTERS = 15;
+        const unsigned int HMM_NUM_CLUSTERS = 20; // number of HMM hidden brain states
 	
 	// whiteice::pLBFGS_nnetwork<>* optimizer = nullptr;
 	whiteice::math::NNGradDescent<>* optimizer = nullptr;
@@ -323,7 +323,7 @@ private:
 	bool dataRBFmodel = true; // don't calculate neural networks but use simple model to directly predict response from stimulus
 	
 	// number of parameters to test with synthModel before selecting the optimium one 
-	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 100; // (was 2000) reduced to 50 because of slowness(?)
+	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 100; // (was 100, 2000) reduced to 50 because of slowness(?)
 	
 	unsigned long long synthParametersChangedTime = 0ULL;
 

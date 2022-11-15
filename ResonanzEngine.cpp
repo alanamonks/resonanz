@@ -50,6 +50,8 @@
 
 #include "FMSoundSynthesis.h"
 
+#include "IsochronicSoundSynthesis.h"
+
 #include "SDLTheora.h"
 
 #include "hermitecurve.h"
@@ -2681,9 +2683,9 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	}
 
 	unsigned int SAMPLES = 50;
-	      
-      if(model.getNumberOfSamples() < SAMPLES)
-	SAMPLES = model.getNumberOfSamples();
+	
+	if(model.getNumberOfSamples() < SAMPLES)
+	  SAMPLES = model.getNumberOfSamples();
 	
 	if(model.calculate(x, m, cov, 1, SAMPLES) == false){
 	  logging.warn("skipping bad synth prediction model (2)");
@@ -5210,7 +5212,7 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
   audioEnabled = true;
   
   if(audioEnabled){
-    synth = new FMSoundSynthesis(); // curretly just supports single synthesizer type
+    synth = new IsochronicSoundSynthesis(); // curretly just supports single synthesizer type
     mic   = new SDLMicListener();   // records single input channel
     synth->pause(); // no sounds
     
