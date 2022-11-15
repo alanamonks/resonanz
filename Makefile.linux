@@ -14,12 +14,12 @@ CP = cp
 
 
 
-CFLAGS = -fPIC -std=c++1y -O3 -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` `pkg-config fluidsynth --cflags` -I. -Ioscpkt -I/usr/lib/jvm/java-7-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I.
-CXXFLAGS = -fPIC -std=c++1y -O3 -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` `pkg-config fluidsynth --cflags` -I. -Ioscpkt -I/usr/lib/jvm/java-7-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I.
+CFLAGS = -fPIC -std=c++1y -O3 -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I/usr/lib/jvm/java-7-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I. `pkg-config theora --cflags` `python3-config --cflags` `pkg-config vorbis --cflags`
+CXXFLAGS = -fPIC -std=c++1y -O3 -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I/usr/lib/jvm/java-7-openjdk-amd64/include/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/ -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux/ -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/ -I. `pkg-config theora --cflags` `python3-config --cflags` `pkg-config vorbis --cflags`
 
-OBJECTS = ResonanzEngine.o MuseOSC.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLSoundSynthesis.o FMSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o SoundSynthesis.o HMMStateUpdator.o
+OBJECTS = ResonanzEngine.o MuseOSC.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLSoundSynthesis.o FMSoundSynthesis.o IsochronicSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o SoundSynthesis.o HMMStateUpdator.o spectral_entropy.o
 
-SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp timeseries.cpp ts_measure.cpp ReinforcementPictures.cpp ReinforcementSounds.cpp SoundSynthesis.cpp HMMStateUpdator.cpp
+SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp timeseries.cpp ts_measure.cpp ReinforcementPictures.cpp ReinforcementSounds.cpp SoundSynthesis.cpp HMMStateUpdator.cpp spectral_entropy.cpp
 
 
 
@@ -27,7 +27,7 @@ SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp NMCFile.cpp NoEEGDevice.cpp Ra
 
 TARGET = resonanz
 
-LIBS = `pkg-config sdl2 --libs` `pkg-config --libs SDL2_ttf` `pkg-config --libs SDL2_image` `pkg-config --libs SDL2_mixer` `pkg-config --libs dinrhiw` -fopenmp -ltheoraenc -ltheoradec -logg
+LIBS = `pkg-config sdl2 --libs` `pkg-config --libs SDL2_ttf` `pkg-config --libs SDL2_image` `pkg-config --libs SDL2_mixer` `pkg-config --libs dinrhiw` `python3-config --ldflags --embed` `pkg-config vorbis --libs` `pkg-config vorbisenc --libs` -fopenmp -ltheoraenc -ltheoradec -logg
 
 RESONANZ_OBJECTS=$(OBJECTS) main.o
 
