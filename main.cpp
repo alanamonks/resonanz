@@ -54,7 +54,7 @@ void print_usage()
   printf("--music-file=    sets music (MP3) file for playback\n");
   printf("--target=        sets measurement program targets (comma separated numbers)\n");
   printf("--device=        sets measurement device: muse* (osc.udp://localhost:4545), [insight], random\n");
-  printf("--method=        sets optimization method: rbf, lbfgs*, bayes\n");
+  printf("--method=        sets optimization method: rbf, lbfgs, bayes*\n");
   printf("--pca            preprocess input data with pca if possible\n");
   printf("--loop           loops program forever\n");
   printf("--program-len=   measured program length in seconds/ticks\n");
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 	bool dumpAsciiCommand = false;
 	whiteice::resonanz::ResonanzCommand cmd;	
 	std::string device = "muse";
-	std::string optimizationMethod = "lbfgs"; // was: lbfgs, rbf
+	std::string optimizationMethod = "bayes"; // was: lbfgs, rbf, bayes
 	bool usepca  = false;
 	bool fullscreen = false;
 	bool loop = false;
