@@ -1,13 +1,15 @@
 /*
- * FMSoundSynthesis.h
+ * IsochronicSoundSynthesis.h
  *
+ * 2022 Tomas Ukkonen
  */
 
-#ifndef FMSOUNDSYNTHESIS_H_
-#define FMSOUNDSYNTHESIS_H_
+#ifndef ISOCHRONICSOUNDSYNTHESIS_H_
+#define ISOCHRONICSOUNDSYNTHESIS_H_
 
 #include "SDLSoundSynthesis.h"
 #include <vector>
+#include <list>
 
 
 class IsochronicSoundSynthesis: public SDLSoundSynthesis {
@@ -45,6 +47,9 @@ public:
   double fadeoutTime;
   
   double oldA, oldFc, oldF;
+
+  std::list<double> meanbuffer;
+  double meansum = 0.0f;
   
   static const unsigned int NBUFFERS = 10;
   std::vector<int16_t> prevbuffer[NBUFFERS];

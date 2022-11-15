@@ -31,12 +31,12 @@ IsochronicSoundSynthesis::IsochronicSoundSynthesis() {
   
   tbase = 0.0;
   
-  fadeoutTime = 50.0; // 50ms fade out between parameter changes
+  fadeoutTime = 100.0; // 100ms fade out between parameter changes
 }
 
 
 IsochronicSoundSynthesis::~IsochronicSoundSynthesis() {
-  // TODO Auto-generated destructor stub
+  this->pause();
 }
 
 
@@ -145,6 +145,8 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
   double hz = (double)snd.freq;
   
   double timeSinceReset = (double)(getMilliseconds() - resetTime);
+
+  const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.001*hz + 1);
   
   for(int i=0;i<samples;i++){
     const double dt = ((double)i)/hz;
@@ -155,14 +157,14 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
     double A0 = A;
     double Fc0 = Fc;
     double F0 = F;
-    
+
     if(now < fadeoutTime){
       double c = now/fadeoutTime;
 
 
       A0 = c*A + (1.0 - c)*oldA;
-      Fc0 = c*Fc + (1.0 - c)*oldFc;
-      F0 = c*F + (1.0 - c)*oldF;
+      // Fc0 = c*Fc + (1.0 - c)*oldFc;
+      // F0 = c*F + (1.0 - c)*oldF;
     }
 
 
@@ -173,8 +175,18 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
     
     if(value <= -1.0) value = -1.0;
     else if(value >= 1.0) value = 1.0;
+
+    meansum += value;
+    meanbuffer.push_back(value);
+    while(meanbuffer.size() > MEANBUFFER_MAX_SIZE){
+      meansum -= meanbuffer.front();
+      meanbuffer.pop_front();
+    }
+
+    double mean = meansum / meanbuffer.size(); 
     
-    buffer[i] = (int16_t)( value*32767 );
+    buffer[i] = (int16_t)( mean*32767 );
+    // buffer[i] = (int16_t)( value*32767 );
   }
 
   
