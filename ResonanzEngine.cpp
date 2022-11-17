@@ -12,6 +12,7 @@
 #include <iostream>
 #include <limits>
 #include <map>
+#include <set>
 
 #include <cmath>
 #include <math.h>
@@ -2152,7 +2153,8 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
       logging.info(buffer);
       engine_setStatus(buffer);
     }
-    
+
+    engine_pollEvents();
   }
   
   keywordModels.resize(keywords.size());
@@ -2184,6 +2186,8 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
       logging.info(buffer);
       engine_setStatus(buffer);
     }
+
+    engine_pollEvents();
   }
   
   
@@ -2200,6 +2204,8 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
 	       synthModel.inputSize(), synthModel.outputSize());
       logging.info(buffer);
     }
+
+    engine_pollEvents();
     
     // synthModel.downsample(100); // keeps only 100 random models
   }
@@ -2264,7 +2270,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
   const unsigned int NUM_TOPRESULTS = SHOW_TOP_RESULTS; 
 
   // how many bayesian neural networks use to calculate mean and cov.
-  const unsigned int MODEL_SAMPLES = 20; 
+  const unsigned int MODEL_SAMPLES = 11;
   
   std::multimap<float, int> bestKeyword;
   std::multimap<float, int> bestPicture;
@@ -2441,9 +2447,56 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
   model_error_ratio.resize(pictureData.size());
   
   logging.info("engine_executeProgram(): calculate pictures");
+
+  // presets values..
+  {
+    for(unsigned int index=0;index<pictureData.size();index++){
+    
+      std::pair<float, int> p;
+      p.first = 1e6f; // very large error as the default value [=> ignotes this picture]
+      p.second = index;
+    
+      results[index] = p;
+
+      model_error_ratio[index] = 1.0f; // dummy value [no clue what to set]
+    }
+  }
+
+
   
+  std::set<unsigned int> picIndexes;
+
+  {
+    // only selects picture from set of was: 50, 100 randomly chosen pictures from all pictures [to keep in sync/realtime requirements]
+    const unsigned int PIC_DATASET_SIZE = 200;
+    
+    for(unsigned int i=0;i<pictureData.size();i++){
+      picIndexes.insert(i);
+    }
+
+    while(picIndexes.size() > PIC_DATASET_SIZE){
+      // keeps removing random elements until dataset size is PIC_DATASET_SIZE
+      unsigned int remove = rng.rand() % picIndexes.size();
+      auto iter = picIndexes.begin();
+
+      while(remove > 0){
+	iter++;
+	remove--;
+      }
+
+      picIndexes.erase(iter); // removes remove:th element from the set
+    }
+  }
+  
+
 #pragma omp parallel for schedule(dynamic)	
-  for(unsigned int index=0;index<pictureData.size();index++){
+  for(unsigned int picindex=0;picindex<picIndexes.size();picindex++){
+
+    auto piciter = picIndexes.begin();
+    for(unsigned int p=0;p<picindex;p++)
+      piciter++;
+    
+    const unsigned int index = (*piciter); // select (all) pictures from PicIndexes set
     
     math::vertex<> x(eegCurrent.size() + HMM_NUM_CLUSTERS);
     

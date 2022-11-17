@@ -291,7 +291,7 @@ private:
 	whiteice::math::NNGradDescent<>* optimizer = nullptr;
 	
 	const unsigned int NUM_OPTIMIZER_THREADS = 2;
-	const unsigned int NUM_OPTIMIZER_ITERATIONS = 1000; // was: 150
+	const unsigned int NUM_OPTIMIZER_ITERATIONS = 500; // was: 150, 1000
 	bool optimizeSynthOnly = false;
 
   	whiteice::nnetwork<>* nn = nullptr;
@@ -303,7 +303,7 @@ private:
 	const int NEURALNETWORK_DEPTH = 2; // how many layers neural network have (was: 3, 6, *10*)
 
         bool use_bayesian_nnetwork = false;
-	const unsigned int BAYES_NUM_SAMPLES = 500; // number of samples collected from "bayesian posterior" (what we really sample is MLE likelihood thought..) [reduced from 1000 to 500 because HMC now don't add samples until epsilon is properly learnt]
+	const unsigned int BAYES_NUM_SAMPLES = 250; // number of samples collected from "bayesian posterior" (what we really sample is MLE likelihood thought..) [reduced from 1000 to 500 because HMC now don't add samples until epsilon is properly learnt]
 
 	bool engine_loadModels(const std::string& modelDir); // loads prediction models for program execution, returns false in case of failure
 	bool engine_executeProgram(const std::vector<float>& eegCurrent,
