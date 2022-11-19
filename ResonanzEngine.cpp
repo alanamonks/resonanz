@@ -2468,8 +2468,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 
   {
     // only selects picture from set of was: 50, 100 randomly chosen pictures from all pictures [to keep in sync/realtime requirements]
-    const unsigned int PIC_DATASET_SIZE = 200;
-    
     for(unsigned int i=0;i<pictureData.size();i++){
       picIndexes.insert(i);
     }
@@ -2682,7 +2680,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 #pragma omp parallel for schedule(dynamic)
     for(unsigned int param=0;param<SYNTH_NUM_GENERATED_PARAMS;param++){
       
-      if(rng.uniform() < 0.20f)
+      if(rng.uniform() < -0.20f) // NEVER FOR NOW!
       {
 	// generates random parameters [random search]
 	for(unsigned int i=0;i<synthTest.size();i++)
@@ -2720,7 +2718,7 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	// engine_estimateNN(x, synthData, m , cov);
 	// NOT SUPPORTED YET...
 
-	assert(0);
+ 	assert(0);
 	
 	// now change high variance output
 	m = x;

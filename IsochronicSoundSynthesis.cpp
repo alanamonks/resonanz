@@ -31,7 +31,7 @@ IsochronicSoundSynthesis::IsochronicSoundSynthesis() {
   
   tbase = 0.0;
   
-  fadeoutTime = 100.0; // 100ms fade out between parameter changes
+  fadeoutTime = 200.0; // 200ms fade out between parameter changes
 }
 
 
@@ -153,29 +153,38 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
     const double t = tbase + dt;
     
     const double now = timeSinceReset + dt*1000.0;
+
     
-    double A0 = A;
-    double Fc0 = Fc;
-    double F0 = F;
-
-    if(now < fadeoutTime){
-      double c = now/fadeoutTime;
-
-
-      A0 = c*A + (1.0 - c)*oldA;
-      // Fc0 = c*Fc + (1.0 - c)*oldFc;
-      // F0 = c*F + (1.0 - c)*oldF;
-    }
-
-
-    double a = A0*sin(2.0*M_PI*F0*t);
+    double a = A*sin(2.0*M_PI*F*t);
     if(a <= 0.0) a = 0.0;
-
-    double value = a*sin(2.0*M_PI*Fc0*t);
+    double value = a*sin(2.0*M_PI*Fc*t);
     
     if(value <= -1.0) value = -1.0;
     else if(value >= 1.0) value = 1.0;
 
+    // mixes partially previous sound to sound if it is fade out period
+    if(now < fadeoutTime){
+      double c = now/fadeoutTime;
+
+      // also fades parameters towards target value [less clicking?]
+      double oldA0 = oldA*(1-c) + A*c;
+      //double oldF0 = oldF*(1-c) + F*c;
+      //double oldFc0 = oldFc*(1-c) + Fc*c;
+
+          
+      double old_a = oldA0*sin(2.0*M_PI*oldF*t);
+      if(old_a <= 0.0) old_a = 0.0;
+      double old_value = old_a*sin(2.0*M_PI*oldFc*t);
+      
+      if(old_value <= -1.0) old_value = -1.0;
+      else if(old_value >= 1.0) old_value = 1.0;
+      
+      
+      value = (1.0 - c)*old_value + c*value;
+    }
+    
+    
+    
     meansum += value;
     meanbuffer.push_back(value);
     while(meanbuffer.size() > MEANBUFFER_MAX_SIZE){

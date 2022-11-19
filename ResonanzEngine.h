@@ -228,8 +228,8 @@ private:
 	long long tick = 0; // current engine tick (one tick is TICK_MS long)
 
 	// set to 100ms (set tick back to 1000ms = 1 sec)
-	static const unsigned int TICK_MS = 100;               // how fast engine runs: engine measures ticks and executes (one) command only when tick changes
-	static const unsigned int MEASUREMODE_DELAY_MS = 200; // how long each screen is shown when measuring response
+	static const unsigned int TICK_MS = 250;             // how fast engine runs: engine measures ticks and executes (one) command only when tick changes (was: 100)
+	static const unsigned int MEASUREMODE_DELAY_MS = 500; // how long each screen is shown when measuring response (was: 200)
 
 	// media resource
 	std::vector<std::string> keywords;
@@ -321,10 +321,13 @@ private:
 	std::vector< whiteice::bayesian_nnetwork<> > pictureModels;
 	whiteice::bayesian_nnetwork<>                synthModel;
 	bool dataRBFmodel = true; // don't calculate neural networks but use simple model to directly predict response from stimulus
-	
+
 	// number of parameters to test with synthModel before selecting the optimium one 
-	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 100; // (was 100, 2000) reduced to 50 because of slowness(?)
-	
+	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 400; // (was 100, 2000) reduced to 50 because of slowness(?)
+
+        // number of pictures to test per iteration for stimulus response before selecting the optimum one
+        const unsigned int PIC_DATASET_SIZE = 100;
+  	
 	unsigned long long synthParametersChangedTime = 0ULL;
 
 	// estimate output value N(m,cov) for x given dataset data uses nearest neighbourhood estimation
