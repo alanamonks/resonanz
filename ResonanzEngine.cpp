@@ -2189,7 +2189,8 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
 
     engine_pollEvents();
   }
-  
+
+  unsigned int synthModelLoaded = 0;
   
   if(synth){
     std::string filename = calculateHashName(eeg->getDataSourceName() + synth->getSynthesizerName()) + ".model";
@@ -2203,15 +2204,20 @@ bool ResonanzEngine::engine_loadModels(const std::string& modelDir)
       snprintf(buffer, 256, "loading synth model success: %d - %d",
 	       synthModel.inputSize(), synthModel.outputSize());
       logging.info(buffer);
+
+      synthModelLoaded++; 
     }
 
     engine_pollEvents();
     
     // synthModel.downsample(100); // keeps only 100 random models
   }
+  else{
+    synthModelLoaded++; // hack to make it work
+  }
   
-  // returns true if could load at least one model for pictures
-  return (pictureModelsLoaded > 0);
+  // returns true if could load at least one model for pictures and one model for keywords..
+  return (pictureModelsLoaded > 0 && synthModelLoaded > 0);
 }
 
 
@@ -2296,13 +2302,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       logging.error("executeProgram(): no K-Means and HMM models loaded");
       return false;
     }
-
-#if 0
-    unsigned int dataCluster = kmeans->getClusterIndex(current);
-    unsigned int nextState = 0;
-    hmm->next_state(HMMstate, nextState, dataCluster);
-    HMMstate = nextState;
-#endif
   }
   
   std::vector< std::pair<float, int> > results(keywordData.size());
@@ -2331,9 +2330,12 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     
     math::vertex<> m;
     math::matrix<> cov;
+
+    unsigned int SAMPLES = MODEL_SAMPLES;
     
     if(dataRBFmodel){
       engine_estimateNN(x, keywordData[index], m , cov);
+      SAMPLES = 1;
     }
     else{
       whiteice::bayesian_nnetwork<>& model = keywordModels[index];
@@ -2345,8 +2347,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	continue; // bad model/data => ignore
       }
 
-
-      unsigned int SAMPLES = MODEL_SAMPLES;
 
       if(model.getNumberOfSamples() < SAMPLES)
 	SAMPLES = model.getNumberOfSamples();
@@ -2363,9 +2363,12 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       logging.warn("skipping bad keyword prediction model");
       continue;
     }
-    
+
     m *= timestep; // corrects delta to given timelength
     cov *= timestep*timestep;
+
+    // converts cov to cov of mean
+    cov /= whiteice::math::blas_real<float>((float)SAMPLES);
     
     // now we have prediction x to the response to the given keyword
     // calculates error (weighted distance to the target state)
@@ -2392,6 +2395,8 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     // calculates average stdev/delta ratio
     auto ratio = stdev.norm()/m.norm();
     model_error_ratio[index] = ratio.c[0];
+
+    std::cout << "ratio: " << ratio << std::endl;
     
     for(unsigned int i=0;i<delta.size();i++){
       delta[i] = math::abs(delta[i]) + 0.50f*stdev[i]; // FIXME: was 1 (handles uncertainty in weights)
@@ -2515,9 +2520,12 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     
     math::vertex<> m;
     math::matrix<> cov;
+
+    unsigned int SAMPLES = MODEL_SAMPLES;
     
     if(dataRBFmodel){
       engine_estimateNN(x, pictureData[index], m , cov);
+      SAMPLES = 1;
     }
     else{
       whiteice::bayesian_nnetwork<>& model = pictureModels[index];
@@ -2528,8 +2536,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	logging.warn("skipping bad picture prediction model (2)");
 	continue; // bad model/data => ignore
       }
-
-      unsigned int SAMPLES = MODEL_SAMPLES;
 
       if(model.getNumberOfSamples() < SAMPLES)
 	SAMPLES = model.getNumberOfSamples();
@@ -2548,6 +2554,9 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     
     m *= timestep; // corrects delta to given timelength
     cov *= timestep*timestep;
+
+    // converts cov to cov of mean
+    cov /= whiteice::math::blas_real<float>((float)SAMPLES);
     
     // now we have prediction x to the response to the given picture
     // calculates error (weighted distance to the target state)
@@ -2574,7 +2583,8 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     // calculates average stdev/delta ratio
     auto ratio = stdev.norm()/m.norm();
     model_error_ratio[index] = ratio.c[0];
-    
+
+
     for(unsigned int i=0;i<delta.size();i++){
       delta[i] = math::abs(delta[i]) + 0.50f*stdev[i]; // FIXME: was 1 (handles uncertainty)
       delta[i] /= math::sqrt(targetVariance[i]);
@@ -2723,10 +2733,13 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	// now change high variance output
 	m = x;
 	cov.resize(x.size(), x.size());
-	cov.identity(); 
+	cov.identity();
+	SAMPLES = 1;
       }
-      else
 #endif
+      
+      unsigned int SAMPLES = MODEL_SAMPLES;
+	
       {
 	auto& model = synthModel;
 	
@@ -2735,8 +2748,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 	  continue; // bad model/data => ignore
 	}
 
-	unsigned int SAMPLES = MODEL_SAMPLES;
-	
 	if(model.getNumberOfSamples() < SAMPLES)
 	  SAMPLES = model.getNumberOfSamples();
 	
@@ -2759,6 +2770,9 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       
       m *= timestep; // corrects delta to given timelength
       cov *= timestep*timestep;
+
+      // converts cov to cov of mean
+      cov /= whiteice::math::blas_real<float>((float)SAMPLES);
       
       // now we have prediction m to the response to the given keyword
       // calculates error (weighted distance to the target state)
@@ -2775,7 +2789,8 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
       // calculates average stdev/delta ratio
       auto ratio = stdev.norm()/m.norm();
       model_error_ratio[param] = ratio.c[0];
-	    
+
+      
       for(unsigned int i=0;i<delta.size();i++){
 	delta[i] = math::abs(delta[i]) + 0.50f*stdev[i]; // FIXME: was 0.5 (handles uncertainty)
 	delta[i] /= targetVariance[i];
@@ -2986,6 +3001,8 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			m *= timestep; // corrects delta to given timelength
 			cov *= timestep*timestep;
 
+			cov /= whiteice::math::blas_real<float>((float)SAMPLES);
+
 			// now we have prediction x to the response to the given keyword
 			// calculates error (weighted distance to the target state)
 
@@ -3059,6 +3076,8 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 			m *= timestep; // corrects delta to given timelength
 			cov *= timestep*timestep;
 
+			cov /= whiteice::math::blas_real<float>((float)SAMPLES);
+
 			// now we have prediction x to the response to the given keyword
 			// calculates error (weighted distance to the target state)
 
@@ -3129,7 +3148,7 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 
 				math::vertex<> m;
 				math::matrix<> cov;
-
+				
 				unsigned int SAMPLES = 50;
 				
 				if(model.getNumberOfSamples() < SAMPLES)
@@ -3147,6 +3166,8 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 
 				m *= timestep; // corrects delta to given timelength
 				cov *= timestep*timestep;
+
+				cov /= whiteice::math::blas_real<float>((float)SAMPLES);
 
 				// TODO take a MCMC sample from N(mean, cov)
 
@@ -3184,6 +3205,8 @@ bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& e
 
 				m *= timestep; // corrects delta to given timelength
 				cov *= timestep*timestep;
+
+				cov /= whiteice::math::blas_real<float>((float)SAMPLES);
 
 				// TODO take a MCMC sample from N(mean, cov)
 
