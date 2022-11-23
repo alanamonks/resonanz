@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 	bool randomPrograms = false;
 	bool verbose = false;
 
-	unsigned int programLength = 120; // 2 minutes default
+	unsigned int programLength = 5*60; // 5 minutes default
 	
 	std::string programFile;
 	std::vector<float> targets;
@@ -375,7 +375,7 @@ int main(int argc, char** argv)
 		    return -1;
 		  }
 		  
-		  if(file.createProgram(engine.getDevice(), targets, 120) == false){
+		  if(file.createProgram(engine.getDevice(), targets, programLength) == false){
 		    std::cout << "Creating neurostim program failed." << std::endl;
 		    return -1;
 		  }
