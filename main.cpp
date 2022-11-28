@@ -23,10 +23,8 @@
 #include "ResonanzEngine.h"
 #include "NMCFile.h"
 
-#ifdef WINNT
-//#include <windows.h>
-//#include "timing.h"
-#endif
+#include "timing.h"
+
 
 bool parse_float_vector(std::vector<float>& v, const char* str);
 
@@ -360,61 +358,64 @@ int main(int argc, char** argv)
 	else if(cmd.command == cmd.CMD_DO_EXECUTE){
 	  whiteice::resonanz::NMCFile file;
 
-	        if(targets.size() == 0){
-		  if(file.loadFile(programFile) == false){
-		    std::cout << "Loading program file: " 
-			      << programFile << " failed." << std::endl;
-		    return -1;
-		  }
-		}
-		else{
-
-		  if(targets.size() != engine.getDevice().getNumberOfSignals()){
-		    printf("Number of signals in target is wrong (%d != %d).\n",
-			   (int)targets.size(), engine.getDevice().getNumberOfSignals());
-		    return -1;
-		  }
-		  
-		  if(file.createProgram(engine.getDevice(), targets, programLength) == false){
-		    std::cout << "Creating neurostim program failed." << std::endl;
-		    return -1;
-		  }
-		}
-
-		std::vector<std::string> signalNames;
-		std::vector< std::vector<float> > signalPrograms;
-
-		signalNames.resize(file.getNumberOfPrograms());
-		signalPrograms.resize(file.getNumberOfPrograms());
-
-		for(unsigned int i=0;i<signalNames.size();i++){
-		  file.getProgramSignalName(i, signalNames[i]);
-		  file.getRawProgram(i, signalPrograms[i]);
-		}
-
-		{
-		  printf("Signals selected:\n");
-		  
-		  for(unsigned int i=0;i<signalNames.size();i++){
-		    printf("%s\n", signalNames[i].c_str());
-		  }
-		}
-		
-		
-		std::string audioFile = cmd.audioFile;
-		
-		
-		if(engine.cmdExecuteProgram(cmd.pictureDir, cmd.keywordsFile, 
-					    cmd.modelDir, audioFile, 
-					    signalNames, signalPrograms,
-					    false, cmd.saveVideo) == false){
-			printf("ERROR: bad parameters\n");
-			return -1;
-		}
-
+	  if(targets.size() == 0){
+	    if(file.loadFile(programFile) == false){
+	      std::cout << "Loading program file: " 
+			<< programFile << " failed." << std::endl;
+	      return -1;
+	    }
+	  }
+	  else{
+	    
+	    if(targets.size() != engine.getDevice().getNumberOfSignals()){
+	      printf("Number of signals in target is wrong (%d != %d).\n",
+		     (int)targets.size(), engine.getDevice().getNumberOfSignals());
+	      return -1;
+	    }
+	    
+	    if(file.createProgram(engine.getDevice(), targets, programLength) == false){
+	      std::cout << "Creating neurostim program failed." << std::endl;
+	      return -1;
+	    }
+	  }
+	  
+	  std::vector<std::string> signalNames;
+	  std::vector< std::vector<float> > signalPrograms;
+	  
+	  signalNames.resize(file.getNumberOfPrograms());
+	  signalPrograms.resize(file.getNumberOfPrograms());
+	  
+	  for(unsigned int i=0;i<signalNames.size();i++){
+	    file.getProgramSignalName(i, signalNames[i]);
+	    file.getRawProgram(i, signalPrograms[i]);
+	  }
+	  
+	  {
+	    printf("Signals selected:\n");
+	    
+	    for(unsigned int i=0;i<signalNames.size();i++){
+	      printf("%s\n", signalNames[i].c_str());
+	    }
+	  }
+	  
+	  
+	  if(engine.cmdExecuteProgram(cmd.pictureDir, cmd.keywordsFile, 
+				      cmd.modelDir, cmd.audioFile, 
+				      signalNames, signalPrograms,
+				      false, cmd.saveVideo) == false)
+	  {
+	    printf("ERROR: cmdExecuteProgram() bad parameters.\n");
+	    fflush(stdout);
+	    return -1;
+	  }
+	  else{
+	    printf("DEBUG: cmdExecuteProgram() successful.\n");
+	    fflush(stdout);
+	  }
+	  
 	}
 	else if(analyzeCommand == true){
-	        sleep(5); // gives engine time to initialize synth object
+	        millisleep(5000); // gives engine time to initialize synth object
 		std::string msg = engine.analyzeModel(cmd.modelDir);
 		std::cout << msg << std::endl;
 		msg = engine.analyzeModel2(cmd.pictureDir, cmd.keywordsFile,
@@ -428,7 +429,7 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	else if(dumpAsciiCommand == true){
-	        sleep(5); // gives engine time to initialize synth object
+	        millisleep(5000); // gives engine time to initialize synth object
 		
 		if(engine.exportDataAscii(cmd.pictureDir, cmd.keywordsFile,
 					  cmd.modelDir)){
@@ -441,14 +442,16 @@ int main(int argc, char** argv)
 		}
 		
 	}
+
 	
-	sleep(1);
+	millisleep(3000);
+	
 
 	while(!engine.keypress() && engine.isBusy()){
 	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  
 	  fflush(stdout);
-	  sleep(2); // resonanz-engine thread is doing all the heavy work
+	  millisleep(2000); // resonanz-engine thread is doing all the heavy work
 	}
 	
 	{
@@ -458,7 +461,7 @@ int main(int argc, char** argv)
 	  
 	
 	engine.cmdStopCommand();
-	sleep(1);
+	millisleep(1000);
 	
 	// reports average RMS of executed program
 	if(cmd.command == cmd.CMD_DO_MEASURE){

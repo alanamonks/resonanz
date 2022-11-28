@@ -323,7 +323,7 @@ private:
 	bool dataRBFmodel = true; // don't calculate neural networks but use simple model to directly predict response from stimulus
 
 	// number of parameters to test with synthModel before selecting the optimium one 
-	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 400; // (was 100, 2000) reduced to 50 because of slowness(?)
+	const unsigned int SYNTH_NUM_GENERATED_PARAMS = 200; // (was 400, 100, 2000) reduced to 50 because of slowness(?)
 
         // number of pictures to test per iteration for stimulus response before selecting the optimum one
         const unsigned int PIC_DATASET_SIZE = 100;

@@ -100,7 +100,7 @@ static bool __sdl__soundsynth_setpriority = false;
 void __sdl_soundsynthesis_mixaudio(void* unused, 
 				   Uint8* stream, int len)
 {
-#if 0
+#if 1
   if(!__sdl__soundsynth_setpriority){
     sched_param sch_params;
     int policy = SCHED_FIFO; // SCHED_RR

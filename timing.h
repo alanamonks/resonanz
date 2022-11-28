@@ -2,7 +2,7 @@
  * timing.h
  *
  *  Created on: 3.3.2013
- *      Author: omistaja
+ *      Author: Tomas Ukkonen
  */
 
 #ifndef TIMING_H_
@@ -10,12 +10,12 @@
 
 // works around buggy usleep in MINGW/windows [use microsleep instead]
 
-#ifdef _WIN32
+#ifdef WINNT
 #include <windows.h>
-#define microsleep(msec) Sleep(msec)
+#define millisleep(msec) Sleep(msec)
 #else
 #include <unistd.h>
-#define microsleep(msec) usleep(msec*1000);
+#define millisleep(msec) usleep(msec*1000);
 #endif
 
 

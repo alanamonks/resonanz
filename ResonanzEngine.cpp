@@ -2395,8 +2395,6 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     // calculates average stdev/delta ratio
     auto ratio = stdev.norm()/m.norm();
     model_error_ratio[index] = ratio.c[0];
-
-    std::cout << "ratio: " << ratio << std::endl;
     
     for(unsigned int i=0;i<delta.size();i++){
       delta[i] = math::abs(delta[i]) + 0.50f*stdev[i]; // FIXME: was 1 (handles uncertainty in weights)

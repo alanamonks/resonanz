@@ -44,7 +44,8 @@ public:
   std::vector<float> currentp;
   
   unsigned long long resetTime = 0ULL;
-  double fadeoutTime;
+  double timeSinceReset; // from tbase value (secs)
+  double fadeoutTime; // in milliseconds
   
   double oldA, oldFc, oldF;
 

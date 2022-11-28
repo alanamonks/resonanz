@@ -23,18 +23,6 @@ public:
   
   virtual bool play();
   virtual bool pause();
-
-  /*
-    virtual std::string getSynthesizerName() = 0;
-    
-    virtual bool reset() = 0;
-    
-    virtual bool getParameters(std::vector<float>& p) = 0;
-    
-    virtual bool setParameters(const std::vector<float>& p) = 0;
-    
-    virtual int getNumberOfParameters() = 0;
-  */
   
   // recommended time it takes to synthesize sound: 
   // it is not good idea to change parameters faster than this

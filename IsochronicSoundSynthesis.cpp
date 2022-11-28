@@ -9,6 +9,9 @@
 #include <math.h>
 #include <vector>
 
+#include <dinrhiw.h>
+
+
 #ifndef M_PI
 #define M_PI 3.141592653
 #endif
@@ -31,7 +34,8 @@ IsochronicSoundSynthesis::IsochronicSoundSynthesis() {
   
   tbase = 0.0;
   
-  fadeoutTime = 50.0; // 50ms fade out between parameter changes
+  //fadeoutTime = 250.0; // 250ms fade out between parameter changes
+  fadeoutTime = 0.0; // no fadeout
 }
 
 
@@ -49,6 +53,8 @@ bool IsochronicSoundSynthesis::reset()
 {
   // resets sound generation (timer)
   tbase = 0.0;
+  timeSinceReset = tbase;
+  
   return true;
 }
 
@@ -97,7 +103,7 @@ bool IsochronicSoundSynthesis::setParameters(const std::vector<float>& p_)
   Fc = f;
   
   {
-    // isochronic modulating freq: F = 1..40 Hz
+    // isochronic modulating freq: F = 1..48 Hz
     
     f = 1.0 + 47.0*p[2];
   }
@@ -105,7 +111,7 @@ bool IsochronicSoundSynthesis::setParameters(const std::vector<float>& p_)
   F = f;
   
   resetTime = getMilliseconds();
-  // tbase = 0.0;
+  timeSinceReset = tbase;
   
   return true;
 }
@@ -144,16 +150,25 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
 {
   double hz = (double)snd.freq;
   
-  double timeSinceReset = (double)(getMilliseconds() - resetTime);
+  //const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.0010*hz + 1);
+  const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.0015*hz + 1);
 
-  const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.001*hz + 1);
+  bool first_time0 = true;
+  bool first_time = true;
+  
   
   for(int i=0;i<samples;i++){
     const double dt = ((double)i)/hz;
     const double t = tbase + dt;
     
-    const double now = timeSinceReset + dt*1000.0;
+    const double now = (t - timeSinceReset)*1000.0;
 
+#if 0
+    if(first_time0){
+      std::cout << "F = " << F << std::endl;
+      first_time0 = false;
+    }
+#endif
     
     double a = A*sin(2.0*M_PI*F*t);
     if(a <= 0.0) a = 0.0;
@@ -162,25 +177,37 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
     if(value <= -1.0) value = -1.0;
     else if(value >= 1.0) value = 1.0;
 
+
     // mixes partially previous sound to sound if it is fade out period
     if(now < fadeoutTime){
       double c = now/fadeoutTime;
 
+      if(c < 0.0) c = 0.0;
+      else if(c > 1.0) c = 1.0;
+
       // also fades parameters towards target value [less clicking?]
       double oldA0 = oldA*(1-c) + A*c;
-      //double oldF0 = oldF*(1-c) + F*c;
-      //double oldFc0 = oldFc*(1-c) + Fc*c;
+      double oldF0 = oldF*(1-c) + F*c;
+      double oldFc0 = oldFc*(1-c) + Fc*c;
+      //oldFc0 = Fc; // use really carry frequency directly..
 
-          
-      double old_a = oldA0*sin(2.0*M_PI*oldF*t);
+#if 0
+      if(first_time){
+	std::cout << "oldF0 = " << oldF0 << ", F = " << F << std::endl;
+	first_time = false;
+      }
+#endif 
+      
+      double old_a = oldA0*sin(2.0*M_PI*oldF0*t);
       if(old_a <= 0.0) old_a = 0.0;
-      double old_value = old_a*sin(2.0*M_PI*oldFc*t);
+      double old_value = old_a*sin(2.0*M_PI*oldFc0*t);
       
       if(old_value <= -1.0) old_value = -1.0;
       else if(old_value >= 1.0) old_value = 1.0;
       
       
-      value = (1.0 - c)*old_value + c*value;
+      // value = (1.0 - c)*old_value + c*value;
+      value = old_value;
     }
     
     
@@ -192,7 +219,10 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
       meanbuffer.pop_front();
     }
 
-    double mean = meansum / meanbuffer.size(); 
+    double mean = meansum / meanbuffer.size();
+    
+    if(mean < -1.0) mean = -1.0;
+    else if(mean > 1.0) mean = 1.0;
     
     buffer[i] = (int16_t)( mean*32760 );
     // buffer[i] = (int16_t)( value*32767 );
