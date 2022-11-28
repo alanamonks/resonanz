@@ -34,8 +34,8 @@ IsochronicSoundSynthesis::IsochronicSoundSynthesis() {
   
   tbase = 0.0;
   
-  //fadeoutTime = 250.0; // 250ms fade out between parameter changes
-  fadeoutTime = 0.0; // no fadeout
+  fadeoutTime = 100.0; // 100ms fade out between parameter changes
+  //fadeoutTime = 0.0; // no fadeout
 }
 
 
@@ -151,7 +151,7 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
   double hz = (double)snd.freq;
   
   //const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.0010*hz + 1);
-  const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.0015*hz + 1);
+  const unsigned int MEANBUFFER_MAX_SIZE = (unsigned int)(0.00200*hz + 1);
 
   bool first_time0 = true;
   bool first_time = true;
@@ -189,7 +189,8 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
       double oldA0 = oldA*(1-c) + A*c;
       double oldF0 = oldF*(1-c) + F*c;
       double oldFc0 = oldFc*(1-c) + Fc*c;
-      //oldFc0 = Fc; // use really carry frequency directly..
+      oldF = F; // use already changed frequencies, just slide amplitude..
+      oldFc0 = Fc; // use really carry frequency directly..
 
 #if 0
       if(first_time){

@@ -458,7 +458,7 @@ int main(int argc, char** argv)
 	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  fflush(stdout);
 	}
-	  
+	
 	
 	engine.cmdStopCommand();
 	millisleep(1000);
