@@ -19,8 +19,8 @@ SDLSoundSynthesis::SDLSoundSynthesis()
   SDL_zero(desired);
   SDL_zero(snd);
   
-  // desired.freq = 44100;
-  desired.freq = 22050;
+  desired.freq = 44100;
+  //desired.freq = 22050;
   desired.format = AUDIO_S16SYS;
   desired.channels = 1; // use mono sound for now
   desired.samples = 4096;

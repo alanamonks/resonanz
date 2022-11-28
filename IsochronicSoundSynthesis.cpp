@@ -31,7 +31,7 @@ IsochronicSoundSynthesis::IsochronicSoundSynthesis() {
   
   tbase = 0.0;
   
-  fadeoutTime = 200.0; // 200ms fade out between parameter changes
+  fadeoutTime = 50.0; // 50ms fade out between parameter changes
 }
 
 
@@ -73,11 +73,11 @@ bool IsochronicSoundSynthesis::setParameters(const std::vector<float>& p_)
     if(pi > 1.0f) pi = 1.0f;
   }
   
-  currentp = p; // copies values for getParameters()
-  
   oldA = A;
   oldFc = Fc;
   oldF = F;
+  
+  currentp = p; // copies values for getParameters()
   
   A = p[0];
   
@@ -194,7 +194,7 @@ bool IsochronicSoundSynthesis::synthesize(int16_t* buffer, int samples)
 
     double mean = meansum / meanbuffer.size(); 
     
-    buffer[i] = (int16_t)( mean*32767 );
+    buffer[i] = (int16_t)( mean*32760 );
     // buffer[i] = (int16_t)( value*32767 );
   }
 
