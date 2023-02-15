@@ -225,7 +225,7 @@ bool SDLTheora::__insert_frame(unsigned int msecs, SDL_Surface* surface, bool la
 		SDL_BlitSurface(surface, NULL, frame, NULL);
 	}
 	else{ // just fills the frame with black
-		SDL_FillRect(frame, NULL, SDL_MapRGB(frame->format, 0, 0, 0));
+	        SDL_FillRect(frame, NULL, SDL_MapRGB(frame->format, 0, 0, 0));
 	}
 
 #if 0
@@ -588,6 +588,17 @@ bool SDLTheora::encode_frame(th_ycbcr_buffer buffer,
 		}
 	}
 
+
+	// writes yet unhandled packets into a page
+	{
+	  while(ogg_stream_flush(ogg_stream, page) != 0){
+	    // write page to file..
+	    fwrite(page->header, 1, page->header_len, outputFile);
+	    fwrite(page->body, 1, page->body_len, outputFile);
+	  }
+	}
+	
+	
 	return true;
 }
 

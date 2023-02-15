@@ -85,8 +85,8 @@ int main(int argc, char** argv)
   }
 #endif
 
-	whiteice::logging.setOutputFile("resonanz-engine.log");
-
+        whiteice::logging.setOutputFile("resonanz-engine.log");
+	
 	
 	// process command line
 	bool hasCommand = false;

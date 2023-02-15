@@ -14,19 +14,10 @@
 
 #include <windows.h>
 
-void win_usleep(__int64 usec) 
-{ 
-  HANDLE timer; 
-  LARGE_INTEGER ft; 
-  
-  ft.QuadPart = -(10*usec); // Convert to 100 nanosecond interval, negative value indicates relative time
-  
-  timer = CreateWaitableTimer(NULL, TRUE, NULL); 
-  SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0); 
-  WaitForSingleObject(timer, INFINITE); 
-  CloseHandle(timer); 
-}
+extern void win_usleep(__int64 usec);
 
+
+#define microsleep(msec) win_usleep(msec*1000)
 #define millisleep(msec) win_usleep(msec*1000)
 
 // Sleep(msec)
@@ -35,6 +26,7 @@ void win_usleep(__int64 usec)
 
 #include <unistd.h>
 
+#define microsleep(msec) usleep(msec*1000);
 #define millisleep(msec) usleep(msec*1000);
 
 #endif
