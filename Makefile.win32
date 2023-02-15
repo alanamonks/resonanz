@@ -13,7 +13,7 @@ MV = mv
 CP = cp
 
 
-CFLAGS = -fPIC -O3 -march=native -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I"/c/Program Files/Java/jdk1.8.0_281/include" -I"/c/Program Files/Java/jdk1.8.0_281/include/win32/" -I. -Iemotiv_insight -Iemotiv_insight/include -Ineurosky `pkg-config theora --cflags` `python3-config --cflags` `pkg-config vorbis --cflags` 
+CFLAGS = -fPIC -O3 -march=native -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I"/c/Program Files/Java/jdk1.8.0_281/include" -I"/c/Program Files/Java/jdk1.8.0_281/include/win32/" -I. -Iemotiv_insight -Iemotiv_insight/include -Ineurosky `pkg-config theora --cflags` `python3-config --cflags` `pkg-config vorbis --cflags`
 
 CXXFLAGS = -fPIC -O3 -march=native -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I"/c/Program Files/Java/jdk1.8.0_281/include" -I"/c/Program Files/Java/jdk1.8.0_281/include/win32/" -I. -Iemotiv_insight -Iemotiv_insight/include -Ineurosky `pkg-config theora --cflags` `python3-config --cflags`
 
@@ -61,7 +61,7 @@ all: $(OBJECTS) resonanz
 # jnilib spectral_test
 
 resonanz: $(RESONANZ_OBJECTS)
-	$(CXX) -static $(CXXFLAGS) -o $(TARGET) $(RESONANZ_OBJECTS) $(LIBS) -mconsole
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(RESONANZ_OBJECTS) $(LIBS) -mconsole
 
 renaissance: $(R9E_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(R9E_TARGET) $(R9E_OBJECTS) $(R9E_LIBS) $(LIBS) -mconsole
