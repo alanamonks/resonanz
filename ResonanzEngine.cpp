@@ -54,6 +54,7 @@
 #include "IsochronicSoundSynthesis.h"
 
 #include "SDLTheora.h"
+#include "SDLAVCodec.h"
 
 #include "hermitecurve.h"
 
@@ -430,12 +431,17 @@ bool ResonanzEngine::cmdStopCommand() throw()
 bool ResonanzEngine::isBusy() throw()
 {
   if(currentCommand.command == ResonanzCommand::CMD_DO_NOTHING){
-    if(incomingCommand != nullptr)
+    if(incomingCommand != nullptr){
+      logging.info("ResonanzEngine::isBusy() = true");
       return true; // there is incoming work to be processed
-    else
+    }
+    else{
+      logging.info("ResonanzEngine::isBusy() = false");
       return false;
+    }
   }
   else{
+    logging.info("ResonanzEngine::isBusy() = true");
     return true;
   }
 }
@@ -449,6 +455,7 @@ bool ResonanzEngine::keypress(){
   std::lock_guard<std::mutex> lock(keypress_mutex);
   if(keypressed){
     keypressed = false;
+    logging.info("ResonanzEngine::keypress() = true");
     return true;
   }
   else return false;
@@ -956,8 +963,18 @@ void ResonanzEngine::engine_loop()
     lastTickProcessed = tick;
 		
 		
-		
     ResonanzCommand prevCommand = currentCommand;
+    
+    
+    {
+      char buffer[80];
+
+      sprintf(buffer, "resonanz-engine: prev command code: %d", prevCommand.command);
+      
+      logging.info(buffer);
+    }
+    
+    
     if(engine_checkIncomingCommand() == true){
       logging.info("new engine command received");
       // we must make engine state transitions, state transfer from the previous command to the new command
@@ -984,7 +1001,7 @@ void ResonanzEngine::engine_loop()
 	  
 	  logging.info("stopping theora video encoding.");
 	  
-	  video->stopEncoding(t1ms - programStarted);
+	  video->stopEncoding((unsigned long long)(t1ms - programStarted));
 	  delete video;
 	  video = nullptr;
 	  programStarted = 0;
@@ -1104,7 +1121,7 @@ void ResonanzEngine::engine_loop()
 	  
 	  logging.info("stopping theora video encoding.");
 	  
-	  video->stopEncoding(t1ms - programStarted);
+	  video->stopEncoding((unsigned long long)(t1ms - programStarted));
 	  delete video;
 	  video = nullptr;
 	  programStarted = 0;
@@ -1120,6 +1137,14 @@ void ResonanzEngine::engine_loop()
       }
       
       // state exit/entry actions:
+      {
+	char buffer[80];
+	
+	sprintf(buffer, "resonanz-engine: current command code: %d", currentCommand.command);
+	
+	logging.info(buffer);
+      }
+      
       
       // checks if we want to have open graphics window and opens one if needed
       if(currentCommand.showScreen == true && prevCommand.showScreen == false){
@@ -1485,9 +1510,11 @@ void ResonanzEngine::engine_loop()
 	  logging.info("Starting video encoder (theora)..");
 	  
 	  // starts video encoder
-	  video = new SDLTheora(0.50f); // 50% quality
+	  //video = new SDLTheora(0.50f); // 50% quality
+	  video = new SDLAVCodec(0.50f); // 50% quality
 	  
-	  if(video->startEncoding("neurostim.ogv", SCREEN_WIDTH, SCREEN_HEIGHT) == false)
+	  if(video->startEncoding("neurostim.mp4",
+				  SCREEN_WIDTH, SCREEN_HEIGHT) == false) // "neurostim.ogv"
 	    logging.error("starting theora video encoder failed");
 	  else
 	    logging.info("started theora video encoding");
@@ -1550,6 +1577,8 @@ void ResonanzEngine::engine_loop()
 	  
 	  if(engine_showScreen(keywords[key], pic, sndparams) == false)
 	    logging.warn("random stimulus: engine_showScreen() failed.");
+	  else
+	    logging.warn("random stimulus: engine_showScreen() success.");
 	}
 	else{
 	  auto& pic = currentPic;
@@ -1570,6 +1599,8 @@ void ResonanzEngine::engine_loop()
 	  
 	  if(engine_showScreen(" ", pic, sndparams) == false)
 	    logging.warn("random stimulus: engine_showScreen() failed.");
+	  else
+	    logging.warn("random stimulus: engine_showScreen() success.");
 	}
       }
       
@@ -1873,7 +1904,7 @@ void ResonanzEngine::engine_loop()
 	  
 	  logging.info("stopping theora video encoding.");
 	  
-	  video->stopEncoding(t1ms - programStarted);
+	  video->stopEncoding((unsigned long long)(t1ms - programStarted));
 	  delete video;
 	  video = nullptr;
 	}
@@ -4992,7 +5023,8 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
       elementsDisplayed++;
     }
   }
-  
+
+  logging.info("engine_showScreen(): picture shown.");
   
   ///////////////////////////////////////////////////////////////////////
   // displays random curve (5 random points) [eye candy (for now)]
@@ -5106,7 +5138,8 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
       }
       
     }
-  
+
+  logging.info("engine_showScreen(): curve done.");
   
   ///////////////////////////////////////////////////////////////////////
   // displays a text
@@ -5144,25 +5177,32 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
     }
     
   }
-  
+
+  logging.info("engine_showScreen(): text done.");
   
   ///////////////////////////////////////////////////////////////////////
   // video encoding (if activated)
   {
-    if(video && programStarted > 0){
+    if(video != NULL && programStarted > 0){
       auto t1 = std::chrono::system_clock::now().time_since_epoch();
       auto t1ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1).count();
       
       logging.info("adding frame to theora encoding queue");
       
-      if(video->insertFrame((t1ms - programStarted), surface) == false)
+      if(video->insertFrame((unsigned long long)(t1ms - programStarted),
+			    surface) == false){
+	
 	logging.error("inserting frame FAILED");
+      }
     }
   }
   
   
   ///////////////////////////////////////////////////////////////////////
   // plays sound
+
+  logging.info("engine_showScreen(): synth start.");
+  
   if(synth)
   {
     // changes synth parameters only as fast sound synthesis can generate
@@ -5189,6 +5229,8 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
 	     message.c_str(), picture, (int)pictures.size(), (int)synthParams.size(), elementsDisplayed);
     logging.info(buffer);
   }
+
+  
   
   return (elementsDisplayed > 0);
 }
@@ -5202,7 +5244,7 @@ void ResonanzEngine::engine_pollEvents()
     // currently ignores all incoming events
     // (should handle window close event somehow)
     
-    if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP){
+    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE){
       std::lock_guard<std::mutex> lock(keypress_mutex);
       keypressed = true;
     }

@@ -38,8 +38,10 @@
 #include "SDLMicrophoneListener.h"
 
 #include "SDLTheora.h"
+#include "SDLAVCodec.h"
 
 #include "HMMStateUpdator.h"
+
 
 namespace whiteice {
 namespace resonanz {
@@ -343,7 +345,8 @@ private:
 	const unsigned int MONTE_CARLO_SIZE = 1000; // number of samples used
 
 	long long programStarted; // 0 = program has not been started
-	SDLTheora* video = nullptr; // used to encode program into video
+        //SDLTheora* video = nullptr; // used to encode program into video
+        SDLAVCodec* video = nullptr; // used to encode program into video
 
 
 	std::mutex measure_program_mutex;

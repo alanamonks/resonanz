@@ -10,7 +10,20 @@
 
 #include <ogg/ogg.h>
 #include <math.h>
-#include <assert.h>
+
+extern "C"
+{
+
+#include <libavutil/avassert.h>
+#include <libavutil/channel_layout.h>
+#include <libavutil/opt.h>
+#include <libavutil/mathematics.h>
+#include <libavutil/timestamp.h>
+
+};
+
+//def av_err2str
+#define av_err2str2(errnum) av_make_error_string((char*)__builtin_alloca(AV_ERROR_MAX_STRING_SIZE), AV_ERROR_MAX_STRING_SIZE, errnum)
 
 
 #include <chrono>
@@ -34,6 +47,9 @@ SDLAVCodec::SDLAVCodec(float q) :
   
   running = false;
   encoder_thread = nullptr;
+  error_flag = false;
+  
+  //av_register_all();
 }
 
   
@@ -58,34 +74,29 @@ SDLAVCodec::~SDLAVCodec()
 
   if(running){
     encode_frame(nullptr ,true);
-    av_write_trailer(m_muxer);
+
+    uint8_t endcode[] = { 0, 0, 1, 0xb7 };
+
+    if(handle){
+      if (codec->id == AV_CODEC_ID_MPEG1VIDEO ||
+	  codec->id == AV_CODEC_ID_MPEG2VIDEO)
+	fwrite(endcode, 1, sizeof(endcode), handle);
+      
+      fclose(handle);
+    }
+    handle = NULL;
+    
+    avcodec_free_context(&av_ctx);
+    av_frame_free(&frame);
+    av_packet_free(&pkt);
+
+    av_ctx = NULL;
+    frame = NULL;
+    pkt = NULL;
   }
   
 }
 
-
-void SDLAVCodec::setupEncoder()
-{
-    const char* encoderName = "libx264";
-    
-    AVCodec* videoCodec = avcodec_find_encoder_by_name(encoderName);
-    m_encoder = avcodec_alloc_context3(videoCodec);
-    m_encoder->bit_rate = frameWidth * frameHeight * FPS * 2;
-    m_encoder->width = frameWidth;
-    m_encoder->height = frameHeight;
-    m_encoder->time_base = (AVRational){1, FPS};
-    m_encoder->framerate = (AVRational){FPS, 1};
-
-    m_encoder->gop_size = FPS;  // have at least 1 I-frame per second
-    m_encoder->max_b_frames = 1;
-    m_encoder->pix_fmt = AV_PIX_FMT_YUV420P;
-
-    assert(avcodec_open2(m_encoder, videoCodec, nullptr) == 0);  // <-- returns -22 (EINVAL) for hardware encoder
-
-    m_muxer->video_codec_id = videoCodec->id;
-    m_muxer->video_codec = videoCodec;
-}
-  
 
 // setups encoding structure
 bool SDLAVCodec::startEncoding(const std::string& filename,
@@ -102,28 +113,71 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   error_flag = false;
   
   frameHeight = height;
-  frameWidth = width; 
-  
-  if(avformat_alloc_output_context2(&m_muxer, nullptr, "matroska", filename.c_str()) != 0) return false;
-  if(m_muxer == NULL) return false;
-  
-  setupEncoder();
-  
-  m_avStream = avformat_new_stream(m_muxer, nullptr);
-  assert(m_avStream != nullptr);
-  m_avStream->id = m_muxer->nb_streams-1;
-  m_avStream->time_base = m_encoder->time_base;
-  
-  // Some formats want stream headers to be separate.
-  if(m_muxer->oformat->flags & AVFMT_GLOBALHEADER)
-    m_encoder->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-  
-  assert(avcodec_parameters_from_context(m_avStream->codecpar,
-					 m_encoder) == 0);
-  assert(avio_open(&m_muxer->pb,
-		   filename.c_str(), AVIO_FLAG_WRITE) == 0);
-  assert(avformat_write_header(m_muxer, nullptr) == 0);
+  frameWidth = width;
 
+  const char* codec_name = "libx264";
+  // const AVCodec *codec;
+  int ret;
+  
+  codec = avcodec_find_encoder_by_name(codec_name);
+  if (!codec) {
+    fprintf(stderr, "Codec '%s' not found\n", codec_name);
+    return false;
+  }
+ 
+  av_ctx = avcodec_alloc_context3(codec);
+  if (!av_ctx) {
+    fprintf(stderr, "Could not allocate video codec context\n");
+    return false;
+  }
+ 
+  /* put sample parameters */
+  av_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
+  /* resolution must be a multiple of two */
+  av_ctx->width = frameWidth;
+  av_ctx->height = frameHeight;
+  /* frames per second */
+  av_ctx->time_base = (AVRational){1, (int)FPS};
+  av_ctx->framerate = (AVRational){(int)FPS, 1};
+  
+    /* emit one intra frame every ten frames
+     * check frame pict_type before passing frame
+     * to encoder, if frame->pict_type is AV_PICTURE_TYPE_I
+     * then gop_size is ignored and the output of encoder
+     * will always be I frame irrespective to gop_size
+     */
+  av_ctx->gop_size = 10;
+  av_ctx->max_b_frames = 1;
+  av_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+ 
+  if (codec->id == AV_CODEC_ID_H264)
+    av_opt_set(av_ctx->priv_data, "preset", "slow", 0);
+ 
+  /* open it */
+  ret = avcodec_open2(av_ctx, codec, NULL);
+  if (ret < 0) {
+    fprintf(stderr, "Could not open codec: %s\n", av_err2str2(ret));
+    return false;
+  }
+  
+  handle = fopen(filename.c_str(), "wb");
+  if (!handle) {
+    fprintf(stderr, "Could not open %s\n", filename.c_str());
+    return false;
+  }
+
+  frame = av_frame_alloc();
+  if (!frame) {
+    fprintf(stderr, "Could not allocate video frame\n");
+    return false;
+  }
+  frame->format = av_ctx->pix_fmt;
+  frame->width  = av_ctx->width;
+  frame->height = av_ctx->height;
+
+  pkt = av_packet_alloc();
+  if (!pkt) return false;
+  
   
   try{
     latest_frame_encoded = -1;
@@ -140,110 +194,34 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   }
   
   return true;
-  
-	
-#if 0 
-	
-	th_info format;
-
-	th_info_init(&format);
-
-	frameHeight = ((height + 15)/16)*16;
-	frameWidth  = ((width + 15)/16)*16;
-
-	format.frame_width = frameWidth;
-	format.frame_height = frameHeight;
-	format.pic_width = width;
-	format.pic_height = height;
-	format.pic_x = 0;
-	format.pic_y = 0;
-	format.quality = (int)(63*quality);
-	format.target_bitrate = 0;
-	format.pixel_fmt = TH_PF_444;
-	format.colorspace = TH_CS_UNSPECIFIED;
-	format.fps_numerator = FPS; // frames per second!
-	format.fps_denominator = 1;
-
-	handle = th_encode_alloc(&format);
-
-	if(handle == NULL)
-		return false;
-
-	// sets encoding speed to the maximum
-	{
-		int splevel = 100;
-		th_encode_ctl(handle, TH_ENCCTL_GET_SPLEVEL_MAX, &splevel, sizeof(int));
-		int result = th_encode_ctl(handle, TH_ENCCTL_SET_SPLEVEL, &splevel, sizeof(int));
-
-		if(result == TH_EFAULT || result == TH_EINVAL || result == TH_EIMPL)
-			logging.warn("couldn't get theora to maximum encoding speed");
-	}
-
-	outputFile = fopen(filename.c_str(), "wb");
-	if(outputFile == NULL){
-		th_encode_free(handle);
-		return false;
-	}
-
-	if(ferror(outputFile)){
-		fclose(outputFile);
-		th_encode_free(handle);
-		return false;
-	}
-
-
-	try{
-		latest_frame_encoded = -1;
-		encoder_thread = new std::thread(&SDLAVCodec::encoder_loop, this);
-
-		if(encoder_thread == nullptr){
-			running = false;
-			fclose(outputFile);
-			th_encode_free(handle);
-			outputFile = NULL;
-			handle = nullptr;
-			return false;
-		}
-	}
-	catch(std::exception& e){
-		running = false;
-		fclose(outputFile);
-		th_encode_free(handle);
-		outputFile = NULL;
-		handle = nullptr;
-		return false;
-	}
-
-	return true;
-#endif
 }
 
 
 // inserts SDL_Surface picture frame into video at msecs
 // onwards since the start of the encoding (msecs = 0 is the first frame)
-bool SDLAVCodec::insertFrame(unsigned int msecs, SDL_Surface* surface)
+bool SDLAVCodec::insertFrame(unsigned long long msecs, SDL_Surface* surface)
 {
-	// very quick skipping of frames [without conversion] when picture for the current frame has been already inserted
-	const int frame = msecs/MSECS_PER_FRAME;
-	if(frame <= latest_frame_encoded)
-		return false;
-
-	if(running){
-		if(__insert_frame(msecs, surface, false)){
-			latest_frame_encoded = frame;
-			return true;
-		}
+  // very quick skipping of frames [without conversion] when picture for the current frame has been already inserted
+  const unsigned long long frame = msecs/MSECS_PER_FRAME;
+  if((signed)frame <= latest_frame_encoded)
+    return false;
+  
+  if(running){
+    if(__insert_frame(msecs, surface, false)){
+      latest_frame_encoded = frame;
+      return true;
+    }
 		else{
-			return false;
+		  return false;
 		}
-	}
-	else{
-		return false;
-	}
+  }
+  else{
+    return false;
+  }
 }
 
 // inserts last frame and stops encoding (and saves and closes file when encoding has stopped)
-bool SDLAVCodec::stopEncoding(unsigned int msecs, SDL_Surface* surface)
+bool SDLAVCodec::stopEncoding(unsigned long long msecs, SDL_Surface* surface)
 {
   if(running){
     if(__insert_frame(msecs, surface, true) == false){
@@ -267,7 +245,25 @@ bool SDLAVCodec::stopEncoding(unsigned int msecs, SDL_Surface* surface)
   encoder_thread = nullptr;
 
   encode_frame(nullptr, true);
-  av_write_trailer(m_muxer);
+  
+  uint8_t endcode[] = { 0, 0, 1, 0xb7 };
+  
+  if(handle){
+    if (codec->id == AV_CODEC_ID_MPEG1VIDEO ||
+	codec->id == AV_CODEC_ID_MPEG2VIDEO)
+      fwrite(endcode, 1, sizeof(endcode), handle);
+    
+    fclose(handle);
+  }
+  handle = NULL;
+  
+  avcodec_free_context(&av_ctx);
+  av_frame_free(&frame);
+  av_packet_free(&pkt);
+
+  av_ctx = NULL;
+  frame = NULL;
+  pkt = NULL;
   
   running = false; // it is safe to do because we have start lock?
   
@@ -275,7 +271,7 @@ bool SDLAVCodec::stopEncoding(unsigned int msecs, SDL_Surface* surface)
 }
 
 
-bool SDLAVCodec::__insert_frame(unsigned int msecs, SDL_Surface* surface, bool last)
+bool SDLAVCodec::__insert_frame(unsigned long long msecs, SDL_Surface* surface, bool last)
 {
   // converts SDL into YUV format [each plane separatedly and have full width and height]
   // before sending it to the encoder thread
@@ -297,18 +293,25 @@ bool SDLAVCodec::__insert_frame(unsigned int msecs, SDL_Surface* surface, bool l
   // assumes yuv pixels format is full plane for each component:
   // Y plane (one byte per pixel), U plane (one byte per pixel), V plane (one byte per pixel)
   
-  SDLAVCodec::frame* f = new SDLAVCodec::frame;
+  SDLAVCodec::videoframe* f = new SDLAVCodec::videoframe;
   
   f->msecs = msecs;
   
   f->frame = av_frame_alloc();
   
-  f->frame->format = AV_PIX_FMT_YUV420P;
+  f->frame->format = av_ctx->pix_fmt;
   f->frame->width = frameWidth;
   f->frame->height = frameHeight;
 
-  if(av_frame_get_buffer(f->frame, 0) != 0) printf("ERROR\n");
-  if(av_frame_make_writable(f->frame) != 0) printf("ERROR\n");
+  if(av_frame_get_buffer(f->frame, 0) != 0){
+    error_flag = true;
+    printf("ERROR\n");
+  }
+  
+  if(av_frame_make_writable(f->frame) != 0){
+    error_flag = true;
+    printf("ERROR\n");
+  }
 
   printf("FRAMEDATA: %llx %llx %llx %llx\n",
 	 (unsigned long long)(f->frame),
@@ -428,7 +431,7 @@ void SDLAVCodec::encoder_loop()
   logging.info("sdl-theora: theora video headers written..");
   
   // keeps encoding incoming frames
-  SDLAVCodec::frame* f = nullptr;
+  SDLAVCodec::videoframe* f = nullptr;
   int latest_frame_generated = -1;
   prev = nullptr;
   
@@ -458,7 +461,7 @@ void SDLAVCodec::encoder_loop()
     }
     
     // converts milliseconds field to frame number
-    int f_frame = (f->msecs / MSECS_PER_FRAME);
+    long long f_frame = (f->msecs / MSECS_PER_FRAME);
     
     // if there has been no frames between:
     // last_frame_generated .. f_frame
@@ -470,12 +473,13 @@ void SDLAVCodec::encoder_loop()
       
       logging.info("sdl-theora: writing initial f-frames");
 
-      for(int i=latest_frame_generated;i<f_frame;i++){
+      for(long long i = latest_frame_generated;i<f_frame;i++){
+	f->frame->pts = i; 
 	if(encode_frame(f->frame) == false)
 	  logging.error("sdl-theora: encoding frame failed");
 	else{
 	  char buffer[80];
-	  snprintf(buffer, 80, "sdl-theora: encoding frame: %d/%d", i, FPS);
+	  snprintf(buffer, 80, "sdl-theora: encoding frame: %lld/%lld", i, FPS);
 	  logging.info(buffer);
 	}
 	
@@ -486,12 +490,13 @@ void SDLAVCodec::encoder_loop()
       
       logging.info("sdl-theora: writing prev-frames");
       
-      for(int i=(latest_frame_generated+1);i<f_frame;i++){
+      for(long long i=(latest_frame_generated+1);i<f_frame;i++){
+	prev->frame->pts = i; 
 	if(encode_frame(prev->frame) == false)
 	  logging.error("sdl-theora: encoding frame failed");
 	else{
 	  char buffer[80];
-	  snprintf(buffer, 80, "sdl-theora: encoding frame: %d/%d", i, FPS);
+	  snprintf(buffer, 80, "sdl-theora: encoding frame: %lld/%lld", i, FPS);
 	  logging.info(buffer);
 	}
 	
@@ -503,12 +508,14 @@ void SDLAVCodec::encoder_loop()
     if(latest_frame_generated < f_frame || f->last)
     {
       logging.info("sdl-theora: writing current frame");
+
+      f->frame->pts = f_frame;
       
       if(encode_frame(f->frame, f->last) == false)
 	logging.error("sdl-theora: encoding frame failed");
       else{
 	char buffer[80];
-	snprintf(buffer, 80, "sdl-theora: encoding frame: %d/%d", f_frame, FPS);
+	snprintf(buffer, 80, "sdl-theora: encoding frame: %lld/%lld", f_frame, FPS);
 	logging.info(buffer);
       }
       
@@ -567,25 +574,24 @@ void SDLAVCodec::encoder_loop()
 bool SDLAVCodec::encode_frame(AVFrame* buffer,
 			      bool last)
 {
-  if(avcodec_send_frame(m_encoder, buffer) != 0) return false;
+  if(avcodec_send_frame(av_ctx, buffer) < 0) return false;
   
   AVPacket packet;
   av_init_packet(&packet);
   int ret = 0;
   while(ret >= 0) {
-    ret = avcodec_receive_packet(m_encoder, &packet);
+    ret = avcodec_receive_packet(av_ctx, &packet);
     if(ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
       return true;  // nothing to write
     }
     if(ret < 0) return false;
     // assert(ret >= 0);
+
+    packet.pts = buffer->pts;
+    packet.dts = buffer->pts;
     
-    av_packet_rescale_ts(&packet,
-			 m_encoder->time_base,
-			 m_avStream->time_base);
+    fwrite(packet.data, 1, packet.size, handle);
     
-    packet.stream_index = m_avStream->index;
-    av_interleaved_write_frame(m_muxer, &packet);
     av_packet_unref(&packet);
   }
 	  

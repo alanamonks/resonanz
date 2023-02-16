@@ -78,7 +78,7 @@ int main(int argc, char**argv)
   
   whiteice::resonanz::SDLAVCodec* codec = new whiteice::resonanz::SDLAVCodec(0.50);
   
-  if(codec->startEncoding("test.mkv", 100, 100) == false){
+  if(codec->startEncoding("test.mp4", 100, 100) == false){
     printf("CODEC INIT FAIL\n");
     return -1;
   }
