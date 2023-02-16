@@ -447,7 +447,9 @@ int main(int argc, char** argv)
 	millisleep(3000);
 	
 
-	while(!engine.keypress() && engine.isBusy()){
+	while((!engine.keypress() && engine.isBusy()) ||
+	      engine.workActive())
+	{
 	  std::cout << "Resonanz status: " << engine.getEngineStatus() << std::endl;
 	  
 	  fflush(stdout);

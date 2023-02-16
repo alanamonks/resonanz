@@ -5244,7 +5244,10 @@ void ResonanzEngine::engine_pollEvents()
     // currently ignores all incoming events
     // (should handle window close event somehow)
     
-    if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE){
+    if(event.type == SDL_KEYDOWN &&
+      ( event.key.keysym.sym == SDLK_ESCAPE ||
+	event.key.keysym.sym == SDLK_RETURN ) )
+    {
       std::lock_guard<std::mutex> lock(keypress_mutex);
       keypressed = true;
     }

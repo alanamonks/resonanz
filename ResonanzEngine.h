@@ -126,6 +126,16 @@ public:
 
 	bool keypress(); // detects keypress from GUI
 
+  
+        bool workActive() const {
+	  // returns true if there is active work going on and cannot stop..
+	  if(video)
+	    if(video->busy())
+	      return true;
+	  
+	  return false;
+	}
+
 	// measured program functions
 	bool invalidateMeasuredProgram(); // invalidates currently measured program
 	bool getMeasuredProgram(std::vector< std::vector<float> >& program);

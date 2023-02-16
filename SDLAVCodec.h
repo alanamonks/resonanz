@@ -26,6 +26,8 @@ extern "C" {
 #include <thread>
 #include <mutex>
 
+#include <dinrhiw.h>
+
 
 namespace whiteice {
   namespace resonanz {
@@ -54,6 +56,20 @@ namespace whiteice {
       // stops encoding with a final frame [nullptr means black empty frame]
       bool stopEncoding(unsigned long long msecs,
 			SDL_Surface* surface = nullptr);
+
+      bool busy() const {
+	std::lock_guard<std::mutex> lock1(incoming_mutex);
+	bool r = (bool)(((this->incoming).size()) > 0);
+	
+#if 0
+	if(r)
+	  whiteice::logging.info("SDLAVCodec::busy() = true");
+	else
+	  whiteice::logging.info("SDLAVCodec::busy() = false");
+#endif
+
+	return r;
+      }
       
       // error was detected during encoding: restart encoding to try again
       bool error() const { return error_flag; }
@@ -78,11 +94,11 @@ namespace whiteice {
       const long long MSECS_PER_FRAME;
       long long latest_frame_encoded;
       
-      std::mutex incoming_mutex;
+      mutable std::mutex incoming_mutex;
       
       SDLAVCodec::videoframe* prev;
       
-      const unsigned int MAX_QUEUE_LENGTH = 100*FPS; // maximum of 1 minute (60 seconds) of frames..
+      const unsigned int MAX_QUEUE_LENGTH = 10000*FPS; // maximum of 1 minute (60 seconds) of frames..
       std::list<SDLAVCodec::videoframe*> incoming; // incoming frames for the encoder (loop)
       
       bool running;

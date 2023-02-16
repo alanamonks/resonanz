@@ -38,7 +38,7 @@ namespace resonanz {
   // FPS was 25, now 100
 
 SDLAVCodec::SDLAVCodec(float q) :
-  FPS(100), MSECS_PER_FRAME(1000/100) // currently saves at 25 frames per second, now 100
+  FPS(30), MSECS_PER_FRAME(1000/30) // currently saves at 25 frames per second, now 100, now 30
 {
   if(q >= 0.0f && q <= 1.0f)
     quality = q;
@@ -73,7 +73,7 @@ SDLAVCodec::~SDLAVCodec()
   }
 
   if(running){
-    encode_frame(nullptr ,true);
+    // encode_frame(nullptr ,true);
 
     uint8_t endcode[] = { 0, 0, 1, 0xb7 };
 
@@ -221,7 +221,8 @@ bool SDLAVCodec::insertFrame(unsigned long long msecs, SDL_Surface* surface)
 }
 
 // inserts last frame and stops encoding (and saves and closes file when encoding has stopped)
-bool SDLAVCodec::stopEncoding(unsigned long long msecs, SDL_Surface* surface)
+bool SDLAVCodec::stopEncoding(unsigned long long msecs,
+			      SDL_Surface* surface)
 {
   if(running){
     if(__insert_frame(msecs, surface, true) == false){
@@ -230,10 +231,14 @@ bool SDLAVCodec::stopEncoding(unsigned long long msecs, SDL_Surface* surface)
     }
   }
   else{
+    logging.fatal("sdl-theora: not running and calling stopEncoding()");
     return false;
   }
 
   std::lock_guard<std::mutex> lock(start_lock);
+
+  while(this->busy()) // waits for encoding to finish..
+    std::this_thread::sleep_for(std::chrono::milliseconds(MSECS_PER_FRAME/10)); 
 
   running = false;
   
@@ -244,7 +249,7 @@ bool SDLAVCodec::stopEncoding(unsigned long long msecs, SDL_Surface* surface)
   }
   encoder_thread = nullptr;
 
-  encode_frame(nullptr, true);
+  // encode_frame(nullptr, true);
   
   uint8_t endcode[] = { 0, 0, 1, 0xb7 };
   
@@ -303,6 +308,9 @@ bool SDLAVCodec::__insert_frame(unsigned long long msecs, SDL_Surface* surface, 
   f->frame->width = frameWidth;
   f->frame->height = frameHeight;
 
+  const long long f_frame = (f->msecs / MSECS_PER_FRAME);
+  f->frame->pts = f_frame;
+
   if(av_frame_get_buffer(f->frame, 0) != 0){
     error_flag = true;
     printf("ERROR\n");
@@ -313,15 +321,16 @@ bool SDLAVCodec::__insert_frame(unsigned long long msecs, SDL_Surface* surface, 
     printf("ERROR\n");
   }
 
-  printf("FRAMEDATA: %llx %llx %llx %llx\n",
+  printf("FRAMEDATA: %llx %llx %llx %llx PTS: %ld\n",
 	 (unsigned long long)(f->frame),
 	 (unsigned long long)(f->frame->data[0]),
 	 (unsigned long long)(f->frame->linesize[0]),
-	 (unsigned long long)(f));
+	 (unsigned long long)(f),
+	 f->frame->pts);
   
   
   // perfect opportunity for parallelization: pixel conversions are independet from each other
-  // #pragma omp parallel for
+#pragma omp parallel for
   for(int y=0; y<f->frame->height; y++) {
     for(int x=0; x<f->frame->width; x++) {
       
@@ -354,7 +363,8 @@ bool SDLAVCodec::__insert_frame(unsigned long long msecs, SDL_Surface* surface, 
     }
   }
 
-  
+
+#pragma omp parallel for
   for(int y=0; y<f->frame->height; y++) {
     for(int x=0; x<f->frame->width; x++) {
       
@@ -453,8 +463,8 @@ void SDLAVCodec::encoder_loop()
       else{
 	incoming_mutex.unlock();
 	
-	// sleep here ~10ms [time between frames 40ms]
-	std::this_thread::sleep_for(std::chrono::milliseconds(MSECS_PER_FRAME/4));
+	// sleep here ~10ms [time between frames 1ms]
+	std::this_thread::sleep_for(std::chrono::milliseconds(MSECS_PER_FRAME/10));
 	
 	continue;
       }
@@ -484,23 +494,27 @@ void SDLAVCodec::encoder_loop()
 	}
 	
       }
+
+      latest_frame_generated = f_frame;
     }
     else if((latest_frame_generated+1) < f_frame){
       // writes prev frames
       
       logging.info("sdl-theora: writing prev-frames");
       
-      for(long long i=(latest_frame_generated+1);i<f_frame;i++){
+      for(long long i=(latest_frame_generated+1);i<(f_frame-1);i++){
 	prev->frame->pts = i; 
 	if(encode_frame(prev->frame) == false)
-	  logging.error("sdl-theora: encoding frame failed");
+	  logging.error("sdl-theora: encoding prev-frame failed");
 	else{
 	  char buffer[80];
-	  snprintf(buffer, 80, "sdl-theora: encoding frame: %lld/%lld", i, FPS);
+	  snprintf(buffer, 80, "sdl-theora: encoding prev-frame: %lld/%lld", i, FPS);
 	  logging.info(buffer);
 	}
 	
       }
+
+      latest_frame_generated = f_frame - 1;
     }
     
     // writes f-frame once (f_frame) if it is a new frame for this msec
