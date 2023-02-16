@@ -101,12 +101,11 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   
   error_flag = false;
   
-  
   frameHeight = height;
   frameWidth = width; 
   
-  assert(avformat_alloc_output_context2(&m_muxer, nullptr, "matroska", nullptr) == 0);
-  assert(m_muxer != nullptr);
+  if(avformat_alloc_output_context2(&m_muxer, nullptr, "matroska", filename.c_str()) != 0) return false;
+  if(m_muxer == NULL) return false;
   
   setupEncoder();
   
@@ -307,13 +306,19 @@ bool SDLAVCodec::__insert_frame(unsigned int msecs, SDL_Surface* surface, bool l
   f->frame->format = AV_PIX_FMT_YUV420P;
   f->frame->width = frameWidth;
   f->frame->height = frameHeight;
-  
-  assert(av_frame_get_buffer(frame, 0) == 0);
-  assert(av_frame_make_writable(frame) == 0);
+
+  if(av_frame_get_buffer(f->frame, 0) != 0) printf("ERROR\n");
+  if(av_frame_make_writable(f->frame) != 0) printf("ERROR\n");
+
+  printf("FRAMEDATA: %llx %llx %llx %llx\n",
+	 (unsigned long long)(f->frame),
+	 (unsigned long long)(f->frame->data[0]),
+	 (unsigned long long)(f->frame->linesize[0]),
+	 (unsigned long long)(f));
   
   
   // perfect opportunity for parallelization: pixel conversions are independet from each other
-#pragma omp parallel for
+  // #pragma omp parallel for
   for(int y=0; y<f->frame->height; y++) {
     for(int x=0; x<f->frame->width; x++) {
       
@@ -339,9 +344,46 @@ bool SDLAVCodec::__insert_frame(unsigned int msecs, SDL_Surface* surface, bool l
       
       f->frame->data[0][y * f->frame->linesize[0] + x] =
 	(unsigned char)round(Y);  // Y
-      f->frame->data[1][y * f->frame->linesize[1] + x] =
+      //f->frame->data[1][y * f->frame->linesize[1] + x] =
+      //(unsigned char)round(Cb);  // Cb
+      //f->frame->data[2][y * f->frame->linesize[2] + x] =
+      //(unsigned char)round(Cr);  // Cr
+    }
+  }
+
+  
+  for(int y=0; y<f->frame->height; y++) {
+    for(int x=0; x<f->frame->width; x++) {
+      
+      const unsigned int index = x + frameWidth*y;
+      unsigned int* source = (unsigned int*)(frame->pixels);
+      
+      const unsigned int r = (source[index] & 0x00FF0000)>>16;
+      const unsigned int g = (source[index] & 0x0000FF00)>> 8;
+      const unsigned int b = (source[index] & 0x000000FF)>> 0;
+      
+      auto Y  =  (0.257*r) + (0.504*g) + (0.098*b) + 16.0;
+      auto Cr =  (0.439*r) - (0.368*g) - (0.071*b) + 128.0;
+      auto Cb = -(0.148*r) - (0.291*g) + (0.439*b) + 128.0;
+      
+      if(Y < 0.0) Y = 0.0;
+      else if(Y > 255.0) Y = 255.0;
+      
+      if(Cr < 0.0) Cr = 0.0;
+      else if(Cr > 255.0) Cr = 255.0;
+      
+      if(Cb < 0.0) Cb = 0.0;
+      else if(Cb > 255.0) Cb = 255.0;
+      
+      //f->frame->data[0][y * f->frame->linesize[0] + x] =
+      //(unsigned char)round(Y);  // Y
+
+      int xx = x/2;
+      int yy = y/2;
+      
+      f->frame->data[1][yy * f->frame->linesize[1] + xx] =
 	(unsigned char)round(Cb);  // Cb
-      f->frame->data[2][y * f->frame->linesize[2] + x] =
+      f->frame->data[2][yy * f->frame->linesize[2] + xx] =
 	(unsigned char)round(Cr);  // Cr
     }
   }
@@ -525,7 +567,7 @@ void SDLAVCodec::encoder_loop()
 bool SDLAVCodec::encode_frame(AVFrame* buffer,
 			      bool last)
 {
-  assert(avcodec_send_frame(m_encoder, buffer) == 0);
+  if(avcodec_send_frame(m_encoder, buffer) != 0) return false;
   
   AVPacket packet;
   av_init_packet(&packet);
@@ -535,7 +577,8 @@ bool SDLAVCodec::encode_frame(AVFrame* buffer,
     if(ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
       return true;  // nothing to write
     }
-    assert(ret >= 0);
+    if(ret < 0) return false;
+    // assert(ret >= 0);
     
     av_packet_rescale_ts(&packet,
 			 m_encoder->time_base,

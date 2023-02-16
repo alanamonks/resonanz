@@ -12,6 +12,7 @@
 #include <dinrhiw.h>
 
 #include "SDLTheora.h"
+#include "SDLAVCodec.h"
 
 
 #include <chrono>
@@ -73,8 +74,14 @@ int main(int argc, char**argv)
 
   // TESTS SDL THEORE CODEC
   
-  whiteice::resonanz::SDLTheora* codec = new whiteice::resonanz::SDLTheora(0.50);
-  if(codec->startEncoding("test.ogv", 100, 100) == false) printf("CODEC INIT FAIL\n");
+  //whiteice::resonanz::SDLTheora* codec = new whiteice::resonanz::SDLTheora(0.50);
+  
+  whiteice::resonanz::SDLAVCodec* codec = new whiteice::resonanz::SDLAVCodec(0.50);
+  
+  if(codec->startEncoding("test.mkv", 100, 100) == false){
+    printf("CODEC INIT FAIL\n");
+    return -1;
+  }
 
   auto t1 = std::chrono::system_clock::now().time_since_epoch();
   auto ms_start = std::chrono::duration_cast<std::chrono::milliseconds>(t1).count();

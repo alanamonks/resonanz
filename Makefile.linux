@@ -51,7 +51,7 @@ MAXIMPACT_TARGET=maximpact
 SOUND_LIBS=`pkg-config sdl2 --libs` `pkg-config SDL2_image --libs` `pkg-config SDL2_ttf --libs` `pkg-config dinrhiw --libs`
 
 SOUND_TEST_TARGET=fmsound
-SOUND_TEST_OBJECTS=sound_test.o SDLSoundSynthesis.o FMSoundSynthesis.o SDLMicrophoneListener.o SoundSynthesis.o hsv.o ts_measure.o
+SOUND_TEST_OBJECTS=sound_test.o SDLSoundSynthesis.o FMSoundSynthesis.o SDLMicrophoneListener.o SoundSynthesis.o hsv.o ts_measure.o SDLAVCodec.o
 # pictureAutoencoder.o
 
 # Adding these to SOUND leads to cygheap read copy failed..
@@ -90,7 +90,7 @@ dummy: jni/dummy.o
 
 
 sound: $(SOUND_TEST_OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(SOUND_TEST_TARGET) $(SOUND_TEST_OBJECTS) $(SOUND_LIBS)
+	$(CXX) $(CXXFLAGS) -o $(SOUND_TEST_TARGET) $(SOUND_TEST_OBJECTS) $(SOUND_LIBS) $(LIBS)
 
 spectral_test: $(SPECTRAL_TEST_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(SPECTRAL_TEST_TARGET) $(SPECTRAL_TEST_OBJECTS) $(LIBS)
