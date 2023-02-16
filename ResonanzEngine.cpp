@@ -134,6 +134,7 @@ ResonanzEngine::ResonanzEngine()
 	
   
   thread_initialized = false;
+  keypressed = false;
   
   // starts updater thread thread
   workerThread = new std::thread(&ResonanzEngine::engine_loop, this);
@@ -201,6 +202,26 @@ ResonanzEngine::~ResonanzEngine()
   if(nnsynth){
     delete nnsynth;
     nnsynth = nullptr;
+  }
+
+  if(video){
+    delete video;
+    video = nullptr;
+  }
+
+  if(mic){
+    delete mic;
+    mic = nullptr;
+  }
+
+  if(synth){
+    delete synth;
+    synth = nullptr;
+  }
+
+  if(incomingCommand){
+    delete incomingCommand;
+    incomingCommand = nullptr;
   }
   
   engine_setStatus("resonanz-engine: halted");
@@ -1997,6 +2018,7 @@ void ResonanzEngine::engine_loop()
     }
     
     engine_pollEvents();
+
     
     if(keypress()){
       if(currentCommand.command != ResonanzCommand::CMD_DO_NOTHING &&
@@ -2006,6 +2028,7 @@ void ResonanzEngine::engine_loop()
 	  cmdStopCommand();
 	}
     }
+    
     
     // monitors current eeg values and logs them into log file
     {
@@ -5025,7 +5048,8 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
   }
 
   logging.info("engine_showScreen(): picture shown.");
-  
+
+#if 0
   ///////////////////////////////////////////////////////////////////////
   // displays random curve (5 random points) [eye candy (for now)]
   
@@ -5140,6 +5164,8 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
     }
 
   logging.info("engine_showScreen(): curve done.");
+
+#endif
   
   ///////////////////////////////////////////////////////////////////////
   // displays a text
@@ -5245,8 +5271,9 @@ void ResonanzEngine::engine_pollEvents()
     // (should handle window close event somehow)
     
     if(event.type == SDL_KEYDOWN &&
-      ( event.key.keysym.sym == SDLK_ESCAPE ||
-	event.key.keysym.sym == SDLK_RETURN ) )
+       (event.key.keysym.sym == SDLK_ESCAPE ||
+	event.key.keysym.sym == SDLK_RETURN)
+       )
     {
       std::lock_guard<std::mutex> lock(keypress_mutex);
       keypressed = true;
@@ -5534,31 +5561,25 @@ bool ResonanzEngine::measureColor(SDL_Surface* image, SDL_Color& averageColor)
   
   // SDL_Surface* im = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
   SDL_Surface* im = image; // skip surface conversion/copy
-  
-  // if(im == 0) return false;
+
+  if(im == 0) return false;
   
   unsigned int* buffer = (unsigned int*)im->pixels;
   
   // instead of calculating value for the whole image, we just calculate sample from 1000 pixels
   
-  for(unsigned int s=0;s<1000;s++){
-    const int x = rand() % im->w;
-    const int y = rand() % im->h;
+  for(unsigned int s=0;s<100;s++){
+    int x = 0, y = 0;
     
-    int rr = (buffer[x + y*(image->pitch/4)] & 0xFF0000) >> 16;
-    int gg = (buffer[x + y*(image->pitch/4)] & 0x00FF00) >> 8;
-    int bb = (buffer[x + y*(image->pitch/4)] & 0x0000FF) >> 0;
-    
-    r += rr;
-    g += gg;
-    b += bb;
-    
-    N++;
-  }
-  
-#if 0
-  for(int y=0;y<(im->h);y++){
-    for(int x=0;x<(im->w);x++){
+    if(im){
+      if(im->w)
+	x = rand() % im->w;
+
+      if(im->h)
+	y = rand() % im->h;
+    }
+
+    if(image && buffer){
       int rr = (buffer[x + y*(image->pitch/4)] & 0xFF0000) >> 16;
       int gg = (buffer[x + y*(image->pitch/4)] & 0x00FF00) >> 8;
       int bb = (buffer[x + y*(image->pitch/4)] & 0x0000FF) >> 0;
@@ -5566,11 +5587,10 @@ bool ResonanzEngine::measureColor(SDL_Surface* image, SDL_Color& averageColor)
       r += rr;
       g += gg;
       b += bb;
-      
-      N++;
     }
+    
+    N++;
   }
-#endif
   
   r /= N;
   g /= N;
@@ -5627,8 +5647,6 @@ bool ResonanzEngine::loadPictures(const std::string directory, std::vector<std::
   if(dp == 0) return false;
   
   while((ep = readdir(dp)) != NULL){
-    if(ep->d_name == NULL)
-      continue;
     
     std::string name = ep->d_name;
     

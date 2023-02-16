@@ -74,18 +74,6 @@ SDLAVCodec::~SDLAVCodec()
 
   if(running){
     // encode_frame(nullptr ,true);
-
-    uint8_t endcode[] = { 0, 0, 1, 0xb7 };
-
-    if(handle){
-      if (codec->id == AV_CODEC_ID_MPEG1VIDEO ||
-	  codec->id == AV_CODEC_ID_MPEG2VIDEO)
-	fwrite(endcode, 1, sizeof(endcode), handle);
-      
-      fclose(handle);
-    }
-    handle = NULL;
-    
     avcodec_free_context(&av_ctx);
     av_frame_free(&frame);
     av_packet_free(&pkt);
@@ -124,12 +112,25 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
     fprintf(stderr, "Codec '%s' not found\n", codec_name);
     return false;
   }
- 
+
+#if 0
+  avformat_alloc_output_context2(&fmt_ctx, NULL, NULL, filename.c_str());
+  if(fmt_ctx == NULL)
+    return false;
+  
+
+  stream = avformat_new_stream(fmt_ctx, NULL);
+  if(stream == NULL) return false;
+#endif
+
   av_ctx = avcodec_alloc_context3(codec);
   if (!av_ctx) {
     fprintf(stderr, "Could not allocate video codec context\n");
     return false;
   }
+
+  // stream->id = fmt_ctx->nb_streams - 1;
+  //stream->index = 0;
  
   /* put sample parameters */
   av_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
@@ -139,6 +140,8 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   /* frames per second */
   av_ctx->time_base = (AVRational){1, (int)FPS};
   av_ctx->framerate = (AVRational){(int)FPS, 1};
+
+  // stream->time_base = av_ctx->time_base;
   
     /* emit one intra frame every ten frames
      * check frame pict_type before passing frame
@@ -149,22 +152,47 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   av_ctx->gop_size = 10;
   av_ctx->max_b_frames = 1;
   av_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+
+#if 0
+  if (fmt_ctx->oformat->flags & AVFMT_GLOBALHEADER)
+    av_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+#endif
  
   if (codec->id == AV_CODEC_ID_H264)
     av_opt_set(av_ctx->priv_data, "preset", "slow", 0);
- 
+  
   /* open it */
   ret = avcodec_open2(av_ctx, codec, NULL);
   if (ret < 0) {
     fprintf(stderr, "Could not open codec: %s\n", av_err2str2(ret));
     return false;
   }
+
+#if 0
+  ret = avcodec_parameters_from_context(stream->codecpar, av_ctx);
+  if(ret < 0) return false;
+#endif
   
-  handle = fopen(filename.c_str(), "wb");
-  if (!handle) {
-    fprintf(stderr, "Could not open %s\n", filename.c_str());
+  // stream->time_base = av_ctx->time_base;
+
+  //printf("VIDEO FORMAT:\n");
+  //av_dump_format(fmt_ctx, 0, filename.c_str(), 1);
+
+#if 0
+  ret = avio_open(&fmt_ctx->pb, filename.c_str(), AVIO_FLAG_WRITE);
+  if(ret < 0) return false;
+  
+  /* init muxer, write output file header */
+  ret = avformat_write_header(fmt_ctx, NULL);
+  if (ret < 0) {
+    printf("Error occurred when opening output file\n");
     return false;
   }
+#endif
+  
+  
+  handle = fopen(filename.c_str(), "w");
+  
 
   frame = av_frame_alloc();
   if (!frame) {
@@ -250,7 +278,8 @@ bool SDLAVCodec::stopEncoding(unsigned long long msecs,
   encoder_thread = nullptr;
 
   // encode_frame(nullptr, true);
-  
+
+
   uint8_t endcode[] = { 0, 0, 1, 0xb7 };
   
   if(handle){
@@ -262,9 +291,13 @@ bool SDLAVCodec::stopEncoding(unsigned long long msecs,
   }
   handle = NULL;
   
+
+  // av_write_trailer(fmt_ctx);
+  
   avcodec_free_context(&av_ctx);
   av_frame_free(&frame);
   av_packet_free(&pkt);
+  //av_free(stream);
 
   av_ctx = NULL;
   frame = NULL;
@@ -604,7 +637,12 @@ bool SDLAVCodec::encode_frame(AVFrame* buffer,
     packet.pts = buffer->pts;
     packet.dts = buffer->pts;
     
+    
+    av_packet_rescale_ts(&packet, av_ctx->time_base, av_ctx->time_base);
+    //packet.stream_index = stream->index;
+
     fwrite(packet.data, 1, packet.size, handle);
+    // av_write_frame(fmt_ctx, &packet);
     
     av_packet_unref(&packet);
   }

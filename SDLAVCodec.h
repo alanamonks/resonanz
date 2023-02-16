@@ -61,13 +61,6 @@ namespace whiteice {
 	std::lock_guard<std::mutex> lock1(incoming_mutex);
 	bool r = (bool)(((this->incoming).size()) > 0);
 	
-#if 0
-	if(r)
-	  whiteice::logging.info("SDLAVCodec::busy() = true");
-	else
-	  whiteice::logging.info("SDLAVCodec::busy() = false");
-#endif
-
 	return r;
       }
       
@@ -78,7 +71,6 @@ namespace whiteice {
       bool __insert_frame(unsigned long long msecs, SDL_Surface* surface, bool last);
       
       struct videoframe {
-	//th_ycbcr_buffer buffer; // picture information
 	AVFrame* frame;
 	
 	// msecs since the start of the [encoded] video
@@ -117,8 +109,14 @@ namespace whiteice {
       std::thread* encoder_thread;
       FILE* handle;
 
+
+      AVFormatContext* fmt_ctx = nullptr;
+      AVStream* stream; 
+      
       AVCodec* codec = nullptr;
       AVCodecContext* av_ctx = nullptr;
+      
+      
       AVFrame *frame = nullptr;
       AVPacket *pkt = nullptr;
       
