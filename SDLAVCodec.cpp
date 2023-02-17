@@ -654,11 +654,14 @@ void SDLAVCodec::encoder_loop()
 bool SDLAVCodec::encode_frame(AVFrame* buffer,
 			      bool last)
 {
-  if(avcodec_send_frame(av_ctx, buffer) < 0) return false;
+  if(avcodec_send_frame(av_ctx, buffer) < 0)
+    return false;
   
   AVPacket packet;
   av_init_packet(&packet);
+  
   int ret = 0;
+  
   while(ret >= 0) {
     ret = avcodec_receive_packet(av_ctx, &packet);
     if(ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
@@ -682,7 +685,7 @@ bool SDLAVCodec::encode_frame(AVFrame* buffer,
     }
 #endif
 
-#if 0
+#if 1
     av_packet_rescale_ts(&packet,
 			 av_ctx->time_base, // your theoric timebase
 			 fmt_ctx->streams[packet.stream_index]->time_base); // the actual timebase
