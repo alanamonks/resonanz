@@ -113,7 +113,7 @@ namespace whiteice {
       AVFormatContext* fmt_ctx = nullptr;
       AVStream* stream; 
       
-      AVCodec* codec = nullptr;
+      const AVCodec* codec = nullptr;
       AVCodecContext* av_ctx = nullptr;
       
       

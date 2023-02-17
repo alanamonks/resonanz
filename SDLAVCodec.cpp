@@ -198,8 +198,8 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
 
   fmt_ctx->start_time = 0;
   fmt_ctx->video_codec = codec;
-  fmt_ctx->oformat->name = "mp4";
-  fmt_ctx->oformat->video_codec = codec->id; // AV_CODEC_ID_H264;
+  // fmt_ctx->oformat->name = "mp4";
+  // fmt_ctx->oformat->video_codec = codec->id; // AV_CODEC_ID_H264;
   fmt_ctx->video_codec_id = codec->id;
   fmt_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
   
