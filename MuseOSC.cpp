@@ -60,8 +60,10 @@ MuseOSC::MuseOSC(unsigned int portNum) :
 MuseOSC::~MuseOSC()
 {
   running = false;
-  if(worker_thread != nullptr)
+  if(worker_thread != nullptr){
     worker_thread->join();
+    delete worker_thread;
+  }
   
   worker_thread = nullptr;
 }

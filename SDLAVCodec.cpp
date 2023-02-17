@@ -511,13 +511,14 @@ void SDLAVCodec::encoder_loop()
   while(1)
   {
     {
-      char buffer[80];
-      snprintf(buffer, 80, "sdl-theora: incoming frame buffer size: %d", (int)incoming.size());
-      logging.info(buffer);
-    }
-    
-    {
       incoming_mutex.lock();
+
+      {
+	char buffer[80];
+	snprintf(buffer, 80, "sdl-theora: incoming frame buffer size: %d", (int)incoming.size());
+	logging.info(buffer);
+      }
+      
       if(incoming.size() > 0){ // has incoming picture data
 	f = incoming.front();
 	incoming.pop_front();
