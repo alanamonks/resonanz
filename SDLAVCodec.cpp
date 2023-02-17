@@ -35,10 +35,8 @@ extern "C"
 namespace whiteice {
 namespace resonanz {
 
-  // FPS was 25, now 100
-
 SDLAVCodec::SDLAVCodec(float q) :
-  FPS(30), MSECS_PER_FRAME(1000/30) // currently saves at 25 frames per second, now 100, now 30
+  FPS(100), MSECS_PER_FRAME(1000/100) // currently saves at 25 frames per second, now 100, now 30, now 60
 {
   if(q >= 0.0f && q <= 1.0f)
     quality = q;
@@ -113,14 +111,22 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
     return false;
   }
 
-#if 0
-  avformat_alloc_output_context2(&fmt_ctx, NULL, NULL, filename.c_str());
+#if 1
+  avformat_alloc_output_context2(&fmt_ctx,
+				 av_guess_format("mp4",
+						 filename.c_str(),
+						 "video/mp4"),
+				 NULL,
+				 filename.c_str());
   if(fmt_ctx == NULL)
     return false;
-  
+
 
   stream = avformat_new_stream(fmt_ctx, NULL);
   if(stream == NULL) return false;
+
+  printf("NUMBER OF STREAMS: %d\n", fmt_ctx->nb_streams);
+  
 #endif
 
   av_ctx = avcodec_alloc_context3(codec);
@@ -129,9 +135,9 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
     return false;
   }
 
-  // stream->id = fmt_ctx->nb_streams - 1;
+
   //stream->index = 0;
- 
+
   /* put sample parameters */
   av_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
   /* resolution must be a multiple of two */
@@ -153,13 +159,17 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   av_ctx->max_b_frames = 1;
   av_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
-#if 0
+#if 1
   if (fmt_ctx->oformat->flags & AVFMT_GLOBALHEADER)
     av_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 #endif
  
-  if (codec->id == AV_CODEC_ID_H264)
-    av_opt_set(av_ctx->priv_data, "preset", "slow", 0);
+  if (codec->id == AV_CODEC_ID_H264){
+    av_opt_set(av_ctx->priv_data, "preset", "ultrafast", 0); // "slow"
+    
+    // "quality of compression" (default: 23), 0 is lossless, 1 is high-quality, 32 is ok
+    av_opt_set(av_ctx->priv_data, "crf", "32", 0);
+  }
   
   /* open it */
   ret = avcodec_open2(av_ctx, codec, NULL);
@@ -168,17 +178,36 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
     return false;
   }
 
-#if 0
+#if 1
   ret = avcodec_parameters_from_context(stream->codecpar, av_ctx);
   if(ret < 0) return false;
 #endif
+
+  stream->start_time = 0;
+
+  stream->time_base = (AVRational){1, (int)FPS};
+  stream->avg_frame_rate = (AVRational){(int)FPS, 1};
+  stream->r_frame_rate = (AVRational){(int)FPS, 1};
   
-  // stream->time_base = av_ctx->time_base;
+  stream->id = fmt_ctx->nb_streams - 1;
+  
+  // stream->codec = av_ctx;
+  
+  printf("CODEC: %d %d\n",
+	 AV_CODEC_ID_H264, codec->id);
 
-  //printf("VIDEO FORMAT:\n");
-  //av_dump_format(fmt_ctx, 0, filename.c_str(), 1);
+  fmt_ctx->start_time = 0;
+  fmt_ctx->video_codec = codec;
+  fmt_ctx->oformat->name = "mp4";
+  fmt_ctx->oformat->video_codec = codec->id; // AV_CODEC_ID_H264;
+  fmt_ctx->video_codec_id = codec->id;
+  fmt_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
+  
 
-#if 0
+  printf("VIDEO FORMAT:\n");
+  av_dump_format(fmt_ctx, 0, filename.c_str(), 1);
+
+#if 1
   ret = avio_open(&fmt_ctx->pb, filename.c_str(), AVIO_FLAG_WRITE);
   if(ret < 0) return false;
   
@@ -190,8 +219,9 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   }
 #endif
   
-  
-  handle = fopen(filename.c_str(), "w");
+
+  handle = NULL;
+  // handle = fopen(filename.c_str(), "w");
   
 
   frame = av_frame_alloc();
@@ -292,12 +322,12 @@ bool SDLAVCodec::stopEncoding(unsigned long long msecs,
   handle = NULL;
   
 
-  // av_write_trailer(fmt_ctx);
+  av_write_trailer(fmt_ctx);
   
   avcodec_free_context(&av_ctx);
   av_frame_free(&frame);
   av_packet_free(&pkt);
-  //av_free(stream);
+  av_free(stream);
 
   av_ctx = NULL;
   frame = NULL;
@@ -517,7 +547,8 @@ void SDLAVCodec::encoder_loop()
       logging.info("sdl-theora: writing initial f-frames");
 
       for(long long i = latest_frame_generated;i<f_frame;i++){
-	f->frame->pts = i; 
+	f->frame->pts = i;
+	
 	if(encode_frame(f->frame) == false)
 	  logging.error("sdl-theora: encoding frame failed");
 	else{
@@ -536,7 +567,8 @@ void SDLAVCodec::encoder_loop()
       logging.info("sdl-theora: writing prev-frames");
       
       for(long long i=(latest_frame_generated+1);i<(f_frame-1);i++){
-	prev->frame->pts = i; 
+	prev->frame->pts = i;
+
 	if(encode_frame(prev->frame) == false)
 	  logging.error("sdl-theora: encoding prev-frame failed");
 	else{
@@ -634,15 +666,30 @@ bool SDLAVCodec::encode_frame(AVFrame* buffer,
     if(ret < 0) return false;
     // assert(ret >= 0);
 
+    // av_packet_rescale_ts(&packet, av_ctx->time_base, av_ctx->time_base);
+
+
+    // packet.stream_index = stream->id;
     packet.pts = buffer->pts;
     packet.dts = buffer->pts;
-    
-    
-    av_packet_rescale_ts(&packet, av_ctx->time_base, av_ctx->time_base);
-    //packet.stream_index = stream->index;
 
-    fwrite(packet.data, 1, packet.size, handle);
-    // av_write_frame(fmt_ctx, &packet);
+#if 0
+    printf("STREAMS:\n");
+    printf("PACKET STREAM: %d\n", packet.stream_index);
+    for(unsigned int i=0;i<fmt_ctx->nb_streams;i++){
+      printf("%d: %llx\n", i, (unsigned long long)fmt_ctx->streams[i]);
+    }
+#endif
+
+#if 0
+    av_packet_rescale_ts(&packet,
+			 av_ctx->time_base, // your theoric timebase
+			 fmt_ctx->streams[packet.stream_index]->time_base); // the actual timebase
+#endif
+    
+    
+    //fwrite(packet.data, 1, packet.size, handle);
+    av_write_frame(fmt_ctx, &packet);
     
     av_packet_unref(&packet);
   }
