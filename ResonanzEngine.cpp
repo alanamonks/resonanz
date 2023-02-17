@@ -5359,7 +5359,12 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
   
   if(audioEnabled){
     synth = new IsochronicSoundSynthesis(); // curretly just supports single synthesizer type
-    mic   = new SDLMicListener();   // records single input channel
+
+    // valgrind says mic listener creation causes BUG in memory handling..
+    // => DISABLED FOR NOW
+    // mic   = new SDLMicListener();   // records single input channel
+    mic = nullptr;
+
     synth->pause(); // no sounds
     
     logging.info("Created sound synthesizer and capture objects..");
