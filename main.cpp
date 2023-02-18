@@ -59,6 +59,7 @@ void print_usage()
   printf("--fullscreen     fullscreen mode instead of windowed mode\n");
   printf("--savevideo      save video to neurostim.ogv file\n");
   printf("--optimize-synth only optimize synth model when optimizing\n");
+  printf("--muse-port=     sets muse osc server port (localhost:<port-number>)\n");
   printf("-v               verbose mode\n");
   printf("\n");
   printf("This is alpha version. Report bugs to Tomas Ukkonen <nop@iki.fi>\n");
@@ -71,7 +72,7 @@ int main(int argc, char** argv)
 {
   srand(time(0));
 
-  printf("Resonanz engine v0.61\n");
+  printf("Resonanz engine v0.70\n");
   
   if(argc <= 1){
     print_usage();
@@ -106,6 +107,8 @@ int main(int argc, char** argv)
 	
 	std::string programFile;
 	std::vector<float> targets;
+	
+	std::string museServerPort = "4545";
 	
 	cmd.pictureDir = "pics";
 	cmd.keywordsFile = "keywords.txt";
@@ -189,6 +192,10 @@ int main(int argc, char** argv)
 	        char* p = &(argv[i][9]);
 		parse_float_vector(targets, p);
 	    }
+	    else if(strncmp(argv[i], "--muse-port=", 12) == 0){
+	        char* p = &(argv[i][12]);
+		if(strlen(p) > 0) museServerPort = p;
+	    }
 	    else if(strcmp(argv[i], "--optimize-synth") == 0){
 	      optimizeSynthOnly = true;
 	    }
@@ -222,7 +229,10 @@ int main(int argc, char** argv)
 	}
 
 	// starts resonanz engine
-	whiteice::resonanz::ResonanzEngine engine;	
+	whiteice::resonanz::ResonanzEngine engine;
+
+	engine.setParameter("muse-port", museServerPort);
+	
 
 	// sets engine parameters
 	{
@@ -407,10 +417,6 @@ int main(int argc, char** argv)
 	    printf("ERROR: cmdExecuteProgram() bad parameters.\n");
 	    fflush(stdout);
 	    return -1;
-	  }
-	  else{
-	    printf("DEBUG: cmdExecuteProgram() successful.\n");
-	    fflush(stdout);
 	  }
 	  
 	}

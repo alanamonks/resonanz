@@ -101,7 +101,9 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   frameHeight = height;
   frameWidth = width;
 
-  const char* codec_name = "libx264";
+  const char* codec_name = "mpeg4";
+  // const char* codec_name = "h264_mf";
+  //const char* codec_name = "libx264";
   // const AVCodec *codec;
   int ret;
   
@@ -125,7 +127,7 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   stream = avformat_new_stream(fmt_ctx, NULL);
   if(stream == NULL) return false;
 
-  printf("NUMBER OF STREAMS: %d\n", fmt_ctx->nb_streams);
+  //printf("NUMBER OF STREAMS: %d\n", fmt_ctx->nb_streams);
   
 #endif
 
@@ -155,6 +157,7 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
      * then gop_size is ignored and the output of encoder
      * will always be I frame irrespective to gop_size
      */
+  
   av_ctx->gop_size = 10;
   av_ctx->max_b_frames = 1;
   av_ctx->pix_fmt = AV_PIX_FMT_YUV420P;
@@ -164,7 +167,8 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
     av_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 #endif
  
-  if (codec->id == AV_CODEC_ID_H264){
+  //if (codec->id == AV_CODEC_ID_H264){
+  {
     av_opt_set(av_ctx->priv_data, "preset", "ultrafast", 0); // "slow"
     
     // "quality of compression" (default: 23), 0 is lossless, 1 is high-quality, 32 is ok
@@ -193,8 +197,8 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   
   // stream->codec = av_ctx;
   
-  printf("CODEC: %d %d\n",
-	 AV_CODEC_ID_H264, codec->id);
+  // printf("CODEC: %d %d\n", AV_CODEC_ID_H264, codec->id);
+	 
 
   fmt_ctx->start_time = 0;
   fmt_ctx->video_codec = codec;
@@ -204,7 +208,7 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
   fmt_ctx->bit_rate = frameWidth * frameHeight * FPS * 2;
   
 
-  printf("VIDEO FORMAT:\n");
+  // printf("VIDEO FORMAT:\n");
   av_dump_format(fmt_ctx, 0, filename.c_str(), 1);
 
 #if 1
@@ -384,12 +388,14 @@ bool SDLAVCodec::__insert_frame(unsigned long long msecs, SDL_Surface* surface, 
     printf("ERROR\n");
   }
 
+  /*
   printf("FRAMEDATA: %llx %llx %llx %llx PTS: %ld\n",
 	 (unsigned long long)(f->frame),
 	 (unsigned long long)(f->frame->data[0]),
 	 (unsigned long long)(f->frame->linesize[0]),
 	 (unsigned long long)(f),
 	 f->frame->pts);
+  */
   
   
   // perfect opportunity for parallelization: pixel conversions are independet from each other

@@ -284,6 +284,8 @@ private:
 	DataSource* eeg = nullptr;
 	std::mutex eeg_mutex;
 	int eegDeviceType = RE_EEG_NO_DEVICE;
+
+        unsigned int musePort = 4545; // parameters when creating MuseOSC device/class for localhost
 	
         bool engine_optimizeModels(unsigned int& currentHMMModel,
 				   unsigned int& currentPictureModel, 

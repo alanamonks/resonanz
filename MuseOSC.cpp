@@ -22,8 +22,8 @@ using namespace std::chrono;
 namespace whiteice {
 namespace resonanz {
 
-MuseOSC::MuseOSC(unsigned int portNum) : 
-		port(portNum)
+MuseOSC::MuseOSC(const unsigned int portNum) : 
+  port(portNum)
 {
   worker_thread = nullptr;
   running = false;

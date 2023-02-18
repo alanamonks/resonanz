@@ -30,7 +30,7 @@ namespace resonanz {
  */
 class MuseOSC: public DataSource {
 public:
-  MuseOSC(unsigned int port); // throw(std::runtime_error)
+  MuseOSC(const unsigned int port); // throw(std::runtime_error)
   virtual ~MuseOSC();
   
   /*

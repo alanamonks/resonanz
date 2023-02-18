@@ -1,0 +1,1100 @@
+INFO 0.00300 Logging system (re)started..
+INFO 0.00300 ResonanzEngine ctor starting
+INFO 0.00300 ResonanzEngine() ctor started
+INFO 0.00300 resonanz-engine: starting..
+INFO 0.01500 ResonanzEngine ctor finished
+INFO 0.01600 engine_loop() started
+INFO 0.01700 windows os: setting resonanz thread high priority
+INFO 0.01800 Starting SDL init (0)..
+INFO 0.01800 Starting SDL subsystem init (events, video, audio)..
+INFO 0.01800 Starting SDL_Init(EVENTS) done..
+INFO 0.02700 Starting SDL_Init(VIDEO) done..
+INFO 0.05200 resonanz-engine::setParameter: show-top-results = 2
+INFO 0.05300 resonanz-engine::setParameter: use-bayesian-nnetwork = true
+INFO 0.05300 resonanz-engine::setParameter: use-data-rbf = true
+INFO 0.05300 resonanz-engine::setParameter: use-bayesian-nnetwork = false
+INFO 0.05300 resonanz-engine::setParameter: use-data-rbf = false
+INFO 0.05300 resonanz-engine::setParameter: random-programs = true
+INFO 0.05300 resonanz-engine::setParameter: pca-preprocess = false
+INFO 0.05300 resonanz-engine::setParameter: fullscreen = false
+INFO 0.05300 resonanz-engine::setParameter: loop = false
+INFO 0.05300 resonanz-engine::setParameter: optimize-synth-only = false
+INFO 0.06700 Starting SDL_Init(AUDIO) done..
+INFO 0.06700 Starting SDL_GetCurrentDisplayMode() done..
+INFO 0.06700 Starting TTF_Init() done..
+INFO 0.06700 Starting IMG_Init() done..
+INFO 0.06700 Created sound synthesizer and capture objects..
+INFO 0.17800 Starting Mix_Init() done..
+INFO 0.23000 SDL initialization.. SUCCESSFUL
+INFO 0.23000 checking command
+INFO 0.23000 new engine command received
+INFO 0.30800 resonanz-engine: loading media files..
+INFO 0.30900 resonanz-engine: loading media files (0.0%)..
+INFO 0.31000 engine_showScreen(Loading.. 0/6 dim(3)) called
+INFO 0.38100 engine_showScreen(Loading.. 0/6 dim(3)) = 3. DONE
+INFO 0.38300 resonanz-engine: loading media files (16.7%)..
+INFO 0.38300 engine_showScreen(Loading.. 1/6 dim(3)) called
+INFO 0.45400 engine_showScreen(Loading.. 1/6 dim(3)) = 2. DONE
+INFO 0.45900 resonanz-engine: loading media files (33.3%)..
+INFO 0.45900 engine_showScreen(Loading.. 2/6 dim(3)) called
+INFO 0.53300 engine_showScreen(Loading.. 2/6 dim(3)) = 2. DONE
+INFO 0.53400 resonanz-engine: loading media files (50.0%)..
+INFO 0.53400 engine_showScreen(Loading.. 3/6 dim(3)) called
+INFO 0.61000 engine_showScreen(Loading.. 3/6 dim(3)) = 3. DONE
+INFO 0.61100 resonanz-engine: loading media files (66.7%)..
+INFO 0.61200 engine_showScreen(Loading.. 4/6 dim(3)) called
+INFO 0.68700 engine_showScreen(Loading.. 4/6 dim(3)) = 2. DONE
+INFO 0.68800 resonanz-engine: loading media files (83.3%)..
+INFO 0.68800 engine_showScreen(Loading.. 5/6 dim(3)) called
+INFO 0.75800 engine_showScreen(Loading.. 5/6 dim(3)) = 2. DONE
+INFO 0.76000 loading media files successful (12 keywords, 6 pics)
+INFO 0.76000 resonanz-engine: starting sound synthesis..
+INFO 0.78100 starting sound synthesis..OK
+INFO 0.78100 resonanz-engine: showing random examples..
+INFO 0.78100 engine_showScreen(good 0/6 dim(3)) called
+INFO 0.78500 engine_showScreen(good 0/6 dim(3)) = 2. DONE
+INFO 0.78600 eeg Interaxon Muse 0.91 0.60 0.28 0.23 0.09 0.89 0.80
+INFO 0.78600 checking command
+INFO 0.78600 resonanz-engine: showing random examples..
+INFO 0.78600 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 0.79200 engine_showScreen(beautiful 5/6 dim(3)) = 2. DONE
+INFO 0.79300 eeg Interaxon Muse 0.91 0.60 0.28 0.23 0.09 0.89 0.80
+INFO 0.82500 checking command
+INFO 0.82500 resonanz-engine: showing random examples..
+INFO 0.82600 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 0.83000 engine_showScreen(beautiful 5/6 dim(3)) = 3. DONE
+INFO 0.83100 eeg Interaxon Muse 0.91 0.60 0.28 0.23 0.09 0.89 0.80
+INFO 0.91900 checking command
+INFO 0.92000 resonanz-engine: showing random examples..
+INFO 0.92000 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 0.92500 engine_showScreen(beautiful 5/6 dim(3)) = 2. DONE
+INFO 0.92500 eeg Interaxon Muse 0.92 0.62 0.28 0.22 0.09 0.89 0.79
+INFO 1.02700 checking command
+INFO 1.02700 resonanz-engine: showing random examples..
+INFO 1.02800 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 1.03100 engine_showScreen(beautiful 5/6 dim(3)) = 3. DONE
+INFO 1.03200 eeg Interaxon Muse 0.93 0.63 0.27 0.22 0.09 0.90 0.78
+INFO 1.12100 checking command
+INFO 1.12100 resonanz-engine: showing random examples..
+INFO 1.12100 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 1.12500 engine_showScreen(beautiful 5/6 dim(3)) = 2. DONE
+INFO 1.12600 eeg Interaxon Muse 0.93 0.63 0.27 0.22 0.09 0.90 0.78
+INFO 1.23100 checking command
+INFO 1.23100 resonanz-engine: showing random examples..
+INFO 1.23100 engine_showScreen(beautiful 5/6 dim(3)) called
+INFO 1.23500 engine_showScreen(beautiful 5/6 dim(3)) = 3. DONE
+INFO 1.23600 eeg Interaxon Muse 0.93 0.63 0.28 0.22 0.09 0.90 0.78
+INFO 1.32400 checking command
+INFO 1.32400 resonanz-engine: showing random examples..
+INFO 1.32400 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.32800 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 1.32900 eeg Interaxon Muse 0.93 0.63 0.30 0.22 0.09 0.90 0.79
+INFO 1.42000 checking command
+INFO 1.42000 resonanz-engine: showing random examples..
+INFO 1.42000 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.42400 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 1.42400 eeg Interaxon Muse 0.93 0.63 0.30 0.22 0.09 0.90 0.79
+INFO 1.52700 checking command
+INFO 1.52700 resonanz-engine: showing random examples..
+INFO 1.52700 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.53000 engine_showScreen(together 3/6 dim(3)) = 3. DONE
+INFO 1.53000 eeg Interaxon Muse 0.94 0.63 0.32 0.22 0.09 0.90 0.79
+INFO 1.62400 checking command
+INFO 1.62400 resonanz-engine: showing random examples..
+INFO 1.62400 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.62700 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 1.62700 eeg Interaxon Muse 0.94 0.63 0.32 0.22 0.09 0.90 0.79
+INFO 1.73300 checking command
+INFO 1.73300 resonanz-engine: showing random examples..
+INFO 1.73300 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.73600 engine_showScreen(together 3/6 dim(3)) = 3. DONE
+INFO 1.73700 eeg Interaxon Muse 0.93 0.61 0.32 0.21 0.10 0.90 0.80
+INFO 1.82500 checking command
+INFO 1.82500 resonanz-engine: showing random examples..
+INFO 1.82500 engine_showScreen(together 3/6 dim(3)) called
+INFO 1.82800 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 1.82800 eeg Interaxon Muse 0.93 0.58 0.32 0.20 0.10 0.89 0.80
+INFO 1.91700 checking command
+INFO 1.91700 resonanz-engine: showing random examples..
+INFO 1.91700 engine_showScreen(dead 5/6 dim(3)) called
+INFO 1.92000 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 1.92100 eeg Interaxon Muse 0.93 0.58 0.32 0.20 0.10 0.89 0.80
+INFO 2.02900 checking command
+INFO 2.02900 resonanz-engine: showing random examples..
+INFO 2.02900 engine_showScreen(dead 5/6 dim(3)) called
+INFO 2.03100 engine_showScreen(dead 5/6 dim(3)) = 3. DONE
+INFO 2.03200 eeg Interaxon Muse 0.86 0.41 0.28 0.17 0.09 0.85 0.79
+INFO 2.12500 checking command
+INFO 2.12500 resonanz-engine: showing random examples..
+INFO 2.12500 engine_showScreen(dead 5/6 dim(3)) called
+INFO 2.12700 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 2.12800 eeg Interaxon Muse 0.77 0.30 0.25 0.16 0.09 0.81 0.80
+INFO 2.23300 checking command
+INFO 2.23300 resonanz-engine: showing random examples..
+INFO 2.23300 engine_showScreen(dead 5/6 dim(3)) called
+INFO 2.23500 engine_showScreen(dead 5/6 dim(3)) = 3. DONE
+INFO 2.23600 eeg Interaxon Muse 0.77 0.30 0.25 0.16 0.09 0.81 0.80
+INFO 2.32500 checking command
+INFO 2.32500 resonanz-engine: showing random examples..
+INFO 2.32500 engine_showScreen(dead 5/6 dim(3)) called
+INFO 2.32700 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 2.32700 eeg Interaxon Muse 0.40 0.14 0.23 0.15 0.09 0.71 0.83
+INFO 2.41700 checking command
+INFO 2.41700 resonanz-engine: showing random examples..
+INFO 2.41700 engine_showScreen(dead 5/6 dim(3)) called
+INFO 2.42000 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 2.42000 eeg Interaxon Muse 0.40 0.14 0.23 0.15 0.09 0.71 0.83
+INFO 2.53100 checking command
+INFO 2.53100 resonanz-engine: showing random examples..
+INFO 2.53100 engine_showScreen(good 3/6 dim(3)) called
+INFO 2.53400 engine_showScreen(good 3/6 dim(3)) = 3. DONE
+INFO 2.53500 eeg Interaxon Muse 0.25 0.12 0.23 0.14 0.09 0.66 0.85
+INFO 2.62200 checking command
+INFO 2.62200 resonanz-engine: showing random examples..
+INFO 2.62200 engine_showScreen(good 3/6 dim(3)) called
+INFO 2.62400 engine_showScreen(good 3/6 dim(3)) = 2. DONE
+INFO 2.62500 eeg Interaxon Muse 0.13 0.10 0.22 0.13 0.08 0.61 0.79
+INFO 2.73000 checking command
+INFO 2.73000 resonanz-engine: showing random examples..
+INFO 2.73000 engine_showScreen(good 3/6 dim(3)) called
+INFO 2.73200 engine_showScreen(good 3/6 dim(3)) = 2. DONE
+INFO 2.73300 eeg Interaxon Muse 0.10 0.10 0.22 0.12 0.08 0.58 0.71
+INFO 2.82700 checking command
+INFO 2.82700 resonanz-engine: showing random examples..
+INFO 2.82700 engine_showScreen(good 3/6 dim(3)) called
+INFO 2.82900 engine_showScreen(good 3/6 dim(3)) = 3. DONE
+INFO 2.82900 eeg Interaxon Muse 0.07 0.10 0.21 0.11 0.08 0.56 0.75
+INFO 2.92200 checking command
+INFO 2.92200 resonanz-engine: showing random examples..
+INFO 2.92200 engine_showScreen(good 3/6 dim(3)) called
+INFO 2.92400 engine_showScreen(good 3/6 dim(3)) = 2. DONE
+INFO 2.92400 eeg Interaxon Muse 0.04 0.10 0.21 0.10 0.08 0.53 0.80
+INFO 3.02600 checking command
+INFO 3.02600 resonanz-engine: showing random examples..
+INFO 3.02600 engine_showScreen(good 3/6 dim(3)) called
+INFO 3.02800 engine_showScreen(good 3/6 dim(3)) = 2. DONE
+INFO 3.02800 eeg Interaxon Muse 0.04 0.10 0.21 0.10 0.08 0.53 0.80
+INFO 3.12100 checking command
+INFO 3.12100 resonanz-engine: showing random examples..
+INFO 3.12100 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.12300 engine_showScreen(beautiful 2/6 dim(3)) = 3. DONE
+INFO 3.12300 eeg Interaxon Muse 0.02 0.09 0.20 0.10 0.07 0.47 0.75
+INFO 3.23100 checking command
+INFO 3.23100 resonanz-engine: showing random examples..
+INFO 3.23100 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.23300 engine_showScreen(beautiful 2/6 dim(3)) = 2. DONE
+INFO 3.23400 eeg Interaxon Muse 0.02 0.09 0.19 0.11 0.07 0.46 0.75
+INFO 3.32500 checking command
+INFO 3.32500 resonanz-engine: showing random examples..
+INFO 3.32500 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.32700 engine_showScreen(beautiful 2/6 dim(3)) = 3. DONE
+INFO 3.32800 eeg Interaxon Muse 0.02 0.09 0.19 0.11 0.07 0.46 0.75
+INFO 3.42100 checking command
+INFO 3.42100 resonanz-engine: showing random examples..
+INFO 3.42100 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.42400 engine_showScreen(beautiful 2/6 dim(3)) = 2. DONE
+INFO 3.42400 eeg Interaxon Muse 0.02 0.10 0.17 0.12 0.06 0.46 0.81
+INFO 3.52900 checking command
+INFO 3.52900 resonanz-engine: showing random examples..
+INFO 3.52900 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.53100 engine_showScreen(beautiful 2/6 dim(3)) = 3. DONE
+INFO 3.53200 eeg Interaxon Muse 0.02 0.10 0.17 0.12 0.06 0.46 0.81
+INFO 3.62200 checking command
+INFO 3.62200 resonanz-engine: showing random examples..
+INFO 3.62200 engine_showScreen(beautiful 2/6 dim(3)) called
+INFO 3.62400 engine_showScreen(beautiful 2/6 dim(3)) = 2. DONE
+INFO 3.62500 eeg Interaxon Muse 0.02 0.12 0.16 0.13 0.06 0.48 0.87
+INFO 3.71800 checking command
+INFO 3.71800 resonanz-engine: showing random examples..
+INFO 3.71800 engine_showScreen(success 2/6 dim(3)) called
+INFO 3.72200 engine_showScreen(success 2/6 dim(3)) = 2. DONE
+INFO 3.72200 eeg Interaxon Muse 0.02 0.14 0.14 0.14 0.06 0.49 0.89
+INFO 3.82700 checking command
+INFO 3.82700 resonanz-engine: showing random examples..
+INFO 3.82700 engine_showScreen(success 2/6 dim(3)) called
+INFO 3.83000 engine_showScreen(success 2/6 dim(3)) = 3. DONE
+INFO 3.83000 eeg Interaxon Muse 0.02 0.14 0.14 0.14 0.06 0.49 0.89
+INFO 3.92000 checking command
+INFO 3.92000 resonanz-engine: showing random examples..
+INFO 3.92000 engine_showScreen(success 2/6 dim(3)) called
+INFO 3.92300 engine_showScreen(success 2/6 dim(3)) = 2. DONE
+INFO 3.92300 eeg Interaxon Muse 0.02 0.15 0.13 0.14 0.06 0.49 0.89
+INFO 4.02700 checking command
+INFO 4.02700 resonanz-engine: showing random examples..
+INFO 4.02700 engine_showScreen(success 2/6 dim(3)) called
+INFO 4.03000 engine_showScreen(success 2/6 dim(3)) = 3. DONE
+INFO 4.03000 eeg Interaxon Muse 0.02 0.16 0.13 0.15 0.06 0.49 0.89
+INFO 4.12300 checking command
+INFO 4.12300 resonanz-engine: showing random examples..
+INFO 4.12300 engine_showScreen(success 2/6 dim(3)) called
+INFO 4.12500 engine_showScreen(success 2/6 dim(3)) = 2. DONE
+INFO 4.12600 eeg Interaxon Muse 0.02 0.16 0.13 0.15 0.06 0.49 0.89
+INFO 4.23100 checking command
+INFO 4.23100 resonanz-engine: showing random examples..
+INFO 4.23100 engine_showScreen(success 2/6 dim(3)) called
+INFO 4.23300 engine_showScreen(success 2/6 dim(3)) = 3. DONE
+INFO 4.23400 eeg Interaxon Muse 0.02 0.16 0.12 0.15 0.07 0.49 0.87
+INFO 4.32600 checking command
+INFO 4.32600 resonanz-engine: showing random examples..
+INFO 4.32600 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.32800 engine_showScreen(together 4/6 dim(3)) = 2. DONE
+INFO 4.32900 eeg Interaxon Muse 0.02 0.16 0.12 0.15 0.07 0.49 0.85
+INFO 4.41900 checking command
+INFO 4.41900 resonanz-engine: showing random examples..
+INFO 4.41900 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.42200 engine_showScreen(together 4/6 dim(3)) = 2. DONE
+INFO 4.42200 eeg Interaxon Muse 0.02 0.16 0.12 0.15 0.07 0.49 0.85
+INFO 4.52600 checking command
+INFO 4.52600 resonanz-engine: showing random examples..
+INFO 4.52600 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.52800 engine_showScreen(together 4/6 dim(3)) = 3. DONE
+INFO 4.52900 eeg Interaxon Muse 0.02 0.17 0.10 0.15 0.08 0.49 0.79
+INFO 4.62100 checking command
+INFO 4.62100 resonanz-engine: showing random examples..
+INFO 4.62100 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.62400 engine_showScreen(together 4/6 dim(3)) = 2. DONE
+INFO 4.62500 eeg Interaxon Muse 0.02 0.17 0.10 0.15 0.08 0.49 0.79
+INFO 4.71800 checking command
+INFO 4.71800 resonanz-engine: showing random examples..
+INFO 4.71800 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.72100 engine_showScreen(together 4/6 dim(3)) = 2. DONE
+INFO 4.72200 eeg Interaxon Muse 0.02 0.17 0.10 0.15 0.08 0.50 0.76
+INFO 4.82700 checking command
+INFO 4.82700 resonanz-engine: showing random examples..
+INFO 4.82700 engine_showScreen(together 4/6 dim(3)) called
+INFO 4.83100 engine_showScreen(together 4/6 dim(3)) = 3. DONE
+INFO 4.83200 eeg Interaxon Muse 0.02 0.17 0.11 0.15 0.09 0.50 0.78
+INFO 4.91900 checking command
+INFO 4.91900 resonanz-engine: showing random examples..
+INFO 4.91900 engine_showScreen(alone 3/6 dim(3)) called
+INFO 4.92300 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 4.92400 eeg Interaxon Muse 0.02 0.17 0.11 0.15 0.09 0.50 0.78
+INFO 5.02700 checking command
+INFO 5.02700 resonanz-engine: showing random examples..
+INFO 5.02700 engine_showScreen(alone 3/6 dim(3)) called
+INFO 5.03000 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 5.03100 eeg Interaxon Muse 0.01 0.15 0.14 0.14 0.09 0.50 0.81
+INFO 5.12400 checking command
+INFO 5.12400 resonanz-engine: showing random examples..
+INFO 5.12400 engine_showScreen(alone 3/6 dim(3)) called
+INFO 5.12700 engine_showScreen(alone 3/6 dim(3)) = 3. DONE
+INFO 5.12700 eeg Interaxon Muse 0.01 0.13 0.15 0.14 0.09 0.50 0.80
+INFO 5.21800 checking command
+INFO 5.21800 resonanz-engine: showing random examples..
+INFO 5.21800 engine_showScreen(alone 3/6 dim(3)) called
+INFO 5.22100 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 5.22200 eeg Interaxon Muse 0.01 0.13 0.15 0.14 0.09 0.50 0.80
+INFO 5.32500 checking command
+INFO 5.32500 resonanz-engine: showing random examples..
+INFO 5.32500 engine_showScreen(alone 3/6 dim(3)) called
+INFO 5.32800 engine_showScreen(alone 3/6 dim(3)) = 3. DONE
+INFO 5.32800 eeg Interaxon Muse 0.01 0.11 0.17 0.13 0.08 0.49 0.74
+INFO 5.42100 checking command
+INFO 5.42100 resonanz-engine: showing random examples..
+INFO 5.42100 engine_showScreen(alone 3/6 dim(3)) called
+INFO 5.42400 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 5.42500 eeg Interaxon Muse 0.02 0.10 0.17 0.13 0.08 0.48 0.75
+INFO 5.52700 checking command
+INFO 5.52700 resonanz-engine: showing random examples..
+INFO 5.52700 engine_showScreen(bad 2/6 dim(3)) called
+INFO 5.53000 engine_showScreen(bad 2/6 dim(3)) = 3. DONE
+INFO 5.53100 eeg Interaxon Muse 0.02 0.10 0.17 0.13 0.08 0.48 0.76
+INFO 5.62400 checking command
+INFO 5.62400 resonanz-engine: showing random examples..
+INFO 5.62400 engine_showScreen(bad 2/6 dim(3)) called
+INFO 5.62700 engine_showScreen(bad 2/6 dim(3)) = 2. DONE
+INFO 5.62700 eeg Interaxon Muse 0.02 0.10 0.16 0.12 0.08 0.48 0.77
+INFO 5.71700 checking command
+INFO 5.71700 resonanz-engine: showing random examples..
+INFO 5.71700 engine_showScreen(bad 2/6 dim(3)) called
+INFO 5.72000 engine_showScreen(bad 2/6 dim(3)) = 2. DONE
+INFO 5.72100 eeg Interaxon Muse 0.02 0.10 0.16 0.12 0.08 0.48 0.77
+INFO 5.82700 checking command
+INFO 5.82700 resonanz-engine: showing random examples..
+INFO 5.82700 engine_showScreen(bad 2/6 dim(3)) called
+INFO 5.83000 engine_showScreen(bad 2/6 dim(3)) = 3. DONE
+INFO 5.83000 eeg Interaxon Muse 0.02 0.09 0.16 0.12 0.07 0.48 0.79
+INFO 5.91800 checking command
+INFO 5.91800 resonanz-engine: showing random examples..
+INFO 5.91800 engine_showScreen(bad 2/6 dim(3)) called
+INFO 5.92100 engine_showScreen(bad 2/6 dim(3)) = 2. DONE
+INFO 5.92100 eeg Interaxon Muse 0.02 0.09 0.16 0.13 0.07 0.48 0.79
+INFO 6.02900 checking command
+INFO 6.02900 resonanz-engine: showing random examples..
+INFO 6.03000 engine_showScreen(bad 2/6 dim(3)) called
+INFO 6.03200 engine_showScreen(bad 2/6 dim(3)) = 3. DONE
+INFO 6.03200 eeg Interaxon Muse 0.02 0.09 0.16 0.13 0.06 0.48 0.81
+INFO 6.12200 checking command
+INFO 6.12200 resonanz-engine: showing random examples..
+INFO 6.12200 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.12500 engine_showScreen(good 1/6 dim(3)) = 2. DONE
+INFO 6.12600 eeg Interaxon Muse 0.03 0.09 0.15 0.13 0.06 0.48 0.84
+INFO 6.23200 checking command
+INFO 6.23200 resonanz-engine: showing random examples..
+INFO 6.23200 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.23600 engine_showScreen(good 1/6 dim(3)) = 3. DONE
+INFO 6.23600 eeg Interaxon Muse 0.03 0.09 0.15 0.13 0.06 0.48 0.88
+INFO 6.32500 checking command
+INFO 6.32500 resonanz-engine: showing random examples..
+INFO 6.32500 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.32800 engine_showScreen(good 1/6 dim(3)) = 2. DONE
+INFO 6.32900 eeg Interaxon Muse 0.03 0.10 0.15 0.13 0.06 0.49 0.91
+INFO 6.41700 checking command
+INFO 6.41700 resonanz-engine: showing random examples..
+INFO 6.41700 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.42000 engine_showScreen(good 1/6 dim(3)) = 2. DONE
+INFO 6.42100 eeg Interaxon Muse 0.03 0.10 0.15 0.12 0.06 0.49 0.93
+INFO 6.52700 checking command
+INFO 6.52700 resonanz-engine: showing random examples..
+INFO 6.52700 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.53000 engine_showScreen(good 1/6 dim(3)) = 3. DONE
+INFO 6.53000 eeg Interaxon Muse 0.04 0.11 0.15 0.12 0.06 0.50 0.94
+INFO 6.62000 checking command
+INFO 6.62000 resonanz-engine: showing random examples..
+INFO 6.62000 engine_showScreen(good 1/6 dim(3)) called
+INFO 6.62300 engine_showScreen(good 1/6 dim(3)) = 2. DONE
+INFO 6.62400 eeg Interaxon Muse 0.04 0.11 0.16 0.11 0.06 0.50 0.94
+INFO 6.71800 checking command
+INFO 6.71800 resonanz-engine: showing random examples..
+INFO 6.71800 engine_showScreen(smile 3/6 dim(3)) called
+INFO 6.72200 engine_showScreen(smile 3/6 dim(3)) = 2. DONE
+INFO 6.72200 eeg Interaxon Muse 0.04 0.12 0.16 0.11 0.06 0.51 0.94
+INFO 6.82400 checking command
+INFO 6.82400 resonanz-engine: showing random examples..
+INFO 6.82400 engine_showScreen(smile 3/6 dim(3)) called
+INFO 6.82800 engine_showScreen(smile 3/6 dim(3)) = 3. DONE
+INFO 6.82800 eeg Interaxon Muse 0.04 0.12 0.16 0.11 0.07 0.51 0.94
+INFO 6.91900 checking command
+INFO 6.91900 resonanz-engine: showing random examples..
+INFO 6.91900 engine_showScreen(smile 3/6 dim(3)) called
+INFO 6.92300 engine_showScreen(smile 3/6 dim(3)) = 2. DONE
+INFO 6.92400 eeg Interaxon Muse 0.04 0.12 0.15 0.11 0.07 0.51 0.94
+INFO 7.02900 checking command
+INFO 7.02900 resonanz-engine: showing random examples..
+INFO 7.02900 engine_showScreen(smile 3/6 dim(3)) called
+INFO 7.03200 engine_showScreen(smile 3/6 dim(3)) = 3. DONE
+INFO 7.03300 eeg Interaxon Muse 0.04 0.13 0.14 0.11 0.07 0.51 0.94
+INFO 7.12000 checking command
+INFO 7.12000 resonanz-engine: showing random examples..
+INFO 7.12000 engine_showScreen(smile 3/6 dim(3)) called
+INFO 7.12300 engine_showScreen(smile 3/6 dim(3)) = 2. DONE
+INFO 7.12400 eeg Interaxon Muse 0.04 0.13 0.14 0.11 0.07 0.51 0.94
+INFO 7.21700 checking command
+INFO 7.21700 resonanz-engine: showing random examples..
+INFO 7.21700 engine_showScreen(smile 3/6 dim(3)) called
+INFO 7.22100 engine_showScreen(smile 3/6 dim(3)) = 2. DONE
+INFO 7.22100 eeg Interaxon Muse 0.04 0.13 0.13 0.11 0.07 0.51 0.93
+INFO 7.32600 checking command
+INFO 7.32600 resonanz-engine: showing random examples..
+INFO 7.32600 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.32900 engine_showScreen(alive 4/6 dim(3)) = 3. DONE
+INFO 7.33000 eeg Interaxon Muse 0.04 0.13 0.13 0.11 0.08 0.52 0.92
+INFO 7.42200 checking command
+INFO 7.42200 resonanz-engine: showing random examples..
+INFO 7.42200 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.42500 engine_showScreen(alive 4/6 dim(3)) = 2. DONE
+INFO 7.42500 eeg Interaxon Muse 0.04 0.14 0.13 0.11 0.08 0.52 0.90
+INFO 7.53100 checking command
+INFO 7.53100 resonanz-engine: showing random examples..
+INFO 7.53100 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.53400 engine_showScreen(alive 4/6 dim(3)) = 3. DONE
+INFO 7.53400 eeg Interaxon Muse 0.04 0.14 0.13 0.11 0.08 0.52 0.87
+INFO 7.62300 checking command
+INFO 7.62300 resonanz-engine: showing random examples..
+INFO 7.62300 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.62600 engine_showScreen(alive 4/6 dim(3)) = 2. DONE
+INFO 7.62600 eeg Interaxon Muse 0.04 0.15 0.13 0.11 0.08 0.52 0.84
+INFO 7.71700 checking command
+INFO 7.71700 resonanz-engine: showing random examples..
+INFO 7.71800 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.72100 engine_showScreen(alive 4/6 dim(3)) = 2. DONE
+INFO 7.72100 eeg Interaxon Muse 0.04 0.16 0.13 0.11 0.08 0.53 0.84
+INFO 7.82500 checking command
+INFO 7.82500 resonanz-engine: showing random examples..
+INFO 7.82500 engine_showScreen(alive 4/6 dim(3)) called
+INFO 7.82800 engine_showScreen(alive 4/6 dim(3)) = 3. DONE
+INFO 7.82900 eeg Interaxon Muse 0.03 0.18 0.13 0.11 0.09 0.54 0.85
+INFO 7.91700 checking command
+INFO 7.91700 resonanz-engine: showing random examples..
+INFO 7.91700 engine_showScreen(evil 0/6 dim(3)) called
+INFO 7.92000 engine_showScreen(evil 0/6 dim(3)) = 2. DONE
+INFO 7.92100 eeg Interaxon Muse 0.03 0.18 0.13 0.11 0.09 0.54 0.85
+INFO 8.02800 checking command
+INFO 8.02800 resonanz-engine: showing random examples..
+INFO 8.02800 engine_showScreen(evil 0/6 dim(3)) called
+INFO 8.03000 engine_showScreen(evil 0/6 dim(3)) = 3. DONE
+INFO 8.03100 eeg Interaxon Muse 0.03 0.22 0.14 0.12 0.09 0.55 0.84
+INFO 8.12400 checking command
+INFO 8.12400 resonanz-engine: showing random examples..
+INFO 8.12400 engine_showScreen(evil 0/6 dim(3)) called
+INFO 8.12700 engine_showScreen(evil 0/6 dim(3)) = 2. DONE
+INFO 8.12700 eeg Interaxon Muse 0.03 0.24 0.15 0.12 0.09 0.56 0.83
+INFO 8.23100 checking command
+INFO 8.23100 resonanz-engine: showing random examples..
+INFO 8.23100 engine_showScreen(evil 0/6 dim(3)) called
+INFO 8.23400 engine_showScreen(evil 0/6 dim(3)) = 3. DONE
+INFO 8.23500 eeg Interaxon Muse 0.03 0.26 0.16 0.12 0.08 0.57 0.83
+INFO 8.32500 checking command
+INFO 8.32500 resonanz-engine: showing random examples..
+INFO 8.32500 engine_showScreen(evil 0/6 dim(3)) called
+INFO 8.32800 engine_showScreen(evil 0/6 dim(3)) = 2. DONE
+INFO 8.32800 eeg Interaxon Muse 0.03 0.29 0.16 0.13 0.08 0.58 0.82
+INFO 8.41800 checking command
+INFO 8.41800 resonanz-engine: showing random examples..
+INFO 8.41800 engine_showScreen(evil 0/6 dim(3)) called
+INFO 8.42100 engine_showScreen(evil 0/6 dim(3)) = 2. DONE
+INFO 8.42100 eeg Interaxon Muse 0.03 0.31 0.15 0.13 0.08 0.59 0.82
+INFO 8.53000 checking command
+INFO 8.53000 resonanz-engine: showing random examples..
+INFO 8.53000 engine_showScreen(bad 3/6 dim(3)) called
+INFO 8.53300 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 8.53300 eeg Interaxon Muse 0.03 0.33 0.14 0.14 0.08 0.59 0.80
+INFO 8.62100 checking command
+INFO 8.62100 resonanz-engine: showing random examples..
+INFO 8.62100 engine_showScreen(bad 3/6 dim(3)) called
+INFO 8.62400 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 8.62500 eeg Interaxon Muse 0.03 0.35 0.13 0.15 0.08 0.59 0.79
+INFO 8.73100 checking command
+INFO 8.73100 resonanz-engine: showing random examples..
+INFO 8.73100 engine_showScreen(bad 3/6 dim(3)) called
+INFO 8.73400 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 8.73500 eeg Interaxon Muse 0.03 0.37 0.13 0.15 0.08 0.59 0.80
+INFO 8.82700 checking command
+INFO 8.82700 resonanz-engine: showing random examples..
+INFO 8.82700 engine_showScreen(bad 3/6 dim(3)) called
+INFO 8.83000 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 8.83000 eeg Interaxon Muse 0.03 0.39 0.13 0.16 0.08 0.60 0.81
+INFO 8.91900 checking command
+INFO 8.91900 resonanz-engine: showing random examples..
+INFO 8.91900 engine_showScreen(bad 3/6 dim(3)) called
+INFO 8.92200 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 8.92200 eeg Interaxon Muse 0.04 0.40 0.13 0.16 0.08 0.61 0.81
+INFO 9.02700 checking command
+INFO 9.02700 resonanz-engine: showing random examples..
+INFO 9.02700 engine_showScreen(bad 3/6 dim(3)) called
+INFO 9.03000 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 9.03000 eeg Interaxon Muse 0.04 0.41 0.13 0.15 0.08 0.61 0.80
+INFO 9.12500 checking command
+INFO 9.12500 resonanz-engine: showing random examples..
+INFO 9.12500 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.12800 engine_showScreen(success 5/6 dim(3)) = 2. DONE
+INFO 9.12800 eeg Interaxon Muse 0.04 0.42 0.12 0.15 0.08 0.61 0.79
+INFO 9.23300 checking command
+INFO 9.23300 resonanz-engine: showing random examples..
+INFO 9.23300 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.23600 engine_showScreen(success 5/6 dim(3)) = 3. DONE
+INFO 9.23700 eeg Interaxon Muse 0.04 0.43 0.12 0.15 0.08 0.61 0.78
+INFO 9.32500 checking command
+INFO 9.32500 resonanz-engine: showing random examples..
+INFO 9.32500 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.32800 engine_showScreen(success 5/6 dim(3)) = 2. DONE
+INFO 9.32900 eeg Interaxon Muse 0.03 0.43 0.12 0.15 0.08 0.61 0.78
+INFO 9.42200 checking command
+INFO 9.42200 resonanz-engine: showing random examples..
+INFO 9.42200 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.42400 engine_showScreen(success 5/6 dim(3)) = 2. DONE
+INFO 9.42500 eeg Interaxon Muse 0.03 0.42 0.12 0.16 0.08 0.60 0.78
+INFO 9.52800 checking command
+INFO 9.52800 resonanz-engine: showing random examples..
+INFO 9.52800 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.53100 engine_showScreen(success 5/6 dim(3)) = 3. DONE
+INFO 9.53200 eeg Interaxon Muse 0.03 0.41 0.12 0.16 0.08 0.60 0.77
+INFO 9.62100 checking command
+INFO 9.62100 resonanz-engine: showing random examples..
+INFO 9.62100 engine_showScreen(success 5/6 dim(3)) called
+INFO 9.62400 engine_showScreen(success 5/6 dim(3)) = 2. DONE
+INFO 9.62400 eeg Interaxon Muse 0.03 0.40 0.12 0.16 0.08 0.60 0.78
+INFO 9.73200 checking command
+INFO 9.73200 resonanz-engine: showing random examples..
+INFO 9.73200 engine_showScreen(bad 4/6 dim(3)) called
+INFO 9.73500 engine_showScreen(bad 4/6 dim(3)) = 3. DONE
+INFO 9.73600 eeg Interaxon Muse 0.04 0.38 0.12 0.16 0.09 0.61 0.79
+INFO 9.82700 checking command
+INFO 9.82700 resonanz-engine: showing random examples..
+INFO 9.82700 engine_showScreen(bad 4/6 dim(3)) called
+INFO 9.83100 engine_showScreen(bad 4/6 dim(3)) = 2. DONE
+INFO 9.83100 eeg Interaxon Muse 0.04 0.36 0.13 0.16 0.09 0.61 0.79
+INFO 9.92100 checking command
+INFO 9.92100 resonanz-engine: showing random examples..
+INFO 9.92100 engine_showScreen(bad 4/6 dim(3)) called
+INFO 9.92400 engine_showScreen(bad 4/6 dim(3)) = 2. DONE
+INFO 9.92400 eeg Interaxon Muse 0.05 0.34 0.13 0.16 0.08 0.62 0.78
+INFO 10.02600 checking command
+INFO 10.02600 resonanz-engine: showing random examples..
+INFO 10.02600 engine_showScreen(bad 4/6 dim(3)) called
+INFO 10.02900 engine_showScreen(bad 4/6 dim(3)) = 3. DONE
+INFO 10.02900 eeg Interaxon Muse 0.06 0.32 0.14 0.15 0.08 0.62 0.77
+INFO 10.12200 checking command
+INFO 10.12200 resonanz-engine: showing random examples..
+INFO 10.12200 engine_showScreen(bad 4/6 dim(3)) called
+INFO 10.12500 engine_showScreen(bad 4/6 dim(3)) = 2. DONE
+INFO 10.12500 eeg Interaxon Muse 0.07 0.30 0.14 0.15 0.08 0.62 0.76
+INFO 10.21700 checking command
+INFO 10.21700 resonanz-engine: showing random examples..
+INFO 10.21700 engine_showScreen(bad 4/6 dim(3)) called
+INFO 10.22000 engine_showScreen(bad 4/6 dim(3)) = 2. DONE
+INFO 10.22100 eeg Interaxon Muse 0.07 0.28 0.14 0.14 0.08 0.61 0.76
+INFO 10.32500 checking command
+INFO 10.32500 resonanz-engine: showing random examples..
+INFO 10.32500 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.32800 engine_showScreen(alone 3/6 dim(3)) = 3. DONE
+INFO 10.32800 eeg Interaxon Muse 0.07 0.26 0.14 0.14 0.08 0.61 0.75
+INFO 10.41700 checking command
+INFO 10.41700 resonanz-engine: showing random examples..
+INFO 10.41700 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.42000 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 10.42000 eeg Interaxon Muse 0.09 0.25 0.15 0.14 0.08 0.62 0.69
+INFO 10.52600 checking command
+INFO 10.52600 resonanz-engine: showing random examples..
+INFO 10.52600 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.52900 engine_showScreen(alone 3/6 dim(3)) = 3. DONE
+INFO 10.52900 eeg Interaxon Muse 0.14 0.26 0.17 0.14 0.08 0.65 0.84
+INFO 10.62200 checking command
+INFO 10.62200 resonanz-engine: showing random examples..
+INFO 10.62200 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.62500 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 10.62600 eeg Interaxon Muse 0.27 0.29 0.18 0.14 0.08 0.70 0.86
+INFO 10.73200 checking command
+INFO 10.73200 resonanz-engine: showing random examples..
+INFO 10.73200 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.73500 engine_showScreen(alone 3/6 dim(3)) = 3. DONE
+INFO 10.73600 eeg Interaxon Muse 0.45 0.33 0.19 0.14 0.08 0.74 0.83
+INFO 10.82500 checking command
+INFO 10.82500 resonanz-engine: showing random examples..
+INFO 10.82500 engine_showScreen(alone 3/6 dim(3)) called
+INFO 10.82800 engine_showScreen(alone 3/6 dim(3)) = 2. DONE
+INFO 10.82800 eeg Interaxon Muse 0.61 0.38 0.19 0.14 0.07 0.77 0.81
+INFO 10.92000 checking command
+INFO 10.92000 resonanz-engine: showing random examples..
+INFO 10.92000 engine_showScreen(fail 4/6 dim(3)) called
+INFO 10.92200 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 10.92300 eeg Interaxon Muse 0.71 0.41 0.20 0.14 0.07 0.79 0.79
+INFO 11.02700 checking command
+INFO 11.02700 resonanz-engine: showing random examples..
+INFO 11.02700 engine_showScreen(fail 4/6 dim(3)) called
+INFO 11.02900 engine_showScreen(fail 4/6 dim(3)) = 3. DONE
+INFO 11.03000 eeg Interaxon Muse 0.76 0.43 0.22 0.13 0.07 0.81 0.79
+INFO 11.12000 checking command
+INFO 11.12000 resonanz-engine: showing random examples..
+INFO 11.12000 engine_showScreen(fail 4/6 dim(3)) called
+INFO 11.12200 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 11.12300 eeg Interaxon Muse 0.79 0.45 0.28 0.13 0.07 0.83 0.80
+INFO 11.21700 checking command
+INFO 11.21700 resonanz-engine: showing random examples..
+INFO 11.21700 engine_showScreen(fail 4/6 dim(3)) called
+INFO 11.21900 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 11.22000 eeg Interaxon Muse 0.81 0.47 0.36 0.14 0.07 0.84 0.80
+INFO 11.32500 checking command
+INFO 11.32500 resonanz-engine: showing random examples..
+INFO 11.32500 engine_showScreen(fail 4/6 dim(3)) called
+INFO 11.32700 engine_showScreen(fail 4/6 dim(3)) = 3. DONE
+INFO 11.32800 eeg Interaxon Muse 0.82 0.51 0.42 0.14 0.07 0.86 0.81
+INFO 11.41700 checking command
+INFO 11.41700 resonanz-engine: showing random examples..
+INFO 11.41700 engine_showScreen(fail 4/6 dim(3)) called
+INFO 11.41900 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 11.42000 eeg Interaxon Muse 0.83 0.55 0.44 0.15 0.07 0.87 0.80
+INFO 11.53000 checking command
+INFO 11.53000 resonanz-engine: showing random examples..
+INFO 11.53000 engine_showScreen(smile 4/6 dim(3)) called
+INFO 11.53300 engine_showScreen(smile 4/6 dim(3)) = 3. DONE
+INFO 11.53400 eeg Interaxon Muse 0.84 0.58 0.43 0.15 0.08 0.87 0.80
+INFO 11.62000 checking command
+INFO 11.62000 resonanz-engine: showing random examples..
+INFO 11.62000 engine_showScreen(smile 4/6 dim(3)) called
+INFO 11.62300 engine_showScreen(smile 4/6 dim(3)) = 2. DONE
+INFO 11.62300 eeg Interaxon Muse 0.84 0.60 0.43 0.15 0.08 0.88 0.79
+INFO 11.71700 checking command
+INFO 11.71700 resonanz-engine: showing random examples..
+INFO 11.71700 engine_showScreen(smile 4/6 dim(3)) called
+INFO 11.72000 engine_showScreen(smile 4/6 dim(3)) = 2. DONE
+INFO 11.72000 eeg Interaxon Muse 0.85 0.60 0.43 0.16 0.08 0.88 0.78
+INFO 11.82800 checking command
+INFO 11.82800 resonanz-engine: showing random examples..
+INFO 11.82800 engine_showScreen(smile 4/6 dim(3)) called
+INFO 11.83000 engine_showScreen(smile 4/6 dim(3)) = 3. DONE
+INFO 11.83100 eeg Interaxon Muse 0.84 0.61 0.43 0.16 0.08 0.88 0.79
+INFO 11.91800 checking command
+INFO 11.91800 resonanz-engine: showing random examples..
+INFO 11.91800 engine_showScreen(smile 4/6 dim(3)) called
+INFO 11.92000 engine_showScreen(smile 4/6 dim(3)) = 2. DONE
+INFO 11.92100 eeg Interaxon Muse 0.84 0.61 0.44 0.16 0.09 0.88 0.80
+INFO 12.02700 checking command
+INFO 12.02700 resonanz-engine: showing random examples..
+INFO 12.02700 engine_showScreen(smile 4/6 dim(3)) called
+INFO 12.02900 engine_showScreen(smile 4/6 dim(3)) = 2. DONE
+INFO 12.02900 eeg Interaxon Muse 0.83 0.60 0.44 0.16 0.09 0.88 0.80
+INFO 12.12100 checking command
+INFO 12.12100 resonanz-engine: showing random examples..
+INFO 12.12100 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.12300 engine_showScreen(dead 5/6 dim(3)) = 3. DONE
+INFO 12.12400 eeg Interaxon Muse 0.81 0.58 0.44 0.17 0.09 0.87 0.81
+INFO 12.23300 checking command
+INFO 12.23300 resonanz-engine: showing random examples..
+INFO 12.23300 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.23500 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 12.23600 eeg Interaxon Muse 0.78 0.55 0.43 0.17 0.09 0.86 0.81
+INFO 12.32300 checking command
+INFO 12.32300 resonanz-engine: showing random examples..
+INFO 12.32300 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.32500 engine_showScreen(dead 5/6 dim(3)) = 3. DONE
+INFO 12.32600 eeg Interaxon Muse 0.72 0.52 0.42 0.16 0.08 0.85 0.80
+INFO 12.42000 checking command
+INFO 12.42000 resonanz-engine: showing random examples..
+INFO 12.42000 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.42200 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 12.42200 eeg Interaxon Muse 0.62 0.48 0.42 0.16 0.08 0.83 0.82
+INFO 12.52600 checking command
+INFO 12.52600 resonanz-engine: showing random examples..
+INFO 12.52600 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.52800 engine_showScreen(dead 5/6 dim(3)) = 3. DONE
+INFO 12.52900 eeg Interaxon Muse 0.51 0.46 0.42 0.16 0.08 0.81 0.84
+INFO 12.62400 checking command
+INFO 12.62400 resonanz-engine: showing random examples..
+INFO 12.62400 engine_showScreen(dead 5/6 dim(3)) called
+INFO 12.62700 engine_showScreen(dead 5/6 dim(3)) = 2. DONE
+INFO 12.62700 eeg Interaxon Muse 0.42 0.44 0.42 0.16 0.07 0.80 0.86
+INFO 12.73200 checking command
+INFO 12.73200 resonanz-engine: showing random examples..
+INFO 12.73200 engine_showScreen(bad 3/6 dim(3)) called
+INFO 12.73400 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 12.73500 eeg Interaxon Muse 0.35 0.40 0.42 0.15 0.07 0.78 0.87
+INFO 12.82300 checking command
+INFO 12.82300 resonanz-engine: showing random examples..
+INFO 12.82300 engine_showScreen(bad 3/6 dim(3)) called
+INFO 12.82500 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 12.82600 eeg Interaxon Muse 0.28 0.35 0.41 0.15 0.07 0.75 0.88
+INFO 12.92000 checking command
+INFO 12.92000 resonanz-engine: showing random examples..
+INFO 12.92000 engine_showScreen(bad 3/6 dim(3)) called
+INFO 12.92300 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 12.92300 eeg Interaxon Muse 0.20 0.28 0.34 0.14 0.07 0.71 0.90
+INFO 13.03000 checking command
+INFO 13.03000 resonanz-engine: showing random examples..
+INFO 13.03000 engine_showScreen(bad 3/6 dim(3)) called
+INFO 13.03300 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 13.03400 eeg Interaxon Muse 0.13 0.20 0.25 0.14 0.06 0.64 0.92
+INFO 13.12100 checking command
+INFO 13.12100 resonanz-engine: showing random examples..
+INFO 13.12100 engine_showScreen(bad 3/6 dim(3)) called
+INFO 13.12300 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 13.12400 eeg Interaxon Muse 0.08 0.15 0.16 0.14 0.06 0.57 0.88
+INFO 13.21800 checking command
+INFO 13.21800 resonanz-engine: showing random examples..
+INFO 13.21800 engine_showScreen(bad 3/6 dim(3)) called
+INFO 13.22100 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 13.22100 eeg Interaxon Muse 0.05 0.13 0.11 0.13 0.06 0.52 0.99
+INFO 13.32300 checking command
+INFO 13.32300 resonanz-engine: showing random examples..
+INFO 13.32300 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.32600 engine_showScreen(dead 0/6 dim(3)) = 3. DONE
+INFO 13.32700 eeg Interaxon Muse 0.05 0.12 0.11 0.13 0.06 0.50 0.98
+INFO 13.41900 checking command
+INFO 13.41900 resonanz-engine: showing random examples..
+INFO 13.41900 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.42200 engine_showScreen(dead 0/6 dim(3)) = 2. DONE
+INFO 13.42200 eeg Interaxon Muse 0.04 0.12 0.11 0.13 0.05 0.49 0.98
+INFO 13.52800 checking command
+INFO 13.52800 resonanz-engine: showing random examples..
+INFO 13.52800 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.53200 engine_showScreen(dead 0/6 dim(3)) = 3. DONE
+INFO 13.53200 eeg Interaxon Muse 0.04 0.11 0.12 0.13 0.05 0.49 0.97
+INFO 13.62100 checking command
+INFO 13.62100 resonanz-engine: showing random examples..
+INFO 13.62100 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.62400 engine_showScreen(dead 0/6 dim(3)) = 2. DONE
+INFO 13.62500 eeg Interaxon Muse 0.04 0.10 0.12 0.13 0.05 0.48 0.95
+INFO 13.73100 checking command
+INFO 13.73100 resonanz-engine: showing random examples..
+INFO 13.73100 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.73500 engine_showScreen(dead 0/6 dim(3)) = 3. DONE
+INFO 13.73500 eeg Interaxon Muse 0.03 0.09 0.12 0.13 0.06 0.47 0.91
+INFO 13.82500 checking command
+INFO 13.82500 resonanz-engine: showing random examples..
+INFO 13.82500 engine_showScreen(dead 0/6 dim(3)) called
+INFO 13.82900 engine_showScreen(dead 0/6 dim(3)) = 2. DONE
+INFO 13.82900 eeg Interaxon Muse 0.03 0.09 0.12 0.12 0.06 0.47 0.88
+INFO 13.92100 checking command
+INFO 13.92100 resonanz-engine: showing random examples..
+INFO 13.92100 engine_showScreen(together 3/6 dim(3)) called
+INFO 13.92400 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 13.92400 eeg Interaxon Muse 0.03 0.09 0.13 0.12 0.06 0.47 0.87
+INFO 14.02700 checking command
+INFO 14.02700 resonanz-engine: showing random examples..
+INFO 14.02700 engine_showScreen(together 3/6 dim(3)) called
+INFO 14.03000 engine_showScreen(together 3/6 dim(3)) = 3. DONE
+INFO 14.03200 eeg Interaxon Muse 0.03 0.09 0.13 0.12 0.06 0.47 0.87
+INFO 14.12100 checking command
+INFO 14.12100 resonanz-engine: showing random examples..
+INFO 14.12100 engine_showScreen(together 3/6 dim(3)) called
+INFO 14.12400 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 14.12400 eeg Interaxon Muse 0.03 0.09 0.14 0.12 0.06 0.47 0.86
+INFO 14.21800 checking command
+INFO 14.21800 resonanz-engine: showing random examples..
+INFO 14.21800 engine_showScreen(together 3/6 dim(3)) called
+INFO 14.22100 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 14.22200 eeg Interaxon Muse 0.03 0.09 0.14 0.12 0.06 0.47 0.86
+INFO 14.32700 checking command
+INFO 14.32700 resonanz-engine: showing random examples..
+INFO 14.32700 engine_showScreen(together 3/6 dim(3)) called
+INFO 14.33000 engine_showScreen(together 3/6 dim(3)) = 3. DONE
+INFO 14.33100 eeg Interaxon Muse 0.03 0.10 0.15 0.12 0.06 0.48 0.87
+INFO 14.41700 checking command
+INFO 14.41700 resonanz-engine: showing random examples..
+INFO 14.41700 engine_showScreen(together 3/6 dim(3)) called
+INFO 14.42000 engine_showScreen(together 3/6 dim(3)) = 2. DONE
+INFO 14.42000 eeg Interaxon Muse 0.03 0.11 0.16 0.11 0.06 0.49 0.88
+INFO 14.52900 checking command
+INFO 14.52900 resonanz-engine: showing random examples..
+INFO 14.52900 engine_showScreen(bad 3/6 dim(3)) called
+INFO 14.53200 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 14.53200 eeg Interaxon Muse 0.03 0.12 0.17 0.11 0.07 0.50 0.89
+INFO 14.62500 checking command
+INFO 14.62500 resonanz-engine: showing random examples..
+INFO 14.62500 engine_showScreen(bad 3/6 dim(3)) called
+INFO 14.62800 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 14.62800 eeg Interaxon Muse 0.03 0.13 0.17 0.11 0.07 0.50 0.88
+INFO 14.73200 checking command
+INFO 14.73200 resonanz-engine: showing random examples..
+INFO 14.73200 engine_showScreen(bad 3/6 dim(3)) called
+INFO 14.73500 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 14.73600 eeg Interaxon Muse 0.03 0.14 0.17 0.11 0.07 0.51 0.87
+INFO 14.82500 checking command
+INFO 14.82500 resonanz-engine: showing random examples..
+INFO 14.82500 engine_showScreen(bad 3/6 dim(3)) called
+INFO 14.82800 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 14.82900 eeg Interaxon Muse 0.03 0.15 0.17 0.11 0.08 0.51 0.84
+INFO 14.92000 checking command
+INFO 14.92000 resonanz-engine: showing random examples..
+INFO 14.92000 engine_showScreen(bad 3/6 dim(3)) called
+INFO 14.92300 engine_showScreen(bad 3/6 dim(3)) = 2. DONE
+INFO 14.92300 eeg Interaxon Muse 0.02 0.16 0.17 0.11 0.08 0.52 0.81
+INFO 15.02800 checking command
+INFO 15.02800 resonanz-engine: showing random examples..
+INFO 15.02800 engine_showScreen(bad 3/6 dim(3)) called
+INFO 15.03100 engine_showScreen(bad 3/6 dim(3)) = 3. DONE
+INFO 15.03200 eeg Interaxon Muse 0.02 0.17 0.16 0.11 0.08 0.52 0.81
+INFO 15.12500 checking command
+INFO 15.12500 resonanz-engine: showing random examples..
+INFO 15.12500 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.12800 engine_showScreen(alone 0/6 dim(3)) = 2. DONE
+INFO 15.12900 eeg Interaxon Muse 0.03 0.19 0.16 0.11 0.09 0.53 0.83
+INFO 15.21700 checking command
+INFO 15.21700 resonanz-engine: showing random examples..
+INFO 15.21700 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.22000 engine_showScreen(alone 0/6 dim(3)) = 2. DONE
+INFO 15.22100 eeg Interaxon Muse 0.03 0.21 0.15 0.11 0.09 0.54 0.84
+INFO 15.32700 checking command
+INFO 15.32700 resonanz-engine: showing random examples..
+INFO 15.32700 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.33000 engine_showScreen(alone 0/6 dim(3)) = 3. DONE
+INFO 15.33100 eeg Interaxon Muse 0.03 0.23 0.14 0.11 0.09 0.54 0.84
+INFO 15.42100 checking command
+INFO 15.42100 resonanz-engine: showing random examples..
+INFO 15.42100 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.42400 engine_showScreen(alone 0/6 dim(3)) = 2. DONE
+INFO 15.42500 eeg Interaxon Muse 0.03 0.25 0.14 0.12 0.09 0.55 0.84
+INFO 15.53000 checking command
+INFO 15.53000 resonanz-engine: showing random examples..
+INFO 15.53000 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.53400 engine_showScreen(alone 0/6 dim(3)) = 3. DONE
+INFO 15.53400 eeg Interaxon Muse 0.02 0.27 0.13 0.12 0.09 0.55 0.84
+INFO 15.62300 checking command
+INFO 15.62300 resonanz-engine: showing random examples..
+INFO 15.62300 engine_showScreen(alone 0/6 dim(3)) called
+INFO 15.62600 engine_showScreen(alone 0/6 dim(3)) = 2. DONE
+INFO 15.62700 eeg Interaxon Muse 0.02 0.28 0.13 0.12 0.09 0.55 0.84
+INFO 15.71700 checking command
+INFO 15.71700 resonanz-engine: showing random examples..
+INFO 15.71700 engine_showScreen(alive 2/6 dim(3)) called
+INFO 15.72000 engine_showScreen(alive 2/6 dim(3)) = 2. DONE
+INFO 15.72000 eeg Interaxon Muse 0.02 0.28 0.13 0.12 0.09 0.55 0.84
+INFO 15.82500 checking command
+INFO 15.82500 resonanz-engine: showing random examples..
+INFO 15.82500 engine_showScreen(alive 2/6 dim(3)) called
+INFO 15.82800 engine_showScreen(alive 2/6 dim(3)) = 3. DONE
+INFO 15.82900 eeg Interaxon Muse 0.02 0.27 0.12 0.12 0.09 0.55 0.84
+INFO 15.91700 checking command
+INFO 15.91700 resonanz-engine: showing random examples..
+INFO 15.91700 engine_showScreen(alive 2/6 dim(3)) called
+INFO 15.92000 engine_showScreen(alive 2/6 dim(3)) = 2. DONE
+INFO 15.92100 eeg Interaxon Muse 0.02 0.26 0.12 0.13 0.09 0.54 0.84
+INFO 16.02700 checking command
+INFO 16.02700 resonanz-engine: showing random examples..
+INFO 16.02700 engine_showScreen(alive 2/6 dim(3)) called
+INFO 16.03000 engine_showScreen(alive 2/6 dim(3)) = 3. DONE
+INFO 16.03100 eeg Interaxon Muse 0.02 0.22 0.11 0.14 0.09 0.52 0.81
+INFO 16.12000 checking command
+INFO 16.12000 resonanz-engine: showing random examples..
+INFO 16.12000 engine_showScreen(alive 2/6 dim(3)) called
+INFO 16.12300 engine_showScreen(alive 2/6 dim(3)) = 2. DONE
+INFO 16.12300 eeg Interaxon Muse 0.02 0.22 0.11 0.14 0.09 0.52 0.81
+INFO 16.23200 checking command
+INFO 16.23200 resonanz-engine: showing random examples..
+INFO 16.23200 engine_showScreen(alive 2/6 dim(3)) called
+INFO 16.23500 engine_showScreen(alive 2/6 dim(3)) = 3. DONE
+INFO 16.23500 eeg Interaxon Muse 0.01 0.21 0.11 0.14 0.09 0.51 0.80
+INFO 16.32300 checking command
+INFO 16.32300 resonanz-engine: showing random examples..
+INFO 16.32300 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.32600 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 16.32700 eeg Interaxon Muse 0.01 0.20 0.11 0.15 0.09 0.50 0.79
+INFO 16.41900 checking command
+INFO 16.41900 resonanz-engine: showing random examples..
+INFO 16.41900 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.42200 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 16.42200 eeg Interaxon Muse 0.01 0.19 0.11 0.15 0.08 0.50 0.76
+INFO 16.52600 checking command
+INFO 16.52600 resonanz-engine: showing random examples..
+INFO 16.52600 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.52900 engine_showScreen(smile 5/6 dim(3)) = 3. DONE
+INFO 16.53000 eeg Interaxon Muse 0.01 0.18 0.11 0.15 0.08 0.49 0.77
+INFO 16.62400 checking command
+INFO 16.62400 resonanz-engine: showing random examples..
+INFO 16.62400 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.62700 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 16.62700 eeg Interaxon Muse 0.01 0.16 0.11 0.15 0.08 0.48 0.79
+INFO 16.73100 checking command
+INFO 16.73100 resonanz-engine: showing random examples..
+INFO 16.73100 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.73400 engine_showScreen(smile 5/6 dim(3)) = 3. DONE
+INFO 16.73500 eeg Interaxon Muse 0.01 0.15 0.11 0.15 0.07 0.48 0.81
+INFO 16.82300 checking command
+INFO 16.82300 resonanz-engine: showing random examples..
+INFO 16.82300 engine_showScreen(smile 5/6 dim(3)) called
+INFO 16.82600 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 16.82700 eeg Interaxon Muse 0.02 0.14 0.11 0.15 0.07 0.48 0.83
+INFO 16.91900 checking command
+INFO 16.91900 resonanz-engine: showing random examples..
+INFO 16.91900 engine_showScreen(alive 5/6 dim(3)) called
+INFO 16.92200 engine_showScreen(alive 5/6 dim(3)) = 2. DONE
+INFO 16.92300 eeg Interaxon Muse 0.02 0.12 0.11 0.15 0.07 0.48 0.84
+INFO 17.02600 checking command
+INFO 17.02600 resonanz-engine: showing random examples..
+INFO 17.02600 engine_showScreen(alive 5/6 dim(3)) called
+INFO 17.02900 engine_showScreen(alive 5/6 dim(3)) = 3. DONE
+INFO 17.02900 eeg Interaxon Muse 0.02 0.11 0.10 0.16 0.07 0.48 0.84
+INFO 17.12000 checking command
+INFO 17.12000 resonanz-engine: showing random examples..
+INFO 17.12000 engine_showScreen(alive 5/6 dim(3)) called
+INFO 17.12300 engine_showScreen(alive 5/6 dim(3)) = 2. DONE
+INFO 17.12300 eeg Interaxon Muse 0.03 0.11 0.11 0.16 0.07 0.49 0.84
+INFO 17.21700 checking command
+INFO 17.21700 resonanz-engine: showing random examples..
+INFO 17.21700 engine_showScreen(alive 5/6 dim(3)) called
+INFO 17.22000 engine_showScreen(alive 5/6 dim(3)) = 2. DONE
+INFO 17.22100 eeg Interaxon Muse 0.03 0.10 0.11 0.16 0.07 0.49 0.84
+INFO 17.32400 checking command
+INFO 17.32400 resonanz-engine: showing random examples..
+INFO 17.32400 engine_showScreen(alive 5/6 dim(3)) called
+INFO 17.32700 engine_showScreen(alive 5/6 dim(3)) = 3. DONE
+INFO 17.32800 eeg Interaxon Muse 0.03 0.10 0.13 0.16 0.07 0.50 0.84
+INFO 17.42100 checking command
+INFO 17.42100 resonanz-engine: showing random examples..
+INFO 17.42100 engine_showScreen(alive 5/6 dim(3)) called
+INFO 17.42400 engine_showScreen(alive 5/6 dim(3)) = 2. DONE
+INFO 17.42500 eeg Interaxon Muse 0.03 0.09 0.14 0.15 0.08 0.50 0.83
+INFO 17.52900 checking command
+INFO 17.52900 resonanz-engine: showing random examples..
+INFO 17.52900 engine_showScreen(safe 2/6 dim(3)) called
+INFO 17.53200 engine_showScreen(safe 2/6 dim(3)) = 3. DONE
+INFO 17.53200 eeg Interaxon Muse 0.03 0.09 0.14 0.15 0.08 0.51 0.83
+INFO 17.62200 checking command
+INFO 17.62200 resonanz-engine: showing random examples..
+INFO 17.62200 engine_showScreen(safe 2/6 dim(3)) called
+INFO 17.62500 engine_showScreen(safe 2/6 dim(3)) = 2. DONE
+INFO 17.62500 eeg Interaxon Muse 0.03 0.10 0.13 0.14 0.08 0.51 0.85
+INFO 17.73100 checking command
+INFO 17.73100 resonanz-engine: showing random examples..
+INFO 17.73100 engine_showScreen(safe 2/6 dim(3)) called
+INFO 17.73300 engine_showScreen(safe 2/6 dim(3)) = 3. DONE
+INFO 17.73400 eeg Interaxon Muse 0.04 0.10 0.13 0.14 0.08 0.51 0.87
+INFO 17.82800 checking command
+INFO 17.82800 resonanz-engine: showing random examples..
+INFO 17.82800 engine_showScreen(safe 2/6 dim(3)) called
+INFO 17.83100 engine_showScreen(safe 2/6 dim(3)) = 2. DONE
+INFO 17.83200 eeg Interaxon Muse 0.04 0.10 0.13 0.14 0.08 0.51 0.89
+INFO 17.91800 checking command
+INFO 17.91800 resonanz-engine: showing random examples..
+INFO 17.91800 engine_showScreen(safe 2/6 dim(3)) called
+INFO 17.92200 engine_showScreen(safe 2/6 dim(3)) = 2. DONE
+INFO 17.92200 eeg Interaxon Muse 0.04 0.11 0.13 0.14 0.07 0.51 0.91
+INFO 18.02600 checking command
+INFO 18.02600 resonanz-engine: showing random examples..
+INFO 18.02600 engine_showScreen(safe 2/6 dim(3)) called
+INFO 18.02900 engine_showScreen(safe 2/6 dim(3)) = 3. DONE
+INFO 18.03000 eeg Interaxon Muse 0.04 0.11 0.13 0.15 0.07 0.52 0.91
+INFO 18.12400 checking command
+INFO 18.12400 resonanz-engine: showing random examples..
+INFO 18.12400 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.12700 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 18.12700 eeg Interaxon Muse 0.04 0.11 0.14 0.15 0.07 0.52 0.90
+INFO 18.23300 checking command
+INFO 18.23300 resonanz-engine: showing random examples..
+INFO 18.23300 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.23700 engine_showScreen(fail 4/6 dim(3)) = 3. DONE
+INFO 18.23700 eeg Interaxon Muse 0.04 0.09 0.14 0.15 0.08 0.51 0.83
+INFO 18.32600 checking command
+INFO 18.32600 resonanz-engine: showing random examples..
+INFO 18.32600 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.32800 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 18.32900 eeg Interaxon Muse 0.04 0.09 0.14 0.15 0.08 0.51 0.83
+INFO 18.42100 checking command
+INFO 18.42100 resonanz-engine: showing random examples..
+INFO 18.42100 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.42400 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 18.42400 eeg Interaxon Muse 0.03 0.08 0.14 0.15 0.08 0.50 0.75
+INFO 18.52900 checking command
+INFO 18.52900 resonanz-engine: showing random examples..
+INFO 18.52900 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.53200 engine_showScreen(fail 4/6 dim(3)) = 3. DONE
+INFO 18.53300 eeg Interaxon Muse 0.03 0.08 0.13 0.14 0.08 0.48 0.79
+INFO 18.62200 checking command
+INFO 18.62200 resonanz-engine: showing random examples..
+INFO 18.62200 engine_showScreen(fail 4/6 dim(3)) called
+INFO 18.62500 engine_showScreen(fail 4/6 dim(3)) = 2. DONE
+INFO 18.62600 eeg Interaxon Muse 0.03 0.08 0.11 0.14 0.08 0.47 0.78
+INFO 18.73100 checking command
+INFO 18.73100 resonanz-engine: showing random examples..
+INFO 18.73100 engine_showScreen(smile 5/6 dim(3)) called
+INFO 18.73400 engine_showScreen(smile 5/6 dim(3)) = 3. DONE
+INFO 18.73400 eeg Interaxon Muse 0.03 0.08 0.10 0.13 0.07 0.47 0.74
+INFO 18.82400 checking command
+INFO 18.82400 resonanz-engine: showing random examples..
+INFO 18.82400 engine_showScreen(smile 5/6 dim(3)) called
+INFO 18.82700 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 18.82700 eeg Interaxon Muse 0.04 0.08 0.10 0.13 0.07 0.47 0.74
+INFO 18.91800 checking command
+INFO 18.91800 resonanz-engine: showing random examples..
+INFO 18.91800 engine_showScreen(smile 5/6 dim(3)) called
+INFO 18.92100 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 18.92100 eeg Interaxon Muse 0.04 0.09 0.10 0.13 0.07 0.48 0.82
+INFO 19.02800 checking command
+INFO 19.02800 resonanz-engine: showing random examples..
+INFO 19.02800 engine_showScreen(smile 5/6 dim(3)) called
+INFO 19.03200 engine_showScreen(smile 5/6 dim(3)) = 3. DONE
+INFO 19.03200 eeg Interaxon Muse 0.05 0.09 0.12 0.13 0.07 0.50 0.91
+INFO 19.12000 checking command
+INFO 19.12000 resonanz-engine: showing random examples..
+INFO 19.12000 engine_showScreen(smile 5/6 dim(3)) called
+INFO 19.12400 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 19.12500 eeg Interaxon Muse 0.05 0.10 0.14 0.13 0.07 0.52 0.95
+INFO 19.21800 checking command
+INFO 19.21800 resonanz-engine: showing random examples..
+INFO 19.21800 engine_showScreen(smile 5/6 dim(3)) called
+INFO 19.22200 engine_showScreen(smile 5/6 dim(3)) = 2. DONE
+INFO 19.22200 eeg Interaxon Muse 0.06 0.12 0.16 0.13 0.07 0.55 0.95
+INFO 19.32400 checking command
+INFO 19.32400 resonanz-engine: showing random examples..
+INFO 19.32400 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.32700 engine_showScreen(beautiful 3/6 dim(3)) = 3. DONE
+INFO 19.32800 eeg Interaxon Muse 0.08 0.17 0.17 0.13 0.07 0.59 0.81
+INFO 19.41900 checking command
+INFO 19.41900 resonanz-engine: showing random examples..
+INFO 19.41900 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.42200 engine_showScreen(beautiful 3/6 dim(3)) = 2. DONE
+INFO 19.42300 eeg Interaxon Muse 0.08 0.17 0.17 0.13 0.07 0.59 0.81
+INFO 19.53000 checking command
+INFO 19.53000 resonanz-engine: showing random examples..
+INFO 19.53000 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.53400 engine_showScreen(beautiful 3/6 dim(3)) = 3. DONE
+INFO 19.53400 eeg Interaxon Muse 0.09 0.20 0.17 0.13 0.07 0.60 0.84
+INFO 19.62500 checking command
+INFO 19.62500 resonanz-engine: showing random examples..
+INFO 19.62500 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.62800 engine_showScreen(beautiful 3/6 dim(3)) = 2. DONE
+INFO 19.62900 eeg Interaxon Muse 0.10 0.22 0.17 0.13 0.08 0.61 0.82
+INFO 19.71700 checking command
+INFO 19.71700 resonanz-engine: showing random examples..
+INFO 19.71700 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.72000 engine_showScreen(beautiful 3/6 dim(3)) = 2. DONE
+INFO 19.72100 eeg Interaxon Muse 0.10 0.25 0.17 0.12 0.08 0.62 0.81
+INFO 19.82600 checking command
+INFO 19.82600 resonanz-engine: showing random examples..
+INFO 19.82600 engine_showScreen(beautiful 3/6 dim(3)) called
+INFO 19.82900 engine_showScreen(beautiful 3/6 dim(3)) = 3. DONE
+INFO 19.83000 eeg Interaxon Muse 0.10 0.27 0.18 0.12 0.08 0.63 0.80
+INFO 19.92000 checking command
+INFO 19.92000 resonanz-engine: showing random examples..
+INFO 19.92000 engine_showScreen(safe 5/6 dim(3)) called
+INFO 19.92400 engine_showScreen(safe 5/6 dim(3)) = 2. DONE
+INFO 19.92400 eeg Interaxon Muse 0.11 0.29 0.18 0.12 0.08 0.64 0.80
+INFO 20.02900 checking command
+INFO 20.02900 resonanz-engine: showing random examples..
+INFO 20.02900 engine_showScreen(safe 5/6 dim(3)) called
+INFO 20.03200 engine_showScreen(safe 5/6 dim(3)) = 3. DONE
+INFO 20.03300 eeg Interaxon Muse 0.13 0.31 0.17 0.13 0.08 0.65 0.81
+INFO 20.12300 checking command
+INFO 20.12300 resonanz-engine: showing random examples..
+INFO 20.12300 engine_showScreen(safe 5/6 dim(3)) called
+INFO 20.12600 engine_showScreen(safe 5/6 dim(3)) = 2. DONE
+INFO 20.12700 Received keypress: stopping command..
+INFO 20.12700 eeg Interaxon Muse 0.22 0.37 0.21 0.14 0.08 0.71 0.81
+INFO 20.23100 checking command
+INFO 20.23100 new engine command received
+INFO 20.23100 stop synth
+INFO 20.25700 resonanz-engine: sleeping..
+INFO 20.25900 eeg Interaxon Muse 0.22 0.37 0.21 0.14 0.08 0.71 0.81
+INFO 20.32700 checking command
+INFO 20.32700 resonanz-engine: sleeping..
+INFO 20.32700 eeg Interaxon Muse 0.29 0.42 0.23 0.14 0.08 0.74 0.82
+INFO 20.42100 checking command
+INFO 20.42100 resonanz-engine: sleeping..
+INFO 20.42100 eeg Interaxon Muse 0.41 0.48 0.24 0.15 0.09 0.78 0.81
+INFO 20.52600 checking command
+INFO 20.52600 resonanz-engine: sleeping..
+INFO 20.52600 eeg Interaxon Muse 0.41 0.48 0.24 0.15 0.09 0.78 0.81
+INFO 20.62500 checking command
+INFO 20.62500 resonanz-engine: sleeping..
+INFO 20.62500 eeg Interaxon Muse 0.44 0.49 0.25 0.15 0.09 0.78 0.81
+INFO 20.71800 checking command
+INFO 20.71800 resonanz-engine: sleeping..
+INFO 20.71800 eeg Interaxon Muse 0.44 0.49 0.25 0.15 0.09 0.78 0.81
+INFO 20.82600 checking command
+INFO 20.82600 resonanz-engine: sleeping..
+INFO 20.82600 eeg Interaxon Muse 0.42 0.48 0.24 0.15 0.08 0.78 0.81
+INFO 20.92100 checking command
+INFO 20.92100 resonanz-engine: sleeping..
+INFO 20.92100 eeg Interaxon Muse 0.40 0.47 0.24 0.15 0.08 0.77 0.81
+INFO 21.02800 checking command
+INFO 21.02800 resonanz-engine: sleeping..
+INFO 21.02800 eeg Interaxon Muse 0.38 0.46 0.24 0.15 0.08 0.77 0.83
+INFO 21.12200 checking command
+INFO 21.12200 new engine command received
+INFO 21.12200 resonanz-engine: sleeping..
+INFO 21.12200 eeg Interaxon Muse 0.38 0.46 0.25 0.16 0.08 0.77 0.85
+INFO 21.23100 checking command
+INFO 21.23100 resonanz-engine: sleeping..
+INFO 21.23100 eeg Interaxon Muse 0.40 0.45 0.30 0.17 0.08 0.78 0.86
+INFO 21.32300 checking command
+INFO 21.32300 resonanz-engine: sleeping..
+INFO 21.32300 eeg Interaxon Muse 0.40 0.45 0.30 0.17 0.08 0.78 0.86
+INFO 21.42000 checking command
+INFO 21.42000 resonanz-engine: sleeping..
+INFO 21.42000 eeg Interaxon Muse 0.41 0.45 0.32 0.17 0.07 0.79 0.87
+INFO 21.52700 checking command
+INFO 21.52700 resonanz-engine: sleeping..
+INFO 21.52700 eeg Interaxon Muse 0.41 0.47 0.34 0.17 0.07 0.79 0.87
+INFO 21.62000 checking command
+INFO 21.62000 resonanz-engine: sleeping..
+INFO 21.62000 eeg Interaxon Muse 0.41 0.47 0.34 0.17 0.07 0.79 0.87
+INFO 21.71900 checking command
+INFO 21.71900 resonanz-engine: sleeping..
+INFO 21.71900 eeg Interaxon Muse 0.38 0.46 0.35 0.17 0.07 0.79 0.87
+INFO 21.82300 checking command
+INFO 21.82300 resonanz-engine: sleeping..
+INFO 21.82300 eeg Interaxon Muse 0.33 0.45 0.37 0.17 0.07 0.78 0.87
+INFO 21.91700 checking command
+INFO 21.91700 resonanz-engine: sleeping..
+INFO 21.91700 eeg Interaxon Muse 0.27 0.43 0.35 0.17 0.07 0.76 0.87
+INFO 22.02700 checking command
+INFO 22.02700 resonanz-engine: sleeping..
+INFO 22.02700 eeg Interaxon Muse 0.21 0.40 0.35 0.17 0.07 0.75 0.87
+INFO 22.07100 resonanz-engine: shutdown..
+INFO 22.12200 checking command
+INFO 22.12200 resonanz-engine: sleeping..
+INFO 22.12200 eeg Interaxon Muse 0.19 0.39 0.35 0.18 0.07 0.74 0.88
+INFO 22.13800 SDL deinitialization..
+INFO 22.25800 SDL deinitialization.. DONE
+INFO 23.07200 resonanz-engine: halted
+INFO 23.07200 Shutdown? Logging class destroyed.

@@ -58,6 +58,9 @@
 
 #include "hermitecurve.h"
 
+#include "timing.h"
+
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -518,7 +521,19 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 #endif
     else if(deviceNumber == ResonanzEngine::RE_EEG_IA_MUSE_DEVICE){
       if(eeg != nullptr) delete eeg;
-      eeg = new MuseOSC(4545);
+      eeg = new MuseOSC(musePort); // 4545
+
+      int counter = 0;
+
+      while(counter < 10){
+	millisleep(2000); // gives engine time connect MuseOSC object to UDP stream..
+	if(eeg->connectionOk()) break;
+	counter++;
+
+	printf("Waiting connection to Muse OSC UDP server (localhost:%d)..\n", musePort);
+	fflush(stdout);
+      }
+      
     }
 #ifdef LIGHTSTONE
     else if(deviceNumber == ResonanzEngine::RE_WD_LIGHTSTONE){
@@ -825,6 +840,10 @@ bool ResonanzEngine::setParameter(const std::string& parameter, const std::strin
     else if(value == "false"){
       randomPrograms = false;
     }
+  }
+  else if(parameter == "muse-port"){
+    musePort = (unsigned int)atoi(value.c_str());
+    std::cout << "MUSE OSC PORT IS NOW: " << musePort << std::endl;
   }
   else{
     return false;
