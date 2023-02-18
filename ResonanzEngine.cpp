@@ -57,6 +57,8 @@
 #include "SDLTheora.h"
 #include "SDLAVCodec.h"
 
+#include "pictureFeatureVector.h"
+
 #include "hermitecurve.h"
 
 #include "timing.h"
@@ -108,7 +110,7 @@ ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
     
     std::vector<unsigned int> nnArchitecture;
     
-    nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+    nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
     for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
       nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
     nnArchitecture.push_back(eeg->getNumberOfSignals());
@@ -584,7 +586,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
     // updates neural network model according to signal numbers of the EEG device
     {
       std::vector<unsigned int> nnArchitecture;
-      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
       nnArchitecture.push_back(eeg->getNumberOfSignals());
@@ -657,7 +659,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
     
     {
       std::vector<unsigned int> nnArchitecture;
-      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
@@ -2608,14 +2610,19 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
     
     const unsigned int index = (*piciter); // select (all) pictures from PicIndexes set
     
-    math::vertex<> x(eegCurrent.size() + HMM_NUM_CLUSTERS);
+    math::vertex<> x(eegCurrent.size() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
     
     for(unsigned int i=0;i<eegCurrent.size();i++){
       x[i] = eegCurrent[i];
     }
-    for(unsigned int i=eegCurrent.size();i<x.size();i++){
+    
+    for(unsigned int i=eegCurrent.size();i<(eegCurrent.size()+HMM_NUM_CLUSTERS);i++){
       if(i-eegCurrent.size() == HMMstate) x[i] = 1.0f;
       else x[i] = 0.0f;
+    }
+
+    for(unsigned int i=eegCurrent.size()+HMM_NUM_CLUSTERS, index=0;i<x.size();i++,index++){
+      x[i] = imageFeatures[picindex][index];
     }
     
     auto original = x;
@@ -3045,7 +3052,8 @@ bool ResonanzEngine::engine_executeProgram(const std::vector<float>& eegCurrent,
 // executes program blindly based on Monte Carlo sampling and prediction models
 // [only works for low dimensional target signals and well-trained models]
 //
-// FIXME: don't support randomPrograms flag which instead selects model randomly 
+// FIXME: don't support randomPrograms flag which instead selects model randomly
+// FIXME: REMOVE THIS NOT USABLE CODE
 //
 bool ResonanzEngine::engine_executeProgramMonteCarlo(const std::vector<float>& eegTarget,
 						     const std::vector<float>& eegTargetVariance, float timestep_)
@@ -4274,6 +4282,7 @@ bool ResonanzEngine::engine_loadMedia(const std::string& picdir, const std::stri
   
   if(loadData){
     images.resize(pictures.size());
+    imageFeatures.resize(pictures.size());
     
     std::vector<float> synthParams;
     if(synth){
@@ -4292,7 +4301,23 @@ bool ResonanzEngine::engine_loadMedia(const std::string& picdir, const std::stri
 	       100.0f*(((float)i)/((float)images.size())));
       engine_setStatus(buffer);
       
-      engine_showScreen("Loading..", i, synthParams);
+      engine_showScreen("Loading..", i, synthParams); // loads picture if it is not loaded yet.
+
+      // calculates feature vector from picture
+      {
+	std::vector<float> features;
+	whiteice::math::vertex<> f;
+	
+	f.resize(PICFEATURES_SIZE);
+	f.zero();
+
+	calculatePicFeatureVector(images[i], features);
+
+	for(unsigned int j=0;j<features.size() && j< f.size();j++)
+	  f[j] = features[j];
+
+	imageFeatures[i] = f;
+      }
       
       engine_pollEvents();
       engine_updateScreen();
@@ -4457,7 +4482,7 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
     if(pictureData[i].load(dbFilename) == false){
       logging.info("Couldn't load picture data => creating empty database");
       
-      pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       pictureData[i].createCluster(name2, eeg->getNumberOfSignals());
       pictureData[i].createCluster("index", 1);
       
@@ -4467,7 +4492,7 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
 	logging.error("Picture data wrong number of clusters or data corruption => reset database");
 	
 	pictureData[i].clear();
-	pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+	pictureData[i].createCluster(name1, eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
 	pictureData[i].createCluster(name2, eeg->getNumberOfSignals());
 	pictureData[i].createCluster("index", 1);
       }
@@ -4632,18 +4657,23 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
     logging.error("store measurement: eegBefore != eegAfter");
     return false;
   }
+
+  // t5 is for pictures with picfeatures
+  std::vector< whiteice::math::blas_real<float> > t1, t2, t3, t4, t5;
   
-  std::vector< whiteice::math::blas_real<float> > t1, t2, t3, t4;
   t1.resize(eegBefore.size() + HMM_NUM_CLUSTERS);
   t2.resize(eegAfter.size());
   t3.resize(eegAfter.size());
   t4.resize(1);
+
+  t5.resize(eegBefore.size() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
   
   // initialize to zero [no bad data possible]
   for(auto& t : t1) t = 0.0f; 
   for(auto& t : t2) t = 0.0f;
   for(auto& t : t3) t = 0.0f;
   t4[0] = 0.0f;
+  for(auto& t : t5) t = 0.0f;
   
   // heavy checks against correctness of the data because buggy code/hardware
   // seem to introduce bad measurment data into database..
@@ -4729,7 +4759,15 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
   }
   
   if(pic < pictureData.size()){
-    if(pictureData[pic].add(0, t1) == false || pictureData[pic].add(1, t2) == false || pictureData[pic].add(2, t4) == false){
+
+    for(unsigned int i=0;i<t1.size();i++)
+      t5[i] = t1[i];
+
+    // picture feature vector to input of picture models (to store in cluster 0 input data)
+    for(unsigned int i=t1.size();i<t5.size();i++)
+      t5[i] = imageFeatures[pic][i-t1.size()].c[0];
+    
+    if(pictureData[pic].add(0, t5) == false || pictureData[pic].add(1, t2) == false || pictureData[pic].add(2, t4) == false){
       logging.error("Adding new picture data FAILED");
       return false;
     }

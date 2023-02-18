@@ -45,15 +45,20 @@ bool calculatePicFeatureVector(const SDL_Surface* pic,
     points.push_back(rgb);
   }
 
+  // printf("PIC FEATURE VECTOR CALC: %d\n", (int)points.size());
+
   kmeans.startTrain(5, points);
 
   unsigned int counter = 0;
 
   while(kmeans.isRunning() && counter < (2*60)){ // max 1 minute
     millisleep(500);
+    counter++;
   }
 
   kmeans.stopTrain();
+
+  // printf("KMEANS FINISHED\n");
 
   // calculates percentages of different clusters;
 
@@ -82,6 +87,14 @@ bool calculatePicFeatureVector(const SDL_Surface* pic,
     features[cluster*4 + 1] = kmeans[cluster][1].c[0];
     features[cluster*4 + 2] = kmeans[cluster][2].c[0];
     features[cluster*4 + 3] = (c.first)/((float)N);
+
+    /*
+    printf("KMEANS CLUSTER SIZE: %f %f %f = %f\n",
+	   features[cluster*4 + 0],
+	   features[cluster*4 + 1],
+	   features[cluster*4 + 2],
+	   features[cluster*4 + 3]);
+    */
   }
 
   return true;

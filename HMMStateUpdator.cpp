@@ -192,7 +192,7 @@ namespace whiteice
 	    
 	    auto v = pic.access(0, i);
 
-	    for(unsigned int j=eeg.size();j<v.size();j++){
+	    for(unsigned int j=eeg.size();j<(eeg.size()+(hmm->getNumHiddenStates()));j++){
 	      unsigned int index = j-eeg.size();
 	      
 	      if(index == HMMstate) v[j] = 1.0f;

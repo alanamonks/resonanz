@@ -249,6 +249,10 @@ private:
 	std::vector<std::string> keywords;
 	std::vector<std::string> pictures;
 	std::vector<SDL_Surface*> images;
+
+        const unsigned int PICFEATURES_SIZE = 20; // 5*(3+1)
+        std::vector< whiteice::math::vertex<> > imageFeatures; // feature vectors of images
+  
 	SDLSoundSynthesis* synth = nullptr;
 	SDLMicListener* mic = nullptr;
 

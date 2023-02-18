@@ -229,8 +229,26 @@ int main(int argc, char** argv)
 	}
 
 	unsigned int numChannels = 7;
-	if(device == "muse4ch")
+	if(device == "muse4ch"){
+	  // converts target to all channels
+	  if(targets.size() == 7){
+	    
+	    auto copy = targets;
+	    copy.resize(25);
+	    
+	    for(unsigned int i=0;i<6;i++){
+	      copy[i] = targets[i];
+	      copy[1*6+i] = targets[i];
+	      copy[2*6+i] = targets[i];
+	      copy[3*6+i] = targets[i];
+	    }
+	    copy[24] = targets[6];
+	    
+	    targets = copy;
+	  }
+	  
 	  numChannels = 25;
+	}
 
 	std::cout << "ResonanzEngine NUMCHANNELS: " << numChannels << std::endl;
 

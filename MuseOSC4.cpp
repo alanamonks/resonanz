@@ -212,6 +212,16 @@ void MuseOSC4::muse_loop() // worker thread loop
       quality = q;
 
       std::vector<float> w; // measurement
+
+      /*
+      printf("QUALITY %f DELTA %d THETA %d ALPHA %d BETA %d GAMMA %d\n",
+	     q,
+	     (int)delta.size(),
+	     (int)theta.size(),
+	     (int)alpha.size(),
+	     (int)beta.size(),
+	     (int)gamma.size());
+      */
       
 
       for(unsigned int m=0;m<delta.size();m++){
@@ -391,6 +401,7 @@ void MuseOSC4::muse_loop() // worker thread loop
 	  int n = connectionQuality.size();
 
 	  if(n < 4){
+	    n = 4 - n;
 	    while(n > 0){
 	      connectionQuality.push_back(0);
 	      n--;
@@ -399,7 +410,8 @@ void MuseOSC4::muse_loop() // worker thread loop
 	}
 	
 	// gets relative frequency bands powers..
-	std::vector<float> f(connectionQuality.size());
+	std::vector<float> f;
+	f.resize(connectionQuality.size());
 
 	for(auto& ff : f) ff = 0.0f;
 	
@@ -407,8 +419,11 @@ void MuseOSC4::muse_loop() // worker thread loop
 	if(r.isOk()){
 	  if(r.popFloat(f[0]).popFloat(f[1]).popFloat(f[2]).popFloat(f[3]).isOkNoMoreArgs()){
 	    std::vector<float> samples;
-	    for(unsigned int i=0;i<f.size();i++)
+	    for(unsigned int i=0;i<f.size();i++){
 	      if(connectionQuality[i]) samples.push_back(f[i]);
+	      else samples.push_back(0.0f);
+	    }
+
 
 	    delta = samples;
 
@@ -430,8 +445,10 @@ void MuseOSC4::muse_loop() // worker thread loop
 	if(r.isOk()){
 	  if(r.popFloat(f[0]).popFloat(f[1]).popFloat(f[2]).popFloat(f[3]).isOkNoMoreArgs()){
 	    std::vector<float> samples;
-	    for(unsigned int i=0;i<f.size();i++)
+	    for(unsigned int i=0;i<f.size();i++){
 	      if(connectionQuality[i]) samples.push_back(f[i]);
+	      else samples.push_back(0.0f);
+	    }
 
 	    theta = samples;
 
@@ -453,8 +470,10 @@ void MuseOSC4::muse_loop() // worker thread loop
 	if(r.isOk()){
 	  if(r.popFloat(f[0]).popFloat(f[1]).popFloat(f[2]).popFloat(f[3]).isOkNoMoreArgs()){
 	    std::vector<float> samples;
-	    for(unsigned int i=0;i<f.size();i++)
+	    for(unsigned int i=0;i<f.size();i++){
 	      if(connectionQuality[i]) samples.push_back(f[i]);
+	      else samples.push_back(0.0f);
+	    }
 
 	    alpha = samples;
 
@@ -475,8 +494,10 @@ void MuseOSC4::muse_loop() // worker thread loop
 	if(r.isOk()){
 	  if(r.popFloat(f[0]).popFloat(f[1]).popFloat(f[2]).popFloat(f[3]).isOkNoMoreArgs()){
 	    std::vector<float> samples;
-	    for(unsigned int i=0;i<f.size();i++)
+	    for(unsigned int i=0;i<f.size();i++){
 	      if(connectionQuality[i]) samples.push_back(f[i]);
+	      else samples.push_back(0.0f);
+	    }
 
 	    beta = samples;
 
@@ -497,8 +518,10 @@ void MuseOSC4::muse_loop() // worker thread loop
 	if(r.isOk()){
 	  if(r.popFloat(f[0]).popFloat(f[1]).popFloat(f[2]).popFloat(f[3]).isOkNoMoreArgs()){
 	    std::vector<float> samples;
-	    for(unsigned int i=0;i<f.size();i++)
+	    for(unsigned int i=0;i<f.size();i++){
 	      if(connectionQuality[i]) samples.push_back(f[i]);
+	      else samples.push_back(0.0f);
+	    }
 
 	    gamma = samples;
 
