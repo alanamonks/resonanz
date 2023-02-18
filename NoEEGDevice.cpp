@@ -10,14 +10,17 @@
 namespace whiteice {
 namespace resonanz {
 
-NoEEGDevice::NoEEGDevice() {
-	// TODO Auto-generated constructor stub
-
-}
-
-NoEEGDevice::~NoEEGDevice() {
-	// TODO Auto-generated destructor stub
-}
-
+  NoEEGDevice::NoEEGDevice(const unsigned int channels) :
+    CHANNELS(channels)
+  {
+    // TODO Auto-generated constructor stub
+    
+  }
+  
+  NoEEGDevice::~NoEEGDevice()
+  {
+    // TODO Auto-generated destructor stub
+  }
+  
 } /* namespace resonanz */
 } /* namespace whiteice */

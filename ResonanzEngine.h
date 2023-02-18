@@ -87,7 +87,7 @@ public:
 class ResonanzEngine 
 {
 public:
-	ResonanzEngine();
+	ResonanzEngine(const unsigned int numDeviceChannels = 7);
 	virtual ~ResonanzEngine();
 
 	// what resonanz is doing right now [especially interesting if we are optimizing model]
@@ -171,6 +171,8 @@ public:
 	static const int RE_EEG_EMOTIV_INSIGHT_DEVICE = 2;
 	static const int RE_EEG_IA_MUSE_DEVICE = 3;
 	static const int RE_WD_LIGHTSTONE = 4;
+        static const int RE_EEG_IA_MUSE_4CH_DEVICE = 5;
+  
 
 	bool setEEGDeviceType(int deviceNumber);
 	int getEEGDeviceType();
@@ -269,6 +271,9 @@ private:
 	
 	bool engine_saveDatabase(const std::string& modelDir);
 	std::string calculateHashName(const std::string& filename) const;
+        
+        
+        std::string latestModelDir;
 
         whiteice::dataset<> eegData; // EEG values data for KMeans and HMM brain state detection
         

@@ -48,6 +48,7 @@
 #endif
 
 #include "MuseOSC.h"
+#include "MuseOSC4.h"
 
 #include "FMSoundSynthesis.h"
 
@@ -69,7 +70,7 @@ namespace whiteice {
 namespace resonanz {
 
 
-ResonanzEngine::ResonanzEngine()
+ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
 {        
   logging.info("ResonanzEngine ctor starting");
   
@@ -102,7 +103,7 @@ ResonanzEngine::ResonanzEngine()
   
   {
     std::lock_guard<std::mutex> lock(eeg_mutex);
-    eeg = new NoEEGDevice();
+    eeg = new NoEEGDevice(numDeviceChannels);
     eegDeviceType = ResonanzEngine::RE_EEG_NO_DEVICE;
     
     std::vector<unsigned int> nnArchitecture;
@@ -533,6 +534,41 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	printf("Waiting connection to Muse OSC UDP server (localhost:%d)..\n", musePort);
 	fflush(stdout);
       }
+
+
+#if 0
+      // reloads and creates databases [do we need to refresh models too??]
+      if(engine_loadDatabase(latestModelDir) == false){
+	logging.error("engine_loadDatabase() FAILED after EEG device change.");
+      }
+      else
+	logging.error("engine_loadDatabase() SUCCESS after EEG device change.");
+#endif
+      
+    }
+    else if(deviceNumber == ResonanzEngine::RE_EEG_IA_MUSE_4CH_DEVICE){
+      if(eeg != nullptr) delete eeg;
+      eeg = new MuseOSC4(musePort); // 4545
+
+      int counter = 0;
+
+      while(counter < 10){
+	millisleep(2000); // gives engine time connect MuseOSC object to UDP stream..
+	if(eeg->connectionOk()) break;
+	counter++;
+
+	printf("Waiting connection to Muse OSC UDP server (localhost:%d)..\n", musePort);
+	fflush(stdout);
+      }
+
+#if 0
+      // reloads and creates databases
+      if(engine_loadDatabase(latestModelDir) == false){
+	logging.error("engine_loadDatabase() FAILED after EEG device change.");
+      }
+      else
+	logging.error("engine_loadDatabase() SUCCESS after EEG device change.");
+#endif
       
     }
 #ifdef LIGHTSTONE
@@ -4276,6 +4312,8 @@ bool ResonanzEngine::engine_loadMedia(const std::string& picdir, const std::stri
 bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
 {
   std::lock_guard<std::mutex> lock(database_mutex);
+
+  latestModelDir = modelDir;
   
   keywordData.resize(keywords.size());
   pictureData.resize(pictures.size());
@@ -4582,7 +4620,10 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
 					     const std::vector<float>& synthBefore,
 					     const std::vector<float>& synthAfter)
 {
-  if(eegBefore.size() != eegAfter.size()) return false;
+  if(eegBefore.size() != eegAfter.size()){
+    logging.error("store measurement: eegBefore != eegAfter");
+    return false;
+  }
   
   std::vector< whiteice::math::blas_real<float> > t1, t2, t3, t4;
   t1.resize(eegBefore.size() + HMM_NUM_CLUSTERS);

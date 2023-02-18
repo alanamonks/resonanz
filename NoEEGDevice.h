@@ -18,7 +18,7 @@ namespace resonanz {
  */
 class NoEEGDevice: public DataSource {
 public:
-	NoEEGDevice();
+	NoEEGDevice(const unsigned int channels = 7);
 	virtual ~NoEEGDevice();
 
 
@@ -33,18 +33,23 @@ public:
 	 *	 returns current value
 	 */
 	virtual bool data(std::vector<float>& x) const {
-		x.resize(1);
-		x[0] = 0.5f;
-		return true;
+	  x.resize(CHANNELS);
+	  for(unsigned int i=0;i<x.size();i++)
+	    x[i] = 0.5f;
+	  return true;
 	}
 
 	virtual bool getSignalNames(std::vector<std::string>& names) const {
-		names.resize(1);
-		names[0] = "Empty signal";
-		return true;
+ 	  names.resize(CHANNELS);
+	  for(unsigned int i=0;i<names.size();i++)
+	    names[i] = "Empty signal";
+	  return true;
 	}
 
-	virtual unsigned int getNumberOfSignals() const { return 1; }
+	virtual unsigned int getNumberOfSignals() const { return CHANNELS; }
+
+private:
+        const unsigned int CHANNELS;
 };
 
 } /* namespace resonanz */

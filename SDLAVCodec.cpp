@@ -103,7 +103,8 @@ bool SDLAVCodec::startEncoding(const std::string& filename,
 
   const char* codec_name = "mpeg4";
   // const char* codec_name = "h264_mf";
-  //const char* codec_name = "libx264";
+  // const char* codec_name = "h264";
+  // const char* codec_name = "libx264";
   // const AVCodec *codec;
   int ret;
   

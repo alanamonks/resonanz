@@ -51,7 +51,7 @@ void print_usage()
   printf("--program-file=  sets NMC program file\n");
   printf("--music-file=    sets music (MP3) file for playback\n");
   printf("--target=        sets measurement program targets (comma separated numbers)\n");
-  printf("--device=        sets measurement device: muse* (osc.udp://localhost:4545), [insight], random\n");
+  printf("--device=        sets measurement device: muse* (osc.udp://localhost:4545), muse4ch, random\n");
   printf("--method=        sets optimization method: rbf, lbfgs, bayes*\n");
   printf("--pca            preprocess input data with pca if possible\n");
   printf("--loop           loops program forever\n");
@@ -228,10 +228,16 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
+	unsigned int numChannels = 7;
+	if(device == "muse4ch")
+	  numChannels = 25;
+
 	// starts resonanz engine
-	whiteice::resonanz::ResonanzEngine engine;
+	whiteice::resonanz::ResonanzEngine engine(numChannels);
 
 	engine.setParameter("muse-port", museServerPort);
+
+	
 	
 
 	// sets engine parameters
@@ -242,6 +248,16 @@ int main(int argc, char** argv)
 	      // osc.udp://localhost:4545
 	      if(engine.setEEGDeviceType(whiteice::resonanz::ResonanzEngine::RE_EEG_IA_MUSE_DEVICE))
 		printf("Hardware: Interaxon Muse EEG\n");
+	      else{
+		printf("Cannot connect to Interaxon Muse EEG device\n");
+		exit(-1);
+	      }
+	    }
+	    else if(device == "muse4ch"){
+	      // listens UDP traffic at localhost:4545 (from muse-io)
+	      // osc.udp://localhost:4545
+	      if(engine.setEEGDeviceType(whiteice::resonanz::ResonanzEngine::RE_EEG_IA_MUSE_4CH_DEVICE))
+		printf("Hardware: Interaxon Muse EEG [4 channels]\n");
 	      else{
 		printf("Cannot connect to Interaxon Muse EEG device\n");
 		exit(-1);
