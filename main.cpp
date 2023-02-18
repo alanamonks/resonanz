@@ -232,6 +232,8 @@ int main(int argc, char** argv)
 	if(device == "muse4ch")
 	  numChannels = 25;
 
+	std::cout << "ResonanzEngine NUMCHANNELS: " << numChannels << std::endl;
+
 	// starts resonanz engine
 	whiteice::resonanz::ResonanzEngine engine(numChannels);
 

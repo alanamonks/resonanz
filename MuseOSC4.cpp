@@ -16,6 +16,9 @@
 #include "oscpkt.hh"
 #include "udp.hh"
 
+#include <dinrhiw.h>
+
+
 using namespace oscpkt;
 using namespace std::chrono;
 
@@ -147,11 +150,13 @@ bool MuseOSC4::getSignalNames(std::vector<std::string>& names) const
   return true;
 }
 
+  
 unsigned int MuseOSC4::getNumberOfSignals() const
 {
   return (4*6+1); // entropy is calculated signal
 }
 
+  
 void MuseOSC4::muse_loop() // worker thread loop
 {
   // sets MuseOSC4 internal thread high priority thread
@@ -316,13 +321,24 @@ void MuseOSC4::muse_loop() // worker thread loop
       
       w.push_back(t);
 
-      // gets current time
-      auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
       
-      std::lock_guard<std::mutex> lock(data_mutex);
-      value = w;
-      latest_sample_seen_t = (long long)ms_since_epoch;
-      
+      if(w.size() != this->getNumberOfSignals()){
+	whiteice::logging.error("MuseOSC4: input data dimensions are WRONG!");
+
+	char buffer[256];
+	sprintf(buffer, "MUSEOSC4 ERROR: %d DATAPOINTS ONLY\n", (int)w.size());
+	whiteice::logging.error(buffer);
+      }
+      else{
+	// gets current time
+	auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	{
+	  std::lock_guard<std::mutex> lock(data_mutex);
+	  value = w;
+	  latest_sample_seen_t = (long long)ms_since_epoch;
+	}
+      }
+
       // printf("EEQ: D:%.2f T:%.2f A:%.2f B:%.2f G:%.2f [QUALITY: %.2f]\n", delta, theta, alpha, beta, gamma, q);
       // printf("EEQ POWER: %.2f [QUALITY %.2f]\n", log(exp(delta)+exp(theta)+exp(alpha)+exp(beta)+exp(gamma)), q);
       // fflush(stdout);
@@ -368,9 +384,24 @@ void MuseOSC4::muse_loop() // worker thread loop
 	    connection_cond.notify_all();
 	  }
 	}
+
+
+	// always sets connection quality to at least 4 channels
+	{
+	  int n = connectionQuality.size();
+
+	  if(n < 4){
+	    while(n > 0){
+	      connectionQuality.push_back(0);
+	      n--;
+	    }
+	  }
+	}
 	
 	// gets relative frequency bands powers..
 	std::vector<float> f(connectionQuality.size());
+
+	for(auto& ff : f) ff = 0.0f;
 	
 	r = msg->match("/muse/elements/delta_absolute");
 	if(r.isOk()){
@@ -392,6 +423,8 @@ void MuseOSC4::muse_loop() // worker thread loop
 	  }
 	  
 	}
+
+	for(auto& ff : f) ff = 0.0f;
 	
 	r = msg->match("/muse/elements/theta_absolute");
 	if(r.isOk()){
@@ -413,6 +446,8 @@ void MuseOSC4::muse_loop() // worker thread loop
 	    hasNewData = true;
 	  }
 	}
+
+	for(auto& ff : f) ff = 0.0f;
 	
 	r = msg->match("/muse/elements/alpha_absolute");
 	if(r.isOk()){
@@ -433,6 +468,8 @@ void MuseOSC4::muse_loop() // worker thread loop
 	    hasNewData = true;
 	  }
 	}
+
+	for(auto& ff : f) ff = 0.0f;
 	
 	r = msg->match("/muse/elements/beta_absolute");
 	if(r.isOk()){
@@ -453,6 +490,8 @@ void MuseOSC4::muse_loop() // worker thread loop
 	    hasNewData = true;
 	  }
 	}
+
+	for(auto& ff : f) ff = 0.0f;
 	
 	r = msg->match("/muse/elements/gamma_absolute");
 	if(r.isOk()){

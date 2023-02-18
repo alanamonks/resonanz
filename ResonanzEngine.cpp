@@ -69,8 +69,8 @@
 namespace whiteice {
 namespace resonanz {
 
-
-ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
+  // FIXME: numDeviceChannels is NOT USED BY CODE AND SHOULD BE REMOVED FROM PARAMETERS
+ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels) 
 {        
   logging.info("ResonanzEngine ctor starting");
   
@@ -4326,6 +4326,13 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
   float picture_num_samples = 0.0f;
   float synth_num_samples   = 0.0f;
 
+  // debugs eeg dimensions to log file at loadDatabase()
+  {
+    char buffer[80];
+    sprintf(buffer, "engine_loadDatabase(): EEG DIMENSIONS: %d", eeg->getNumberOfSignals());
+    logging.info(buffer);
+  }
+
   // loads EEG stream values
   {
     std::string dbFilename = modelDir + "/" + calculateHashName("eegData" + eeg->getDataSourceName()) + ".ds";
@@ -4389,6 +4396,7 @@ bool ResonanzEngine::engine_loadDatabase(const std::string& modelDir)
 	keywordData[i].createCluster("index", 1);
       }
     }
+    
     
     const unsigned int datasize = keywordData[i].size(0);
     
@@ -4709,7 +4717,12 @@ bool ResonanzEngine::engine_storeMeasurement(unsigned int pic, unsigned int key,
   }
   
   if(key < keywordData.size()){
-    if(keywordData[key].add(0, t1) == false || keywordData[key].add(1, t2) == false || keywordData[key].add(2, t4) == false){
+    bool b1 = true, b2 = true, b3 = true;
+    
+    if((b1 = keywordData[key].add(0, t1)) == false ||
+       (b2 = keywordData[key].add(1, t2)) == false ||
+       (b3 = keywordData[key].add(2, t4)) == false)
+    {
       logging.error("Adding new keyword data FAILED");
       return false;
     }
