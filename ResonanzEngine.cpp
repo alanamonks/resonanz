@@ -119,6 +119,19 @@ ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
     nn->setNonlinearity(whiteice::nnetwork<>::rectifier);
     nn->setNonlinearity(nn->getLayers()-1, whiteice::nnetwork<>::pureLinear);
     nn->setResidual(true);
+
+
+    nnArchitecture.clear();
+    nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+    for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+    nnArchitecture.push_back(eeg->getNumberOfSignals());
+    
+    nnkey = new whiteice::nnetwork<>(nnArchitecture);
+    nnkey->setNonlinearity(whiteice::nnetwork<>::rectifier);
+    nnkey->setNonlinearity(nn->getLayers()-1, whiteice::nnetwork<>::pureLinear);
+    nnkey->setResidual(true);
+
     
     // creates dummy synth neural network
     const int synth_number_of_parameters = 3;
@@ -203,6 +216,11 @@ ResonanzEngine::~ResonanzEngine()
   if(nn){
     delete nn;
     nn = nullptr;
+  }
+
+  if(nnkey){
+    delete nnkey;
+    nnkey = nullptr;
   }
 
   if(nnsynth){
@@ -586,6 +604,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
     // updates neural network model according to signal numbers of the EEG device
     {
       std::vector<unsigned int> nnArchitecture;
+      
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
@@ -599,6 +618,22 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 			  whiteice::nnetwork<>::pureLinear);
       nn->setResidual(true);
       
+
+      nnArchitecture.clear();
+      
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+      nnArchitecture.push_back(eeg->getNumberOfSignals());
+      
+      if(nnkey != nullptr) delete nnkey;
+      
+      nnkey = new whiteice::nnetwork<>(nnArchitecture);
+      nnkey->setNonlinearity(whiteice::nnetwork<>::rectifier);
+      nnkey->setNonlinearity(nn->getLayers()-1,
+			  whiteice::nnetwork<>::pureLinear);
+      nnkey->setResidual(true);
+
       
       nnArchitecture.clear();
       
@@ -659,6 +694,7 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
     
     {
       std::vector<unsigned int> nnArchitecture;
+      
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       
       for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
@@ -673,6 +709,23 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       nn->setNonlinearity(nn->getLayers()-1,
 			  whiteice::nnetwork<>::pureLinear);
       nn->setResidual(true);
+
+
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      
+      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+      
+      nnArchitecture.push_back(eeg->getNumberOfSignals());
+      
+      if(nnkey != nullptr) delete nnkey;
+      
+      nnkey = new whiteice::nnetwork<>(nnArchitecture);
+      nnkey->setNonlinearity(whiteice::nnetwork<>::rectifier);
+      nnkey->setNonlinearity(nn->getLayers()-1,
+			  whiteice::nnetwork<>::pureLinear);
+      nnkey->setResidual(true);
+      
       
       nnArchitecture.clear();
       
@@ -2130,6 +2183,11 @@ void ResonanzEngine::engine_loop()
   if(nn != nullptr){
     delete nn;
     nn = nullptr;
+  }
+
+  if(nnkey != nullptr){
+    delete nnkey;
+    nnkey = nullptr;
   }
   
   if(nnsynth != nullptr){
@@ -3935,7 +3993,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       
       optimizer = new whiteice::math::NNGradDescent<>();
       optimizer->setUseMinibatch(true);
-      optimizer->startOptimize(keywordData[currentKeywordModel], *nn,
+      optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey,
 			       NUM_OPTIMIZER_THREADS);
       
       {
@@ -3975,12 +4033,12 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  logging.info(buffer);
 	}
 	
-	nn->importdata(w);
+	nnkey->importdata(w);
 	
 	// switches to bayesian optimizer
 	const bool adaptive = true;
 	
-	bayes_optimizer = new whiteice::UHMC<>(*nn, keywordData[currentKeywordModel], adaptive);
+	bayes_optimizer = new whiteice::UHMC<>(*nnkey, keywordData[currentKeywordModel], adaptive);
 	bayes_optimizer->setMinibatch(true);
 	bayes_optimizer->startSampler();
 	
@@ -4039,15 +4097,15 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  }
 	  
 	  whiteice::math::vertex<> w;
-	  nn->randomize();
-	  nn->exportdata(w);
+	  nnkey->randomize();
+	  nnkey->exportdata(w);
 	  
 	  //optimizer = new whiteice::pLBFGS_nnetwork<>(*nn, keywordData[currentKeywordModel], false, false);
 	  //optimizer->minimize(NUM_OPTIMIZER_THREADS);
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(keywordData[currentKeywordModel], *nn, 
+	  optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
 				   NUM_OPTIMIZER_THREADS);
 	}
       }
@@ -4094,9 +4152,9 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	// saves optimization results to a file
 	std::string dbFilename = currentCommand.modelDir + "/" +
 	  calculateHashName(keywords[currentKeywordModel] + eeg->getDataSourceName()) + ".model";
-	nn->importdata(w);
+	nnkey->importdata(w);
 	
-	bnn->importNetwork(*nn);
+	bnn->importNetwork(*nnkey);
 	
 	if(bnn->save(dbFilename) == false)
 	  logging.error("saving nn configuration file failed");
@@ -4107,8 +4165,8 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	// starts new computation
 	currentKeywordModel++;
 	if(currentKeywordModel < keywords.size()){
-	  nn->randomize();
-	  nn->exportdata(w);
+	  nnkey->randomize();
+	  nnkey->exportdata(w);
 	  
 	  {
 	    char buffer[512];
@@ -4122,7 +4180,7 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(keywordData[currentKeywordModel], *nn, 
+	  optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
 				   NUM_OPTIMIZER_THREADS);
 	}
       }

@@ -318,7 +318,9 @@ private:
 	bool optimizeSynthOnly = false;
 
   	whiteice::nnetwork<>* nn = nullptr;
+        whiteice::nnetwork<>* nnkey = nullptr; // key data neural network 
 	whiteice::nnetwork<>* nnsynth = nullptr; // synth data neural network
+        
 	whiteice::bayesian_nnetwork<>* bnn = nullptr;
 	whiteice::UHMC<>* bayes_optimizer = nullptr;
 
