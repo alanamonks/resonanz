@@ -3487,15 +3487,6 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       // starts HMM optimizer
       hmm = new HMM(KMEANS_NUM_CLUSTERS, HMM_NUM_CLUSTERS);
 
-#if 0
-      std::vector<whiteice::math::vertex<> > eegTS; // eeg time-series
-      
-      if(eegData.getData(0,eegTS) == false){
-	logging.error("Loading EEG data from datastructure failed");
-	return false;
-      }
-#endif
-
       std::vector<unsigned int> observations;
       {
 	// converts data to observation variables
@@ -3587,8 +3578,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       
       optimizer = new whiteice::math::NNGradDescent<>();
       optimizer->setUseMinibatch(true);
-      optimizer->startOptimize(synthData, *nnsynth, 
-			       NUM_OPTIMIZER_THREADS);
+      if(optimizer->startOptimize(synthData, *nnsynth, 
+				  NUM_OPTIMIZER_THREADS) == false){
+	logging.error("nnsynth NNGradDescent::startOptimize() FAILED.");
+      }
       
     }
     else if(optimizer != nullptr && use_bayesian_nnetwork){ // pre-optimizer is active
@@ -3766,8 +3759,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
       
       optimizer = new whiteice::math::NNGradDescent<>();
       optimizer->setUseMinibatch(true);
-      optimizer->startOptimize(pictureData[currentPictureModel], *nn,
-			       NUM_OPTIMIZER_THREADS);
+      if(optimizer->startOptimize(pictureData[currentPictureModel], *nn,
+				  NUM_OPTIMIZER_THREADS) == false){
+	logging.error("nn NNGradDescent::startOptimize() FAILED.");
+      }
       
       {
 	char buffer[512];
@@ -3878,8 +3873,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(pictureData[currentPictureModel], *nn,
-				   NUM_OPTIMIZER_THREADS);
+	  if(optimizer->startOptimize(pictureData[currentPictureModel], *nn,
+				      NUM_OPTIMIZER_THREADS) == false){
+	    logging.error("nn NNGradDescent::startOptimize() FAILED.");
+	  }
 	  
 	}
       }
@@ -3953,8 +3950,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(pictureData[currentPictureModel], *nn,
-				   NUM_OPTIMIZER_THREADS);
+	  if(optimizer->startOptimize(pictureData[currentPictureModel], *nn,
+				      NUM_OPTIMIZER_THREADS) == false){
+	    logging.error("nn NNGradDescent::startOptimize() FAILED.");
+	  }
 	}
       }
     }
@@ -3981,20 +3980,23 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
   }
   else if(currentKeywordModel < keywords.size() && optimizeSynthOnly == false){
     
-    if(optimizer == nullptr && bayes_optimizer == nullptr){ // first model to be optimized (no need to store the previous result)
+    if(optimizer == nullptr && bayes_optimizer == nullptr){
+      // first model to be optimized (no need to store the previous result)
       
       whiteice::math::vertex<> w;
       
-      nn->randomize();
-      nn->exportdata(w);
+      nnkey->randomize();
+      nnkey->exportdata(w);
       
       //optimizer = new whiteice::pLBFGS_nnetwork<>(*nn, keywordData[currentKeywordModel], false, false);
       //optimizer->minimize(NUM_OPTIMIZER_THREADS);
       
       optimizer = new whiteice::math::NNGradDescent<>();
       optimizer->setUseMinibatch(true);
-      optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey,
-			       NUM_OPTIMIZER_THREADS);
+      if(optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey,
+				  NUM_OPTIMIZER_THREADS) == false){
+	logging.error("nnkey NNGradDescent::startOptimize() FAILED.");
+      }
       
       {
 	char buffer[512];
@@ -4105,8 +4107,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
-				   NUM_OPTIMIZER_THREADS);
+	  if(optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
+				      NUM_OPTIMIZER_THREADS)){
+	    logging.error("nnkey NNGradDescent::startOptimize() FAILED.");
+	  }
 	}
       }
       else{
@@ -4180,8 +4184,10 @@ bool ResonanzEngine::engine_optimizeModels(unsigned int& currentHMMModel,
 	  
 	  optimizer = new whiteice::math::NNGradDescent<>();
 	  optimizer->setUseMinibatch(true);
-	  optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
-				   NUM_OPTIMIZER_THREADS);
+	  if(optimizer->startOptimize(keywordData[currentKeywordModel], *nnkey, 
+				      NUM_OPTIMIZER_THREADS) == false){
+	    logging.error("nnkey NNGradDescent::startOptimize() FAILED.");
+	  }
 	}
       }
     }
