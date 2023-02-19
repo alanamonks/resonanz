@@ -23,9 +23,9 @@ CXXFLAGS = -fPIC -std=c++1y -O3 -g -fopenmp `pkg-config sdl2 --cflags` `pkg-conf
 
 # -fsanitize=address
 
-OBJECTS = ResonanzEngine.o MuseOSC.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLAVCodec.o SDLSoundSynthesis.o FMSoundSynthesis.o IsochronicSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o SoundSynthesis.o HMMStateUpdator.o spectral_entropy.o
+OBJECTS = ResonanzEngine.o MuseOSC.o MuseOSC4.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLAVCodec.o SDLSoundSynthesis.o FMSoundSynthesis.o IsochronicSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o SoundSynthesis.o HMMStateUpdator.o spectral_entropy.o pictureFeatureVector.o
 
-SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp SDLAVCodec.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp timeseries.cpp ts_measure.cpp ReinforcementPictures.cpp ReinforcementSounds.cpp SoundSynthesis.cpp HMMStateUpdator.cpp spectral_entropy.cpp
+SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp MuseOSC4.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp SDLAVCodec.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp timeseries.cpp ts_measure.cpp ReinforcementPictures.cpp ReinforcementSounds.cpp SoundSynthesis.cpp HMMStateUpdator.cpp spectral_entropy.cpp pictureFeatureVector.cpp
 
 
 
