@@ -4279,6 +4279,9 @@ bool ResonanzEngine::engine_loadMedia(const std::string& picdir, const std::stri
       SDL_FreeSurface(images[i]);
     images[i] = nullptr;
   }
+
+  images.clear();
+  imageFeatures.clear();
   
   if(loadData){
     images.resize(pictures.size());
@@ -4294,12 +4297,15 @@ bool ResonanzEngine::engine_loadMedia(const std::string& picdir, const std::stri
     
     for(unsigned int i=0;i<images.size();i++){
       images[i] = nullptr;
-      
-      char buffer[80];
-      
-      snprintf(buffer, 80, "resonanz-engine: loading media files (%.1f%%)..",
-	       100.0f*(((float)i)/((float)images.size())));
-      engine_setStatus(buffer);
+
+      {
+	char buffer[80];
+	
+	snprintf(buffer, 80,
+		 "resonanz-engine: loading media files (%.1f%%)..",
+		 100.0f*(((float)i)/((float)images.size())));
+	engine_setStatus(buffer);
+      }
       
       engine_showScreen("Loading..", i, synthParams); // loads picture if it is not loaded yet.
 
@@ -5375,9 +5381,11 @@ bool ResonanzEngine::engine_showScreen(const std::string& message, unsigned int 
 
 void ResonanzEngine::engine_pollEvents()
 {
+  std::lock_guard<std::mutex> lock(keypress_mutex);
+  
   SDL_Event event;
   
-  while(SDL_PollEvent(&event)){
+  while(SDL_PollEvent(&event)){ // this is not thread-safe so must be protected by mutex lock???
     // currently ignores all incoming events
     // (should handle window close event somehow)
     
@@ -5386,7 +5394,6 @@ void ResonanzEngine::engine_pollEvents()
 	event.key.keysym.sym == SDLK_RETURN)
        )
     {
-      std::lock_guard<std::mutex> lock(keypress_mutex);
       keypressed = true;
     }
   }
