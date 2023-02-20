@@ -520,6 +520,9 @@ int main(int argc, char** argv)
 	  std::cout << msg << std::endl;
 	}
 	else if(cmd.command == cmd.CMD_DO_EXECUTE){
+	  printf("ABOUT TO SHOW PROGRAM EXECUTE STATISTICS\n"); 
+
+	  
 	  std::string msg = engine.executedProgramStatistics();
 	  std::cout << msg << std::endl;
 	}

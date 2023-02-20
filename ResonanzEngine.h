@@ -324,8 +324,8 @@ private:
 	whiteice::bayesian_nnetwork<>* bnn = nullptr;
 	whiteice::UHMC<>* bayes_optimizer = nullptr;
 
-	const int NEURALNETWORK_COMPLEXITY = 10; // values above 10 seem to make sense (was: 25, 10)
-	const int NEURALNETWORK_DEPTH = 2; // how many layers neural network have (was: 3, 6, *10*)
+	const int NEURALNETWORK_COMPLEXITY = 4; // values above 10 seem to make sense (was: 25, 10) [was: 10]
+        const int NEURALNETWORK_DEPTH = 3; // how many layers neural network have (was: 3, 6, *10*) [was: 1, 2, 5] (only (2*x+1) odd values work correctly now!)
 
         bool use_bayesian_nnetwork = false;
 	const unsigned int BAYES_NUM_SAMPLES = 250; // number of samples collected from "bayesian posterior" (what we really sample is MLE likelihood thought..) [reduced from 1000 to 500 because HMC now don't add samples until epsilon is properly learnt]

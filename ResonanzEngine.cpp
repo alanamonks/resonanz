@@ -111,8 +111,11 @@ ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
     std::vector<unsigned int> nnArchitecture;
     
     nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
-    for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+    
+    for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
       nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
+    }
     nnArchitecture.push_back(eeg->getNumberOfSignals());
     
     nn = new whiteice::nnetwork<>(nnArchitecture);
@@ -123,8 +126,10 @@ ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
 
     nnArchitecture.clear();
     nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
-    for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+    for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
       nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
+    }
     nnArchitecture.push_back(eeg->getNumberOfSignals());
     
     nnkey = new whiteice::nnetwork<>(nnArchitecture);
@@ -137,12 +142,12 @@ ResonanzEngine::ResonanzEngine(const unsigned int numDeviceChannels)
     const int synth_number_of_parameters = 3;
     
     nnArchitecture.clear();
-    nnArchitecture.push_back(eeg->getNumberOfSignals() +
-			     2*synth_number_of_parameters +
-			     HMM_NUM_CLUSTERS);
+    nnArchitecture.push_back(eeg->getNumberOfSignals() + 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
     
-    for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+    for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
       nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + 2*synth_number_of_parameters + HMM_NUM_CLUSTERS));
+      nnArchitecture.push_back(eeg->getNumberOfSignals() + 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
+    }
     nnArchitecture.push_back(eeg->getNumberOfSignals());
     
     nnsynth = new whiteice::nnetwork<>(nnArchitecture);
@@ -606,8 +611,10 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       std::vector<unsigned int> nnArchitecture;
       
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
+      }
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
       if(nn != nullptr) delete nn;
@@ -622,8 +629,10 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       nnArchitecture.clear();
       
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      }
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
       if(nnkey != nullptr) delete nnkey;
@@ -643,10 +652,13 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
 				 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
 	
-	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
 				    2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS));
+	  nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				   2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
+	}
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -663,10 +675,13 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
 				 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
-	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
 				    2*synth_number_of_parameters) + HMM_NUM_CLUSTERS);
+	  nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				   2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
+	}
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
 	if(nnsynth != nullptr) delete nnsynth;
@@ -697,8 +712,10 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
       
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
       
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS + PICFEATURES_SIZE);
+      }
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -713,8 +730,10 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 
       nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
       
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + HMM_NUM_CLUSTERS);
+      }
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -733,11 +752,14 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
 				 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
 	
-	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
 				    2*synth->getNumberOfParameters() +
 				    HMM_NUM_CLUSTERS));
+	  nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				   2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
+	}
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -755,11 +777,14 @@ bool ResonanzEngine::setEEGDeviceType(int deviceNumber)
 	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
 				 2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
 	
-	for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+	for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	  nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				   (eeg->getNumberOfSignals() + 
 				    2*synth_number_of_parameters +
 				    HMM_NUM_CLUSTERS));
+	  nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				   2*synth_number_of_parameters + HMM_NUM_CLUSTERS);
+	}
 	
 	nnArchitecture.push_back(eeg->getNumberOfSignals());
 	
@@ -5575,11 +5600,14 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
       nnArchitecture.push_back(eeg->getNumberOfSignals() + 
 			       2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
       
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				 (eeg->getNumberOfSignals() + 
 				  2*synth->getNumberOfParameters() +
 				  HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				 2*synth->getNumberOfParameters() + HMM_NUM_CLUSTERS);
+      }
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
@@ -5598,11 +5626,15 @@ bool ResonanzEngine::engine_SDL_init(const std::string& fontname)
 			       2*synth_number_of_parameters +
 			       HMM_NUM_CLUSTERS);
       
-      for(int i=0;i<NEURALNETWORK_DEPTH-1;i++)
+      for(int i=0;i<(NEURALNETWORK_DEPTH-1)/2;i++){
 	nnArchitecture.push_back(NEURALNETWORK_COMPLEXITY*
 				 (eeg->getNumberOfSignals() + 
 				  2*synth_number_of_parameters +
 				  HMM_NUM_CLUSTERS));
+	nnArchitecture.push_back(eeg->getNumberOfSignals() + 
+				 2*synth_number_of_parameters +
+			       HMM_NUM_CLUSTERS);
+      }
       
       nnArchitecture.push_back(eeg->getNumberOfSignals());
       
