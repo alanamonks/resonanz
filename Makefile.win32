@@ -17,9 +17,9 @@ CFLAGS = -fPIC -O3 -march=native -g -fopenmp `pkg-config sdl2 --cflags` `pkg-con
 
 CXXFLAGS = -fPIC -O3 -march=native -g -fopenmp `pkg-config sdl2 --cflags` `pkg-config --cflags SDL2_ttf` `pkg-config --cflags SDL2_image` `pkg-config --cflags SDL2_mixer` `pkg-config --cflags dinrhiw` -I. -Ioscpkt -I"/c/Program Files/Java/jdk1.8.0_281/include" -I"/c/Program Files/Java/jdk1.8.0_281/include/win32/" -I. -Iemotiv_insight -Iemotiv_insight/include -Ineurosky `pkg-config theora --cflags` `python3-config --cflags` `pkg-config libavcodec --cflags` `pkg-config libavformat --cflags` `pkg-config libavutil --cflags`
 
-OBJECTS = ResonanzEngine.o MuseOSC.o MuseOSC4.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLAVCodec.o SoundSynthesis.o SDLSoundSynthesis.o FMSoundSynthesis.o IsochronicSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o EmotivInsight.o HMMStateUpdator.o spectral_entropy.o timing.o pictureFeatureVector.o
+OBJECTS = ResonanzEngine.o MuseOSC.o MuseOSC4.o NMCFile.o NoEEGDevice.o RandomEEG.o SDLTheora.o SDLAVCodec.o SoundSynthesis.o SDLSoundSynthesis.o FMSoundSynthesis.o IsochronicSoundSynthesis.o hermitecurve.o SDLMicrophoneListener.o EmotivInsight.o HMMStateUpdator.o spectral_entropy.o timing.o pictureFeatureVector.o IsochronicPictureSynthesis.o TranquilityEngine.o 
 
-SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp MuseOSC4.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp SDLTheora.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp Log.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp EmotivInsight.cpp NeuroskyEEG.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp HMMStateUpdator.cpp spectral_entropy.cpp IsochronicSoundSynthesis.cpp timing.cpp pictureFeatureVector.cpp
+SOURCES = main.cpp ResonanzEngine.cpp MuseOSC.cpp MuseOSC4.cpp NMCFile.cpp NoEEGDevice.cpp RandomEEG.cpp SDLTheora.cpp SDLTheora.cpp jni/fi_iki_nop_neuromancer_ResonanzEngine.cpp Log.cpp hermitecurve.cpp SDLMicrophoneListener.cpp LightstoneDevice.cpp EmotivInsight.cpp NeuroskyEEG.cpp measurements.cpp optimizeResponse.cpp pictureAutoencoder.cpp renaissance.cpp stimulation.cpp hsv.cpp HMMStateUpdator.cpp spectral_entropy.cpp IsochronicSoundSynthesis.cpp timing.cpp pictureFeatureVector.cpp IsochronicPictureSynthesis.cpp TranquilityEngine.cpp
 
 
 
@@ -54,6 +54,11 @@ R9E_TARGET=renaissance
 R9E_LIBS=`/usr/local/bin/sdl2-config --libs` `pkg-config SDL2_image --libs` `pkg-config dinrhiw --libs` -lws2_32 -mconsole
 R9E_OBJECTS=renaissance.o pictureAutoencoder.o measurements.o optimizeResponse.o stimulation.o MuseOSC.o NoEEGDevice.o RandomEEG.o hsv.o
 
+TRANQUILITY_TARGET=tranquility
+TRANQUILITY_LIBS=`pkg-config sdl2 --libs` `pkg-config --libs SDL2_ttf` `pkg-config --libs SDL2_image` `pkg-config --libs SDL2_mixer` `pkg-config --libs dinrhiw` `python3-config --ldflags --embed` `pkg-config vorbis --libs` `pkg-config vorbisenc --libs` -fopenmp -ltheoraenc -ltheoradec -logg -lws2_32 -Lemotiv_insight -ledk `pkg-config libavcodec --libs` `pkg-config libavformat --libs` `pkg-config libavutil --libs`
+TRANQUILITY_OBJECTS=$(OBJECTS) tmain.o 
+
+
 ############################################################
 
 all: $(OBJECTS) resonanz 
@@ -66,6 +71,10 @@ resonanz: $(RESONANZ_OBJECTS)
 
 renaissance: $(R9E_OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(R9E_TARGET) $(R9E_OBJECTS) $(R9E_LIBS) $(LIBS) -mconsole
+
+tranquility: $(TRANQUILITY_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(TRANQUILITY_TARGET) $(TRANQUILITY_OBJECTS) $(LIBS) -mconsole
+
 
 jnilib: $(JNILIB_OBJECTS)
 	$(CXX) -shared -Wl,-soname,$(JNITARGET) -o $(JNITARGET) $(JNILIB_OBJECTS) $(LIBS)
