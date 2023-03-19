@@ -35,7 +35,7 @@ bool IsochronicPictureSynthesis::getParameters(std::vector<float>& p)
 {
   p.resize(4);
   
-  p[0] = (logF+1.0)/5.0;
+  p[0] = (logF+1.0)/3.0;
   p[1] = r;
   p[2] = g;
   p[3] = b;
@@ -57,7 +57,7 @@ bool IsochronicPictureSynthesis::setParameters(const std::vector<float>& p)
       logF = p[0];
     }
 
-    logF *= 5.0;
+    logF *= 3.0;
     logF -= 1.0;
     
     

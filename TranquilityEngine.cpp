@@ -1,8 +1,7 @@
 /*
  * TranquilityEngine.cpp
  *
- *  Created on: 13.6.2015
- *  Edited: 2021, 2022
+ *  Created on: 19.3.2023
  *      Author: Tomas Ukkonen
  */
 
@@ -5240,8 +5239,8 @@ bool TranquilityEngine::engine_loadDatabase(const std::string& modelDir)
     synth_num_samples   /= 1;
     picsynth_num_samples /= 1;
     
-    char buffer[128];
-    snprintf(buffer, 128, 
+    char buffer[1024];
+    snprintf(buffer, 1024, 
 	     "measurements database loaded: %.1f EEG stream samples %.1f [samples/picture] %.1f [samples/keyword] %.1f [picsynth samples] %.1f [synth samples]", eeg_num_samples, picture_num_samples, keyword_num_samples, picsynth_num_samples, synth_num_samples);
     
     logging.info(buffer);

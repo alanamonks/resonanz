@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include<conio.h>
+// #include <conio.h>
 
 #include <dinrhiw.h>
 

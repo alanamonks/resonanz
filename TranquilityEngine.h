@@ -248,8 +248,8 @@ private:
   long long tick = 0; // current engine tick (one tick is TICK_MS long)
   
   // set to 100ms (set tick back to 1000ms = 1 sec)
-  static const unsigned int TICK_MS = 250;             // how fast engine runs: engine measures ticks and executes (one) command only when tick changes (was: 100)
-  static const unsigned int MEASUREMODE_DELAY_MS = 500; // how long each screen is shown when measuring response (was: 200)
+  static const unsigned int TICK_MS = 100;             // how fast engine runs: engine measures ticks and executes (one) command only when tick changes (was: 100, 250)
+  static const unsigned int MEASUREMODE_DELAY_MS = 100; // how long each screen is shown when measuring response (was: 200, 500)
   
   // media resource
   std::vector<std::string> keywords;
